@@ -29,29 +29,37 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
 
     public bool IsLoadAssetsAssigned => loadAssetsFunc != null;
 
-    public async UniTask LoadSceneAsync<T>(bool isLoadingUIEnabled = true) where T : ILoadableScene
+    private void Awake()
+    {
+        previousSceneLoadProgressAction += () => { Destroy(Camera.main.GetComponent<AudioListener>()); };
+    }
+
+    public async UniTask LoadSceneAsync<T>(bool isLoadingEnabled = true)
     {
         previousSceneLoadProgressAction?.Invoke();
 
         currentSceneName = SceneManager.GetActiveScene().name;
         targetSceneName = typeof(T).Name;
 
-        if (isLoadingUIEnabled)
-        {
-            await LoadAndActivateSceneAsync(LOADING_SCENE_NAME);
-        }
-        else
-        {
-            await LoadAndActivateSceneAsync(targetSceneName);
+        await LoadAndActivateSceneAsync(targetSceneName);
 
-            await UniTask.WaitUntil(() => IsLoadAssetsAssigned);
+        await UniTask.WaitUntil(() => IsLoadAssetsAssigned);
 
-            await SceneManager.UnloadSceneAsync(currentSceneName);
+        await SceneManager.UnloadSceneAsync(currentSceneName);
 
-            await LoadAllSteps();
+        await LoadAllSteps();
 
-            Clear();
-        }
+        Clear();
+    }
+
+    public async UniTask LoadSceneAsyncWithLoadingUI<T>() where T : ILoadableScene
+    {
+        previousSceneLoadProgressAction?.Invoke();
+
+        currentSceneName = SceneManager.GetActiveScene().name;
+        targetSceneName = typeof(T).Name;
+
+        await LoadAndActivateSceneAsync(LOADING_SCENE_NAME);
     }
 
     private async UniTask LoadAndActivateSceneAsync(string sceneName)
