@@ -122,7 +122,7 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
             currentPercent += increasePercentage;
             updateProgressAction?.Invoke(currentPercent);
 
-            await UniTask.Delay(PROGRESS_STEP_DELAY, cancellationToken: linked.Token); // ���� ���ݸ�ŭ ���
+            await UniTask.Delay(PROGRESS_STEP_DELAY, cancellationToken: linked.Token);
         }
     }
 

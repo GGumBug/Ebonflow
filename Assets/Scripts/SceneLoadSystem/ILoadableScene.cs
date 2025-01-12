@@ -3,24 +3,22 @@ using Cysharp.Threading.Tasks;
 public interface ILoadableScene
 {
     /// <summary>
-    /// ¸®¼Ò½º ·Îµå
+    /// ë¦¬ì†ŒìŠ¤ ë¡œë“œ
     /// </summary>
     UniTask LoadAssets();
 
     /// <summary>
-    /// µ¥ÀÌÅÍ ÃÊ±âÈ­
+    /// ë°ì´í„° ì´ˆê¸°í™”
     /// </summary>
     UniTask InitializeData();
 
     /// <summary>
-    /// ¾À ¼³Á¤
+    /// ì”¬ ì„¤ì •
     /// </summary>
     UniTask SetupScene();
 
     /// <summary>
-    /// ·Îµù ¿Ï·á ÈÄ ÃÖÁ¾ ÀÛ¾÷
+    /// ë¡œë”© ì™„ë£Œ í›„ ìµœì¢… ì‘ì—…
     /// </summary>
     UniTask FinalizeLoading();
 }
-
-
