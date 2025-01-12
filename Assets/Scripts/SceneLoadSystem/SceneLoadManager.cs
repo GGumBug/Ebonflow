@@ -18,32 +18,30 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
     private float increasePercentage = 1f;
     private CancellationTokenSource cancel;
     private CancellationTokenSource linked;
+    private Action<float> updateProgressAction;
 
-    public Action previousSceneLoadProgressAction;
-    public Action<float> updateProgressAction;
-    public Func<UniTask> loadAssetsFunc;
-    public Func<UniTask> initializeDataFunc;
-    public Func<UniTask> setupSceneFunc;
-    public Func<UniTask> finalizeLoadingFunc;
-    public Func<Action, UniTask> loadingEndAnimationAction;
+    private bool HasAssignedLoadingTasks => Callbacks != null;
 
-    public bool IsLoadAssetsAssigned => loadAssetsFunc != null;
+    public SceneLoadCallbacks Callbacks { get; set; } = null;
+    public Action PreviousSceneLoadProgressAction { get; set; }
+    public Action OnSceneLoadComplete { get; set; }
 
     private void Awake()
     {
-        previousSceneLoadProgressAction += () => { Destroy(Camera.main.GetComponent<AudioListener>()); };
+        PreviousSceneLoadProgressAction += () => { Destroy(Camera.main.GetComponent<AudioListener>()); };
+        OnSceneLoadComplete += async () => { await SceneManager.UnloadSceneAsync(LOADING_SCENE_NAME); };
     }
 
     public async UniTask LoadSceneAsync<T>(bool isLoadingEnabled = true)
     {
-        previousSceneLoadProgressAction?.Invoke();
+        PreviousSceneLoadProgressAction?.Invoke();
 
         currentSceneName = SceneManager.GetActiveScene().name;
         targetSceneName = typeof(T).Name;
 
         await LoadAndActivateSceneAsync(targetSceneName);
 
-        await UniTask.WaitUntil(() => IsLoadAssetsAssigned);
+        await UniTask.WaitUntil(() => HasAssignedLoadingTasks);
 
         await SceneManager.UnloadSceneAsync(currentSceneName);
 
@@ -54,7 +52,7 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
 
     public async UniTask LoadSceneAsyncWithLoadingUI<T>() where T : ILoadableScene
     {
-        previousSceneLoadProgressAction?.Invoke();
+        PreviousSceneLoadProgressAction?.Invoke();
 
         currentSceneName = SceneManager.GetActiveScene().name;
         targetSceneName = typeof(T).Name;
@@ -76,7 +74,7 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
     {
         await LoadAndActivateSceneAsync(targetSceneName);
 
-        await UniTask.WaitUntil(() => IsLoadAssetsAssigned);
+        await UniTask.WaitUntil(() => HasAssignedLoadingTasks);
 
         var targetScene = SceneManager.GetSceneByName(targetSceneName);
 
@@ -88,17 +86,17 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
 
         await LoadAllSteps();
 
-        await FinishLoading();
+        FinishLoading();
     }
 
     private async UniTask LoadAllSteps()
     {
         var loadSteps = new[]
         {
-            new { Func = loadAssetsFunc, StepPercent = STEP_PERCENTS[0] },
-            new { Func = initializeDataFunc, StepPercent = STEP_PERCENTS[1] },
-            new { Func = setupSceneFunc, StepPercent = STEP_PERCENTS[2] },
-            new { Func = finalizeLoadingFunc, StepPercent = STEP_PERCENTS[3] }
+            new { Func = Callbacks.LoadAssets, StepPercent = STEP_PERCENTS[0] },
+            new { Func = Callbacks.InitializeData, StepPercent = STEP_PERCENTS[1] },
+            new { Func = Callbacks.SetupScene, StepPercent = STEP_PERCENTS[2] },
+            new { Func = Callbacks.FinalizeLoading, StepPercent = STEP_PERCENTS[3] }
         };
 
         cancel = new();
@@ -134,12 +132,9 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
         }
     }
 
-    private async UniTask FinishLoading()
+    private void FinishLoading()
     {
-        await loadingEndAnimationAction.Invoke(async () =>
-        {
-            await SceneManager.UnloadSceneAsync(LOADING_SCENE_NAME);
-        });
+        OnSceneLoadComplete?.Invoke();
 
         Clear();
     }
@@ -150,11 +145,7 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
         targetSceneName = null;
         currentPercent = 0f;
         updateProgressAction = null;
-        loadAssetsFunc = null;
-        initializeDataFunc = null;
-        setupSceneFunc = null;
-        finalizeLoadingFunc = null;
-        loadingEndAnimationAction = null;
+        Callbacks = null;
 
         cancel.Cancel();
         cancel.Dispose();

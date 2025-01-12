@@ -1,16 +1,24 @@
-using UnityEngine;
+using Cysharp.Threading.Tasks;
 
-public class MenuScene : MonoBehaviour
+public class MenuScene : SceneBase
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override async UniTask LoadAssets()
     {
-        
+        await UniTask.Yield();
     }
 
-    // Update is called once per frame
-    void Update()
+    public override async UniTask InitializeData()
     {
-        
+        await UniTask.Yield();
+    }
+
+    public override async UniTask SetupScene()
+    {
+        await UniTask.Yield();
+    }
+
+    public override async UniTask FinalizeLoading()
+    {
+        await UniTask.Yield();
     }
 }
