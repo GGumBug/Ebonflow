@@ -29,44 +29,45 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
 
     public bool IsLoadAssetsAssigned => loadAssetsFunc != null;
 
-    public async UniTask LoadSceneAsync<T>() where T : ILoadableScene
-    {
-        previousSceneLoadProgressAction?.Invoke();
-
-        currentSceneName = SceneManager.GetActiveScene().name;
-        targetSceneName = typeof(T).Name;
-        // 타겟 씬 로딩
-        await ActivateScene(targetSceneName);
-
-        // 로딩 작업이 할당될 때까지 대기
-        await UniTask.WaitUntil(() => IsLoadAssetsAssigned);
-
-        // 기존 씬 언로드
-        await SceneManager.UnloadSceneAsync(currentSceneName);
-
-        // 각 단계의 로딩 작업 처리
-        await LoadAllSteps();
-
-        Clear();
-    }
-
-    public async UniTask ActivateLoadingSceneAsync<T>() where T : ILoadableScene
+    public async UniTask LoadSceneAsync<T>(bool isLoadingUIEnabled = true) where T : ILoadableScene
     {
         previousSceneLoadProgressAction?.Invoke();
 
         currentSceneName = SceneManager.GetActiveScene().name;
         targetSceneName = typeof(T).Name;
 
-        // 로딩 씬 활성화
-        await ActivateScene(LOADING_SCENE_NAME);
+        if (isLoadingUIEnabled)
+        {
+            await LoadAndActivateSceneAsync(LOADING_SCENE_NAME);
+        }
+        else
+        {
+            await LoadAndActivateSceneAsync(targetSceneName);
+
+            await UniTask.WaitUntil(() => IsLoadAssetsAssigned);
+
+            await SceneManager.UnloadSceneAsync(currentSceneName);
+
+            await LoadAllSteps();
+
+            Clear();
+        }
     }
 
-    public async UniTask ActivateTargetScene()
+    private async UniTask LoadAndActivateSceneAsync(string sceneName)
     {
-        // 타겟 씬 로딩
-        await ActivateScene(targetSceneName);
+        var asyncOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+        asyncOperation.allowSceneActivation = false;
 
-        // 로딩 작업이 할당될 때까지 대기
+        await UniTask.WaitUntil(() => asyncOperation.progress >= LOAD_SCENE_PROGRESS_THRESHOLD);
+
+        asyncOperation.allowSceneActivation = true;
+    }
+
+    private async UniTask ActivateTargetScene()
+    {
+        await LoadAndActivateSceneAsync(targetSceneName);
+
         await UniTask.WaitUntil(() => IsLoadAssetsAssigned);
 
         var targetScene = SceneManager.GetSceneByName(targetSceneName);
@@ -77,31 +78,17 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
 
         await SceneManager.UnloadSceneAsync(currentSceneName);
 
-        // 각 단계의 로딩 작업 처리
         await LoadAllSteps();
 
-        // 로딩 완료 및 애니메이션 처리
         await FinishLoading();
-    }
-
-    private async UniTask ActivateScene(string sceneName)
-    {
-        var asyncOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-        asyncOperation.allowSceneActivation = false;
-
-        // 씬 로드가 거의 완료될 때까지 대기
-        await UniTask.WaitUntil(() => asyncOperation.progress >= LOAD_SCENE_PROGRESS_THRESHOLD);
-
-        // 씬 활성화
-        asyncOperation.allowSceneActivation = true;
     }
 
     private async UniTask LoadAllSteps()
     {
         var loadSteps = new[]
         {
-            new { Func = initializeDataFunc, StepPercent = STEP_PERCENTS[0] },
-            new { Func = loadAssetsFunc, StepPercent = STEP_PERCENTS[1] },
+            new { Func = loadAssetsFunc, StepPercent = STEP_PERCENTS[0] },
+            new { Func = initializeDataFunc, StepPercent = STEP_PERCENTS[1] },
             new { Func = setupSceneFunc, StepPercent = STEP_PERCENTS[2] },
             new { Func = finalizeLoadingFunc, StepPercent = STEP_PERCENTS[3] }
         };
@@ -135,13 +122,12 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
             currentPercent += increasePercentage;
             updateProgressAction?.Invoke(currentPercent);
 
-            await UniTask.Delay(PROGRESS_STEP_DELAY, cancellationToken: linked.Token); // 진행 간격만큼 대기
+            await UniTask.Delay(PROGRESS_STEP_DELAY, cancellationToken: linked.Token); // 占쏙옙占쏙옙 占쏙옙占쌥몌옙큼 占쏙옙占�
         }
     }
 
     private async UniTask FinishLoading()
     {
-        // 로딩 완료 애니메이션 및 로딩 씬 언로드
         await loadingEndAnimationAction.Invoke(async () =>
         {
             await SceneManager.UnloadSceneAsync(LOADING_SCENE_NAME);
@@ -150,7 +136,7 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
         Clear();
     }
 
-    void Clear()
+    private void Clear()
     {
         currentSceneName = null;
         targetSceneName = null;
