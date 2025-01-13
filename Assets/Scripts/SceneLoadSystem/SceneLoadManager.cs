@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
 {
     private const int PROGRESS_STEP_DELAY = 100;
-    private const string LOADING_SCENE_NAME = "Loading";
     private const float LOAD_SCENE_PROGRESS_THRESHOLD = 0.89f;
     private readonly float[] STEP_PERCENTS = { 30f, 30f, 20f, 20f };
 
@@ -29,7 +28,6 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
     private void Awake()
     {
         PreviousSceneLoadProgressAction += () => { Destroy(Camera.main.GetComponent<AudioListener>()); };
-        OnSceneLoadComplete += async () => { await SceneManager.UnloadSceneAsync(LOADING_SCENE_NAME); };
     }
 
     public async UniTask LoadSceneAsync<T>(bool isLoadingEnabled = true)
@@ -57,7 +55,7 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
         currentSceneName = SceneManager.GetActiveScene().name;
         targetSceneName = typeof(T).Name;
 
-        await LoadAndActivateSceneAsync(LOADING_SCENE_NAME);
+        await LoadAndActivateSceneAsync(Constants.LOADING_SCENE_NAME);
     }
 
     private async UniTask LoadAndActivateSceneAsync(string sceneName)
@@ -70,7 +68,7 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
         asyncOperation.allowSceneActivation = true;
     }
 
-    private async UniTask ActivateTargetScene()
+    public async UniTask ActivateTargetScene()
     {
         await LoadAndActivateSceneAsync(targetSceneName);
 

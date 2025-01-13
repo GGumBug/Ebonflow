@@ -148,6 +148,8 @@ GameObject:
   - component: {fileID: 185607451958151544}
   - component: {fileID: 6121484720777287109}
   - component: {fileID: 4513747426926111163}
+  - component: {fileID: 288890022898949573}
+  - component: {fileID: 193844138210319044}
   m_Layer: 5
   m_Name: UILoading
   m_TagString: Untagged
@@ -239,6 +241,30 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &288890022898949573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7549528599724126340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b431a83781cb4e449a9343500ac0ab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!225 &193844138210319044
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7549528599724126340}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &8715866682051972919
 GameObject:
   m_ObjectHideFlags: 0
