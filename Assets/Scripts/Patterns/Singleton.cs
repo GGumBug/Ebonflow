@@ -22,12 +22,23 @@ public abstract class Singleton<T> : MonoBehaviour where T : Component
         }
     }
 
-    static T CreateInstance()
+    private static T CreateInstance()
     {
         var go = new GameObject() { name = $"[{typeof(T).Name}]" };
         var instance = go.AddComponent<T>();
         if (instance.GetComponent<IDonDestroy>() != null)
             DontDestroyOnLoad(go);
         return instance;
+    }
+
+    private void Awake()
+    {
+        Init();
+    }
+
+    protected virtual void Init()
+    {
+        string managerName = GetType().Name;
+        Debug.Log($"{managerName} Initialized");
     }
 }
