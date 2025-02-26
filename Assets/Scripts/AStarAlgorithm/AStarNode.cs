@@ -3,15 +3,15 @@ using UnityEngine;
 [System.Serializable]
 public class AStarNode
 {
-    public AStarNode(bool isWall, int x, int y)
+    public AStarNode(bool isBlock, int x, int y)
     {
-        IsWall = isWall;
+        IsBlock = isBlock;
         X = x;
         Y = y;
     }
 
 
-    [field: SerializeField] public bool IsWall { get; private set; }
+    [field: SerializeField] public bool IsBlock { get; private set; }
     [field: SerializeField] public int X { get; private set; }
     [field: SerializeField] public int Y { get; private set; }
 

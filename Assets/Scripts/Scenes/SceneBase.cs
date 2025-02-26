@@ -3,9 +3,14 @@ using UnityEngine;
 
 public abstract class SceneBase : MonoBehaviour, ILoadableScene
 {
+    public bool isDebugMode = false;
+
     private void Awake()
     {
-        SetSceneLoadCallbacks();
+        if (isDebugMode)
+            DebugMode();
+        else
+            SetSceneLoadCallbacks();
     }
 
     void SetSceneLoadCallbacks()
@@ -24,4 +29,6 @@ public abstract class SceneBase : MonoBehaviour, ILoadableScene
     public abstract UniTask InitializeData();
     public abstract UniTask SetupScene();
     public abstract UniTask FinalizeLoading();
+
+    public abstract UniTask DebugMode();
 }
