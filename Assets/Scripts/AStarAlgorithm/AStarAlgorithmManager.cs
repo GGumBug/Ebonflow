@@ -24,7 +24,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
             {
                 bool isWall = false;
                 foreach (Collider2D col in Physics2D.OverlapCircleAll(new Vector2(i + bottomLeft.x, j + bottomLeft.y), 0.4f))
-                    if (col.gameObject.layer == LayerMask.NameToLayer("Wall")) isWall = true;
+                    if (col.gameObject.layer == LayerMask.NameToLayer("Block")) isWall = true;
 
                 NodeArray[i, j] = new AStarNode(isWall, i + bottomLeft.x, j + bottomLeft.y);
             }
