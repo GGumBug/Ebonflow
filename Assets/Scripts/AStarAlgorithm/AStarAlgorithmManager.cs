@@ -106,9 +106,10 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         }
     }
 
+    bool _isDarawLine => _finalNodeList != null && _finalNodeList.Count != 0;
     void OnDrawGizmos()
     {
-        if (_finalNodeList.Count != 0)
+        if (_isDarawLine)
             for (int i = 0; i < _finalNodeList.Count - 1; i++)
                 Gizmos.DrawLine(new Vector2(_finalNodeList[i].X, _finalNodeList[i].Y), new Vector2(_finalNodeList[i + 1].X, _finalNodeList[i + 1].Y));
     }
