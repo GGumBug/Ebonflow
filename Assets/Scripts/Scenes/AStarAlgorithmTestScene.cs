@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,8 @@ public class AStarAlgorithmTestScene : SceneBase
     [SerializeField] private TestCharacter startChracter;
     [SerializeField] private TestCharacter targetChracter;
     [SerializeField] private Button btnFindPath;
+
+    [SerializeField] private TestCharacter[] enemies;
 
     public override UniTask FinalizeLoading()
     {
@@ -31,8 +34,24 @@ public class AStarAlgorithmTestScene : SceneBase
     public override async UniTask DebugMode()
     {
         AStarAlgorithmManager.Instance.CreateGridFromTilemap(new Vector2Int(6, 6), new Vector2Int(0, 0));
-        btnFindPath.onClick.AddListener(() => AStarAlgorithmManager.Instance.FindPath(startChracter, targetChracter, true, true));
+        btnFindPath.onClick.AddListener(StartDrawPath);
 
         await UniTask.Yield();
+    }
+
+    private void StartDrawPath()
+    {
+        var hash = GetEnemyHashSet();
+        AStarAlgorithmManager.Instance.DrawPath(startChracter, hash, true, true);
+    }
+
+    HashSet<IAStarPathPoint> GetEnemyHashSet()
+    {
+        HashSet<IAStarPathPoint> newHashSet = new HashSet<IAStarPathPoint>();
+
+        foreach (var enemy in enemies)
+            newHashSet.Add(enemy);
+
+        return newHashSet;
     }
 }

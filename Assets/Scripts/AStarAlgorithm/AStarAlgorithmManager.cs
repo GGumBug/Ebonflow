@@ -13,11 +13,25 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
     private AStarNode _startNode, _targetNode, _currentNode;
     private HashSet<AStarNode> _closedSet;
     private PriorityQueue<AStarNode> _openNodeQueue;
-    private List<AStarNode> _finalPathNodes;
+    private List<AStarNode> _drawPathNodeList;
+
+    private float GetFinalPathCost => _targetNode.F;
 
     protected override void Init()
     {
         base.Init();
+    }
+
+    public void DrawPath(IAStarPathPoint startPoint, IAStarPathPoint targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    {
+        var finalPath = FindPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
+        _drawPathNodeList = finalPath;
+    }
+
+    public void DrawPath(IAStarPathPoint startPoint, HashSet<IAStarPathPoint> targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    {
+        var finalPath = FindClosestTargetPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
+        _drawPathNodeList = finalPath;
     }
 
     public void CreateGridFromTilemap(Vector2Int gridTopRight, Vector2Int gridBottomLeft)
@@ -52,7 +66,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         }
     }
 
-    public void FindPath(IAStarPathPoint startPoint, IAStarPathPoint targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    private List<AStarNode> FindPath(IAStarPathPoint startPoint, IAStarPathPoint targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
         Vector2Int startVector = startPoint.PathPoint;
         Vector2Int targetVector = targetPoint.PathPoint;
@@ -65,7 +79,6 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 
         _openNodeQueue = new PriorityQueue<AStarNode>(5, SortOrder.Ascending);
         _closedSet = new HashSet<AStarNode>();
-        _finalPathNodes = new List<AStarNode>();
 
         _openNodeQueue.Enqueue(_startNode, _startNode.F);
 
@@ -76,12 +89,30 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 
             if (_currentNode == _targetNode)
             {
-                ConstructFinalPath();
-                return;
+                return ConstructFinalPath();
             }
 
             EvaluateAdjacentNodes(_currentNode);
         }
+
+        return null;
+    }
+
+    private List<AStarNode> FindClosestTargetPath(IAStarPathPoint startPoint, HashSet<IAStarPathPoint> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
+    {
+        if (targetPoints == null || targetPoints.Count == 0)
+            throw new System.ArgumentNullException(nameof(targetPoints), "The targets set cannot be null.");
+
+        PriorityQueue<List<AStarNode>> pathQueue = new PriorityQueue<List<AStarNode>>(5, SortOrder.Ascending);
+
+        foreach (var target in targetPoints)
+        {
+            var finalPath = FindPath(startPoint, target, allowDiagonal, dontCrossCorner);
+            float pathCost = GetFinalPathCost;
+            pathQueue.Enqueue(finalPath, pathCost);
+        }
+
+        return pathQueue.Dequeue();
     }
 
     private void EvaluateAdjacentNodes(AStarNode node)
@@ -161,33 +192,30 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return (fromX == toX || fromY == toY) ? COST_STRAIGHT : COST_DIAGONAL;
     }
 
-    private void ConstructFinalPath()
+    private List<AStarNode> ConstructFinalPath()
     {
+        List<AStarNode> finalPathNodes = new();
         AStarNode node = _targetNode;
         while (node != _startNode)
         {
-            _finalPathNodes.Add(node);
+            finalPathNodes.Add(node);
             node = node.ParentNode;
         }
-        _finalPathNodes.Add(_startNode);
-        _finalPathNodes.Reverse();
+        finalPathNodes.Add(_startNode);
+        finalPathNodes.Reverse();
 
-        for (int i = 0; i < _finalPathNodes.Count; i++)
-        {
-            Debug.Log($"{i}번째는 {_finalPathNodes[i].X}, {_finalPathNodes[i].Y}");
-        }
+        return finalPathNodes;
     }
 
-    private bool IsDrawLine => _finalPathNodes != null && _finalPathNodes.Count > 0;
-
+    private bool IsDrawLine => _drawPathNodeList != null && _drawPathNodeList.Count > 0;
     private void OnDrawGizmos()
     {
         if (IsDrawLine)
         {
-            for (int i = 0; i < _finalPathNodes.Count - 1; i++)
+            for (int i = 0; i < _drawPathNodeList.Count - 1; i++)
             {
-                Vector2 from = new Vector2(_finalPathNodes[i].X, _finalPathNodes[i].Y);
-                Vector2 to = new Vector2(_finalPathNodes[i + 1].X, _finalPathNodes[i + 1].Y);
+                Vector2 from = new Vector2(_drawPathNodeList[i].X, _drawPathNodeList[i].Y);
+                Vector2 to = new Vector2(_drawPathNodeList[i + 1].X, _drawPathNodeList[i + 1].Y);
                 Gizmos.DrawLine(from, to);
             }
         }
