@@ -5,6 +5,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 {
     private const int COST_STRAIGHT = 10;
     private const int COST_DIAGONAL = 14;
+    private const int TARGET_COUNT_THRESHOLD = 3;
 
     private bool _allowDiagonal, _dontCrossCorner;
     private Vector2Int _gridBottomLeft;
@@ -103,6 +104,11 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         if (targetPoints == null || targetPoints.Count == 0)
             throw new System.ArgumentNullException(nameof(targetPoints), "The targets set cannot be null.");
 
+        if (targetPoints.Count > TARGET_COUNT_THRESHOLD)
+        {
+            targetPoints = FilterTargetsByHeuristic(startPoint, targetPoints);
+        }
+
         PriorityQueue<List<AStarNode>> pathQueue = new PriorityQueue<List<AStarNode>>(5, SortOrder.Ascending);
 
         foreach (var target in targetPoints)
@@ -113,6 +119,25 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         }
 
         return pathQueue.Dequeue();
+    }
+
+    private HashSet<IAStarPathPoint> FilterTargetsByHeuristic(IAStarPathPoint startPoint, HashSet<IAStarPathPoint> targetPoints)
+    {
+        PriorityQueue<IAStarPathPoint> targetQueue = new PriorityQueue<IAStarPathPoint>(targetPoints.Count, SortOrder.Ascending);
+        foreach (var target in targetPoints)
+        {
+            int distance = Mathf.Abs(startPoint.PathPoint.x - target.PathPoint.x) +
+                           Mathf.Abs(startPoint.PathPoint.y - target.PathPoint.y);
+            targetQueue.Enqueue(target, distance);
+        }
+
+        HashSet<IAStarPathPoint> filteredTargets = new HashSet<IAStarPathPoint>();
+        int count = Mathf.Min(TARGET_COUNT_THRESHOLD, targetQueue.Count);
+        for (int i = 0; i < count; i++)
+        {
+            filteredTargets.Add(targetQueue.Dequeue());
+        }
+        return filteredTargets;
     }
 
     private void EvaluateAdjacentNodes(AStarNode node)
