@@ -5,7 +5,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 {
     private const int COST_STRAIGHT = 10;
     private const int COST_DIAGONAL = 14;
-    private const int TARGET_COUNT_THRESHOLD = 3;
+    private const int TARGET_COUNT_THRESHOLD = 20;
 
     private bool _allowDiagonal, _dontCrossCorner;
     private Vector2Int _gridBottomLeft;
