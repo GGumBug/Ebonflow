@@ -4118,6 +4118,7 @@ MonoBehaviour:
   isDebugMode: 1
   startChracter: {fileID: 192804232}
   targetChracter: {fileID: 1437227749}
+  btnFindPath: {fileID: 632843448}
 --- !u!1 &1776527630
 GameObject:
   m_ObjectHideFlags: 0
