@@ -29,7 +29,7 @@ public class AStarAlgorithmTestScene : SceneBase
     public override async UniTask DebugMode()
     {
         AStarAlgorithmManager.Instance.CreateGridFromTilemap(new Vector2Int(6, 6), new Vector2Int(0, 0));
-        AStarAlgorithmManager.Instance.PathFinding(startChracter, targetChracter);
+        AStarAlgorithmManager.Instance.PathFinding(startChracter, targetChracter, true, true);
 
         await UniTask.Yield();
     }

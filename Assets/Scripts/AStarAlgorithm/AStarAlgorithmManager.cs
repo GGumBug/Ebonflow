@@ -6,15 +6,13 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
     private const int COST_STRAIGHT = 10;
     private const int COST_DIAGONAL = 14;
 
+    private bool _allowDiagonal, _dontCrossCorner;
     private Vector2Int _bottomLeft;
     private Vector2Int _topRight;
     private List<AStarNode> _finalNodeList;
     private AStarNode[,] _nodeArray;
     private AStarNode _startNode, _targetNode, _currentNode;
     private List<AStarNode> _openList, _closedList;
-
-    [SerializeField] private bool allowDiagonal;
-    [SerializeField] private bool dontCrossCorner;
 
     protected override void Init()
     {
@@ -54,10 +52,13 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
     }
 
 
-    public void PathFinding(IAStarPathPoint startPoint, IAStarPathPoint targetPoint)
+    public void PathFinding(IAStarPathPoint startPoint, IAStarPathPoint targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
         Vector2Int startVector = startPoint.PathPoint;
         Vector2Int targetVector = targetPoint.PathPoint;
+
+        _allowDiagonal = allowDiagonal;
+        _dontCrossCorner = dontCrossCorner;
 
         _startNode = _nodeArray[startVector.x - _bottomLeft.x, startVector.y - _bottomLeft.y];
         _targetNode = _nodeArray[targetVector.x - _bottomLeft.x, targetVector.y - _bottomLeft.y];
@@ -95,7 +96,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 
     private void EvaluateNeighbors(AStarNode node)
     {
-        if (allowDiagonal)
+        if (_allowDiagonal)
         {
             OpenListAdd(node.X + 1, node.Y + 1);
             OpenListAdd(node.X - 1, node.Y + 1);
@@ -126,7 +127,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         }
 
         // 대각 이동 시 코너 크로싱 제한 체크
-        if (allowDiagonal)
+        if (_allowDiagonal)
         {
             if (_nodeArray[_currentNode.X - _bottomLeft.x, checkY - _bottomLeft.y].IsBlock &&
                 _nodeArray[checkX - _bottomLeft.x, _currentNode.Y - _bottomLeft.y].IsBlock)
@@ -136,7 +137,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         }
 
         // 코너 크로싱 금지 옵션 체크 (대각 이동 여부와 관계없이)
-        if (dontCrossCorner)
+        if (_dontCrossCorner)
         {
             if (_nodeArray[_currentNode.X - _bottomLeft.x, checkY - _bottomLeft.y].IsBlock ||
                 _nodeArray[checkX - _bottomLeft.x, _currentNode.Y - _bottomLeft.y].IsBlock)
