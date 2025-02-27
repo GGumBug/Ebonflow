@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 public class PriorityQueue<T>
 {
@@ -63,6 +64,18 @@ public class PriorityQueue<T>
             throw new InvalidOperationException("Priority queue is empty.");
 
         return _heap[0].Data;
+    }
+
+    public bool Contains(T data)
+    {
+        for (int i = 0; i < _size; i++)
+        {
+            if (EqualityComparer<T>.Default.Equals(_heap[i].Data, data))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void HeapifyUp(int idx)
