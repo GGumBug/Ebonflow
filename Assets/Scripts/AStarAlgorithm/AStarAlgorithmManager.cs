@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 {
@@ -7,26 +7,27 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
     private const int COST_DIAGONAL = 14;
 
     private bool _allowDiagonal, _dontCrossCorner;
-    private Vector2Int _bottomLeft;
-    private Vector2Int _topRight;
-    private List<AStarNode> _finalNodeList;
-    private AStarNode[,] _nodeArray;
+    private Vector2Int _gridBottomLeft;
+    private Vector2Int _gridTopRight;
+    private AStarNode[,] _gridNodes;
     private AStarNode _startNode, _targetNode, _currentNode;
-    private List<AStarNode> _openList, _closedList;
+    private HashSet<AStarNode> _closedSet;
+    private PriorityQueue<AStarNode> _openNodeQueue;
+    private List<AStarNode> _finalPathNodes;
 
     protected override void Init()
     {
         base.Init();
     }
 
-    public void CreateGridFromTilemap(Vector2Int topRight, Vector2Int bottomLeft)
+    public void CreateGridFromTilemap(Vector2Int gridTopRight, Vector2Int gridBottomLeft)
     {
-        _topRight = topRight;
-        _bottomLeft = bottomLeft;
+        _gridTopRight = gridTopRight;
+        _gridBottomLeft = gridBottomLeft;
 
-        int sizeX = _topRight.x - _bottomLeft.x + 1;
-        int sizeY = _topRight.y - _bottomLeft.y + 1;
-        _nodeArray = new AStarNode[sizeX, sizeY];
+        int sizeX = _gridTopRight.x - _gridBottomLeft.x + 1;
+        int sizeY = _gridTopRight.y - _gridBottomLeft.y + 1;
+        _gridNodes = new AStarNode[sizeX, sizeY];
 
         int blockLayer = LayerMask.NameToLayer("Block");
 
@@ -34,7 +35,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         {
             for (int j = 0; j < sizeY; j++)
             {
-                Vector2 tilePosition = new Vector2(i + _bottomLeft.x, j + _bottomLeft.y);
+                Vector2 tilePosition = new Vector2(i + _gridBottomLeft.x, j + _gridBottomLeft.y);
                 bool isBlock = false;
 
                 foreach (Collider2D col in Physics2D.OverlapCircleAll(tilePosition, 0.4f))
@@ -46,13 +47,12 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
                     }
                 }
 
-                _nodeArray[i, j] = new AStarNode(isBlock, i + _bottomLeft.x, j + _bottomLeft.y);
+                _gridNodes[i, j] = new AStarNode(isBlock, i + _gridBottomLeft.x, j + _gridBottomLeft.y);
             }
         }
     }
 
-
-    public void PathFinding(IAStarPathPoint startPoint, IAStarPathPoint targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    public void FindPath(IAStarPathPoint startPoint, IAStarPathPoint targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
         Vector2Int startVector = startPoint.PathPoint;
         Vector2Int targetVector = targetPoint.PathPoint;
@@ -60,135 +60,134 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         _allowDiagonal = allowDiagonal;
         _dontCrossCorner = dontCrossCorner;
 
-        _startNode = _nodeArray[startVector.x - _bottomLeft.x, startVector.y - _bottomLeft.y];
-        _targetNode = _nodeArray[targetVector.x - _bottomLeft.x, targetVector.y - _bottomLeft.y];
+        _startNode = GetNodeAt(startVector.x, startVector.y);
+        _targetNode = GetNodeAt(targetVector.x, targetVector.y);
 
-        _openList = new List<AStarNode> { _startNode };
-        _closedList = new List<AStarNode>();
-        _finalNodeList = new List<AStarNode>();
+        _openNodeQueue = new PriorityQueue<AStarNode>(5, SortOrder.Ascending);
+        _closedSet = new HashSet<AStarNode>();
+        _finalPathNodes = new List<AStarNode>();
 
-        while (_openList.Count > 0)
+        _openNodeQueue.Enqueue(_startNode, _startNode.F);
+
+        while (_openNodeQueue.Count > 0)
         {
-            // _openList에서 F값이 가장 낮은 노드를 선택 (F가 같으면 H값이 낮은 것을 우선)
-            _currentNode = _openList[0];
-            for (int i = 1; i < _openList.Count; i++)
-            {
-                AStarNode node = _openList[i];
-                if (node.F < _currentNode.F || (node.F == _currentNode.F && node.H < _currentNode.H))
-                {
-                    _currentNode = node;
-                }
-            }
+            _currentNode = _openNodeQueue.Dequeue();
+            _closedSet.Add(_currentNode);
 
-            _openList.Remove(_currentNode);
-            _closedList.Add(_currentNode);
-
-            // 목표 노드에 도달한 경우 경로를 구성하고 종료
             if (_currentNode == _targetNode)
             {
-                BuildFinalPath();
+                ConstructFinalPath();
                 return;
             }
 
-            EvaluateNeighbors(_currentNode);
+            EvaluateAdjacentNodes(_currentNode);
         }
     }
 
-    private void EvaluateNeighbors(AStarNode node)
+    private void EvaluateAdjacentNodes(AStarNode node)
     {
+        // 대각선 이동 가능 여부에 따라 처리
         if (_allowDiagonal)
         {
-            OpenListAdd(node.X + 1, node.Y + 1);
-            OpenListAdd(node.X - 1, node.Y + 1);
-            OpenListAdd(node.X - 1, node.Y - 1);
-            OpenListAdd(node.X + 1, node.Y - 1);
-        }
-
-        OpenListAdd(node.X, node.Y + 1);
-        OpenListAdd(node.X + 1, node.Y);
-        OpenListAdd(node.X, node.Y - 1);
-        OpenListAdd(node.X - 1, node.Y);
-    }
-
-    private void OpenListAdd(int checkX, int checkY)
-    {
-        // 좌표가 그리드 내에 있는지 확인
-        if (checkX < _bottomLeft.x || checkX > _topRight.x || checkY < _bottomLeft.y || checkY > _topRight.y)
-        {
-            return;
-        }
-
-        AStarNode neighborNode = _nodeArray[checkX - _bottomLeft.x, checkY - _bottomLeft.y];
-
-        // 이웃 노드가 블록이거나 이미 검사한 노드면 리턴
-        if (neighborNode.IsBlock || _closedList.Contains(neighborNode))
-        {
-            return;
-        }
-
-        // 대각 이동 시 코너 크로싱 제한 체크
-        if (_allowDiagonal)
-        {
-            if (_nodeArray[_currentNode.X - _bottomLeft.x, checkY - _bottomLeft.y].IsBlock &&
-                _nodeArray[checkX - _bottomLeft.x, _currentNode.Y - _bottomLeft.y].IsBlock)
+            foreach (var dir in Constants.DIAGONAL_DIRECTIONS)
             {
-                return;
+                TryAddToOpenQueue(node.X + dir.x, node.Y + dir.y);
             }
         }
+        foreach (var dir in Constants.ORTHOGONAL_DIRECTIONS)
+        {
+            TryAddToOpenQueue(node.X + dir.x, node.Y + dir.y);
+        }
+    }
 
-        // 코너 크로싱 금지 옵션 체크 (대각 이동 여부와 관계없이)
+    private void TryAddToOpenQueue(int checkX, int checkY)
+    {
+        // 그리드 범위 내에 있는지 검사
+        if (!IsWithinGridBounds(checkX, checkY))
+            return;
+
+        AStarNode neighborNode = GetNodeAt(checkX, checkY);
+
+        // 블록이거나 이미 처리한 노드면 건너뜁니다.
+        if (neighborNode.IsBlock || _closedSet.Contains(neighborNode))
+            return;
+
+        // 대각선 이동 시, 코너 크로싱 제한 검사
+        if (_allowDiagonal)
+        {
+            AStarNode adjacent1 = GetNodeAt(_currentNode.X, checkY);
+            AStarNode adjacent2 = GetNodeAt(checkX, _currentNode.Y);
+            if (adjacent1.IsBlock && adjacent2.IsBlock)
+                return;
+        }
+
+        // 코너 크로싱 금지 옵션 검사
         if (_dontCrossCorner)
         {
-            if (_nodeArray[_currentNode.X - _bottomLeft.x, checkY - _bottomLeft.y].IsBlock ||
-                _nodeArray[checkX - _bottomLeft.x, _currentNode.Y - _bottomLeft.y].IsBlock)
-            {
+            AStarNode adjacent1 = GetNodeAt(_currentNode.X, checkY);
+            AStarNode adjacent2 = GetNodeAt(checkX, _currentNode.Y);
+            if (adjacent1.IsBlock || adjacent2.IsBlock)
                 return;
-            }
         }
 
-        // 이동 비용 계산 (상하좌우: 10, 대각선: 14)
-        int moveCost = _currentNode.G + ((_currentNode.X - checkX == 0 || _currentNode.Y - checkY == 0) ? COST_STRAIGHT : COST_DIAGONAL);
+        int moveCost = _currentNode.G + CalculateMoveCost(_currentNode.X, _currentNode.Y, checkX, checkY);
 
-        if (moveCost < neighborNode.G || !_openList.Contains(neighborNode))
+        if (moveCost < neighborNode.G || !_openNodeQueue.Contains(neighborNode))
         {
             neighborNode.G = moveCost;
             neighborNode.H = (Mathf.Abs(neighborNode.X - _targetNode.X) + Mathf.Abs(neighborNode.Y - _targetNode.Y)) * COST_STRAIGHT;
             neighborNode.ParentNode = _currentNode;
 
-            if (!_openList.Contains(neighborNode))
-            {
-                _openList.Add(neighborNode);
-            }
+            if (!_openNodeQueue.Contains(neighborNode))
+                _openNodeQueue.Enqueue(neighborNode, neighborNode.F);
         }
     }
 
-    private void BuildFinalPath()
+    // 그리드 범위 체크를 위한 헬퍼 메서드
+    private bool IsWithinGridBounds(int x, int y)
+    {
+        return x >= _gridBottomLeft.x && x <= _gridTopRight.x && y >= _gridBottomLeft.y && y <= _gridTopRight.y;
+    }
+
+    // 주어진 그리드 좌표에 해당하는 노드를 반환
+    private AStarNode GetNodeAt(int x, int y)
+    {
+        return _gridNodes[x - _gridBottomLeft.x, y - _gridBottomLeft.y];
+    }
+
+    // 이동 비용 계산 (상하좌우와 대각선 이동 비용 차이를 적용)
+    private int CalculateMoveCost(int fromX, int fromY, int toX, int toY)
+    {
+        return (fromX == toX || fromY == toY) ? COST_STRAIGHT : COST_DIAGONAL;
+    }
+
+    private void ConstructFinalPath()
     {
         AStarNode node = _targetNode;
         while (node != _startNode)
         {
-            _finalNodeList.Add(node);
+            _finalPathNodes.Add(node);
             node = node.ParentNode;
         }
-        _finalNodeList.Add(_startNode);
-        _finalNodeList.Reverse();
+        _finalPathNodes.Add(_startNode);
+        _finalPathNodes.Reverse();
 
-        for (int i = 0; i < _finalNodeList.Count; i++)
+        for (int i = 0; i < _finalPathNodes.Count; i++)
         {
-            Debug.Log($"{i}번째는 {_finalNodeList[i].X}, {_finalNodeList[i].Y}");
+            Debug.Log($"{i}번째는 {_finalPathNodes[i].X}, {_finalPathNodes[i].Y}");
         }
     }
 
-    private bool IsDrawLine => _finalNodeList != null && _finalNodeList.Count > 0;
+    private bool IsDrawLine => _finalPathNodes != null && _finalPathNodes.Count > 0;
 
     private void OnDrawGizmos()
     {
         if (IsDrawLine)
         {
-            for (int i = 0; i < _finalNodeList.Count - 1; i++)
+            for (int i = 0; i < _finalPathNodes.Count - 1; i++)
             {
-                Vector2 from = new Vector2(_finalNodeList[i].X, _finalNodeList[i].Y);
-                Vector2 to = new Vector2(_finalNodeList[i + 1].X, _finalNodeList[i + 1].Y);
+                Vector2 from = new Vector2(_finalPathNodes[i].X, _finalPathNodes[i].Y);
+                Vector2 to = new Vector2(_finalPathNodes[i + 1].X, _finalPathNodes[i + 1].Y);
                 Gizmos.DrawLine(from, to);
             }
         }
