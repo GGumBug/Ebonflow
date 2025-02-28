@@ -121,7 +121,10 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
             }
         }
 
-        return pathQueue.Dequeue();
+        if (pathQueue == null || pathQueue.Count <= 0)
+            throw new System.ArgumentNullException(nameof(pathQueue), "찾은 경로가 없습니다.");
+        
+        return pathQueue.Dequeue(); 
     }
 
     private HashSet<AStarAgent> FilterTargetsByHeuristic(AStarAgent startPoint, HashSet<AStarAgent> targetPoints)
