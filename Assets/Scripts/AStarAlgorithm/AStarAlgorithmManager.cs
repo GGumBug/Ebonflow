@@ -106,17 +106,19 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
             throw new System.ArgumentNullException(nameof(targetPoints), "The targets set cannot be null.");
 
         if (targetPoints.Count > TARGET_COUNT_THRESHOLD)
-        {
             targetPoints = FilterTargetsByHeuristic(startPoint, targetPoints);
-        }
 
         PriorityQueue<List<AStarNode>> pathQueue = new PriorityQueue<List<AStarNode>>(5, SortOrder.Ascending);
 
         foreach (var target in targetPoints)
         {
             var finalPath = FindPath(startPoint, target, allowDiagonal, dontCrossCorner);
-            float pathCost = GetFinalPathCost;
-            pathQueue.Enqueue(finalPath, pathCost);
+
+            if (finalPath != null && finalPath.Count > 1)
+            {
+                float pathCost = GetFinalPathCost;
+                pathQueue.Enqueue(finalPath, pathCost);
+            }
         }
 
         return pathQueue.Dequeue();
