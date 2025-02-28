@@ -14,7 +14,6 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
     private AStarNode _startNode, _targetNode, _currentNode;
     private HashSet<AStarNode> _closedSet;
     private PriorityQueue<AStarNode> _openNodeQueue;
-    private List<AStarNode> _drawPathNodeList;
 
     private float GetFinalPathCost => _targetNode.F;
 
@@ -55,19 +54,17 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         }
     }
 
-    public void DrawPath(IAStarPathPoint startPoint, IAStarPathPoint targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    public List<AStarNode> GetPath(AStarAgent startPoint, AStarAgent targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
-        var finalPath = FindPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
-        _drawPathNodeList = finalPath;
+        return FindPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
     }
 
-    public void DrawPath(IAStarPathPoint startPoint, HashSet<IAStarPathPoint> targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    public List<AStarNode> GetPath(AStarAgent startPoint, HashSet<AStarAgent> targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
-        var finalPath = FindClosestTargetPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
-        _drawPathNodeList = finalPath;
+        return FindClosestTargetPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
     }
 
-    private List<AStarNode> FindPath(IAStarPathPoint startPoint, IAStarPathPoint targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    private List<AStarNode> FindPath(AStarAgent startPoint, AStarAgent targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
         Vector2Int startVector = startPoint.PathPoint;
         Vector2Int targetVector = targetPoint.PathPoint;
@@ -99,7 +96,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return null;
     }
 
-    private List<AStarNode> FindClosestTargetPath(IAStarPathPoint startPoint, HashSet<IAStarPathPoint> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
+    private List<AStarNode> FindClosestTargetPath(AStarAgent startPoint, HashSet<AStarAgent> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
         if (targetPoints == null || targetPoints.Count == 0)
             throw new System.ArgumentNullException(nameof(targetPoints), "The targets set cannot be null.");
@@ -121,9 +118,9 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return pathQueue.Dequeue();
     }
 
-    private HashSet<IAStarPathPoint> FilterTargetsByHeuristic(IAStarPathPoint startPoint, HashSet<IAStarPathPoint> targetPoints)
+    private HashSet<AStarAgent> FilterTargetsByHeuristic(AStarAgent startPoint, HashSet<AStarAgent> targetPoints)
     {
-        PriorityQueue<IAStarPathPoint> targetQueue = new PriorityQueue<IAStarPathPoint>(targetPoints.Count, SortOrder.Ascending);
+        PriorityQueue<AStarAgent> targetQueue = new PriorityQueue<AStarAgent>(targetPoints.Count, SortOrder.Ascending);
         foreach (var target in targetPoints)
         {
             int distance = Mathf.Abs(startPoint.PathPoint.x - target.PathPoint.x) +
@@ -131,7 +128,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
             targetQueue.Enqueue(target, distance);
         }
 
-        HashSet<IAStarPathPoint> filteredTargets = new HashSet<IAStarPathPoint>();
+        HashSet<AStarAgent> filteredTargets = new HashSet<AStarAgent>();
         int count = Mathf.Min(TARGET_COUNT_THRESHOLD, targetQueue.Count);
         for (int i = 0; i < count; i++)
         {
@@ -232,18 +229,19 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return finalPathNodes;
     }
 
-    private bool IsDrawLine => _drawPathNodeList != null && _drawPathNodeList.Count > 0;
-    private void OnDrawGizmos()
-    {
-        if (IsDrawLine)
-        {
-            for (int i = 0; i < _drawPathNodeList.Count - 1; i++)
-            {
-                Vector2 from = new Vector2(_drawPathNodeList[i].X, _drawPathNodeList[i].Y);
-                Vector2 to = new Vector2(_drawPathNodeList[i + 1].X, _drawPathNodeList[i + 1].Y);
-                Gizmos.color = Color.yellow;
-                Gizmos.DrawLine(from, to);
-            }
-        }
-    }
+    // private List<AStarNode> _drawPathNodeList;
+    // private bool IsDrawLine => _drawPathNodeList != null && _drawPathNodeList.Count > 0;
+    // private void OnDrawGizmos()
+    // {
+    //     if (IsDrawLine)
+    //     {
+    //         for (int i = 0; i < _drawPathNodeList.Count - 1; i++)
+    //         {
+    //             Vector2 from = new Vector2(_drawPathNodeList[i].X, _drawPathNodeList[i].Y);
+    //             Vector2 to = new Vector2(_drawPathNodeList[i + 1].X, _drawPathNodeList[i + 1].Y);
+    //             Gizmos.color = Color.yellow;
+    //             Gizmos.DrawLine(from, to);
+    //         }
+    //     }
+    // }
 }

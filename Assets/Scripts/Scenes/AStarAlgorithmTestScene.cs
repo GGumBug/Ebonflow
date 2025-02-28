@@ -47,12 +47,12 @@ public class AStarAlgorithmTestScene : SceneBase, IAStarGridSettings
     private void StartDrawPath()
     {
         var hash = GetEnemyHashSet();
-        AStarAlgorithmManager.Instance.DrawPath(_startChracter, hash, true, true);
+        AStarAlgorithmManager.Instance.GetPath(_startChracter, hash, true, true);
     }
 
-    HashSet<IAStarPathPoint> GetEnemyHashSet()
+    HashSet<AStarAgent> GetEnemyHashSet()
     {
-        HashSet<IAStarPathPoint> newHashSet = new HashSet<IAStarPathPoint>();
+        HashSet<AStarAgent> newHashSet = new HashSet<AStarAgent>();
 
         foreach (var enemy in _enemies)
             newHashSet.Add(enemy);
