@@ -2,15 +2,13 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private TeamType team;
 
-    // Update is called once per frame
-    void Update()
+    public TeamType Team { get; private set; }
+    public AStarAgent Agent {get; private set;}
+
+    private void Awake() 
     {
-        
+        Agent = gameObject.AddComponent<AStarAgent>();
     }
 }
