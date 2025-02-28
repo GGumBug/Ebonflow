@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 public class AStarAgentCommandManager : Singleton<AStarAgentCommandManager>
 {
-    [SerializeField] private AStarAgent[] _enemies;
+    [SerializeField] private AStarAgent[] allys;
+    [SerializeField] private AStarAgent[] enemies;
 
-    [SerializeField] private HashSet<AStarAgent> allyUnits;
-    [SerializeField] private HashSet<AStarAgent> enemyUnits;
+    // [SerializeField] private HashSet<AStarAgent> allyUnits;
+    // [SerializeField] private HashSet<AStarAgent> enemyUnits;
 
     private AStarAlgorithmManager _aStarAlgorithmManager;
 
@@ -15,19 +16,19 @@ public class AStarAgentCommandManager : Singleton<AStarAgentCommandManager>
         _aStarAlgorithmManager = AStarAlgorithmManager.Instance;
     }
 
-    public List<AStarNode> FindNearestEnemy(AStarAgent startAgent, TeamType team)
+    public List<AStarNode> FindNearestEnemy(AStarAgent startAgent, TeamType team, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
-        HashSet<AStarAgent> targetUnits = team == TeamType.Ally ? GetEnemyHashSet() : allyUnits;
+        HashSet<AStarAgent> targetUnits = team == TeamType.Ally ? GetEnemyHashSet(enemies) : GetEnemyHashSet(allys);
 
-        return _aStarAlgorithmManager.GetPath(startAgent, targetUnits);
+        return _aStarAlgorithmManager.GetPath(startAgent, targetUnits, allowDiagonal, dontCrossCorner);
     }
 
-    HashSet<AStarAgent> GetEnemyHashSet()
+    HashSet<AStarAgent> GetEnemyHashSet(AStarAgent[] aStarAgentArray)
     {
         HashSet<AStarAgent> newHashSet = new HashSet<AStarAgent>();
 
-        foreach (var enemy in _enemies)
-            newHashSet.Add(enemy);
+        foreach (var agent in aStarAgentArray)
+            newHashSet.Add(agent);
 
         return newHashSet;
     }

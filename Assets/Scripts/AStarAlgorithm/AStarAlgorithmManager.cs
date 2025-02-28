@@ -228,20 +228,4 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 
         return finalPathNodes;
     }
-
-    // private List<AStarNode> _drawPathNodeList;
-    // private bool IsDrawLine => _drawPathNodeList != null && _drawPathNodeList.Count > 0;
-    // private void OnDrawGizmos()
-    // {
-    //     if (IsDrawLine)
-    //     {
-    //         for (int i = 0; i < _drawPathNodeList.Count - 1; i++)
-    //         {
-    //             Vector2 from = new Vector2(_drawPathNodeList[i].X, _drawPathNodeList[i].Y);
-    //             Vector2 to = new Vector2(_drawPathNodeList[i + 1].X, _drawPathNodeList[i + 1].Y);
-    //             Gizmos.color = Color.yellow;
-    //             Gizmos.DrawLine(from, to);
-    //         }
-    //     }
-    // }
 }
