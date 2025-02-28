@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AStarAlgorithmTestScene : SceneBase, IGridSettings
+public class AStarAlgorithmTestScene : SceneBase, IAStarGridSettings
 {
-    [SerializeField] private TestCharacter _startChracter;
-    [SerializeField] private TestCharacter _targetChracter;
+    [SerializeField] private AStarAgent _startChracter;
     [SerializeField] private Button _btnFindPath;
     [SerializeField] private Vector2Int _gridTopRight;
     [SerializeField] private Vector2Int _gridBottomLeft;
-
-    [SerializeField] private TestCharacter[] enemies;
+    [SerializeField] private AStarAgent[] _enemies;
 
     public Vector2Int GridTopRight => _gridTopRight;
 
@@ -56,7 +54,7 @@ public class AStarAlgorithmTestScene : SceneBase, IGridSettings
     {
         HashSet<IAStarPathPoint> newHashSet = new HashSet<IAStarPathPoint>();
 
-        foreach (var enemy in enemies)
+        foreach (var enemy in _enemies)
             newHashSet.Add(enemy);
 
         return newHashSet;

@@ -23,7 +23,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         base.Init();
     }
 
-    public void CreateGridFromTilemap(IGridSettings gridSettings)
+    public void CreateGridFromTilemap(IAStarGridSettings gridSettings)
     {
         _gridTopRight = gridSettings.GridTopRight;
         _gridBottomLeft = gridSettings.GridBottomLeft;
@@ -241,6 +241,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
             {
                 Vector2 from = new Vector2(_drawPathNodeList[i].X, _drawPathNodeList[i].Y);
                 Vector2 to = new Vector2(_drawPathNodeList[i + 1].X, _drawPathNodeList[i + 1].Y);
+                Gizmos.color = Color.yellow;
                 Gizmos.DrawLine(from, to);
             }
         }

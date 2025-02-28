@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public interface IGridSettings
+public interface IAStarGridSettings
 {
     Vector2Int GridTopRight { get; }
     Vector2Int GridBottomLeft { get; }
