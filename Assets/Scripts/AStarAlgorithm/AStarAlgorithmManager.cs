@@ -22,32 +22,30 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         base.Init();
     }
 
-    public void CreateGridFromTilemap(IAStarGridSettings gridSettings)
+    public void SetGridBounds(IAStarGridSettings gridSettings)
     {
         _gridTopRight = gridSettings.GridTopRight;
         _gridBottomLeft = gridSettings.GridBottomLeft;
+    }
 
+    public void CreateGridFromTilemap()
+    {
         int sizeX = _gridTopRight.x - _gridBottomLeft.x + 1;
         int sizeY = _gridTopRight.y - _gridBottomLeft.y + 1;
         _gridNodes = new AStarNode[sizeX, sizeY];
 
         int blockLayer = LayerMask.NameToLayer("Block");
+        int unitLayer = LayerMask.NameToLayer("Unit");
+        int mask = (1 << blockLayer) | (1 << unitLayer);
 
         for (int i = 0; i < sizeX; i++)
         {
             for (int j = 0; j < sizeY; j++)
             {
                 Vector2 tilePosition = new Vector2(i + _gridBottomLeft.x, j + _gridBottomLeft.y);
-                bool isBlock = false;
 
-                foreach (Collider2D col in Physics2D.OverlapCircleAll(tilePosition, 0.4f))
-                {
-                    if (col.gameObject.layer == blockLayer)
-                    {
-                        isBlock = true;
-                        break;
-                    }
-                }
+                Collider2D[] colliders = Physics2D.OverlapCircleAll(tilePosition, 0.4f, mask);
+                bool isBlock = colliders.Length > 0;
 
                 _gridNodes[i, j] = new AStarNode(isBlock, i + _gridBottomLeft.x, j + _gridBottomLeft.y);
             }

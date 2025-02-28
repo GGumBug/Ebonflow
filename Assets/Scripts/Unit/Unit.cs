@@ -7,6 +7,7 @@ public class Unit : MonoBehaviour
 
     private void OnMouseDown() 
     {
+        Debug.Log($"{name} is OnClicked!");
         _aStarAgent.FollowPath(team);
     }
 }

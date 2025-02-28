@@ -30,6 +30,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     public void FollowPath(TeamType team)
     {
+        AStarAlgorithmManager.Instance.CreateGridFromTilemap();
         _currentPath = AStarAgentCommandManager.Instance.FindNearestEnemy(this, team, true, true);
         _isMove = true;
     }
