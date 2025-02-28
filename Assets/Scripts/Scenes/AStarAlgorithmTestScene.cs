@@ -5,14 +5,11 @@ using UnityEngine.UI;
 
 public class AStarAlgorithmTestScene : SceneBase, IAStarGridSettings
 {
-    [SerializeField] private AStarAgent _startChracter;
     [SerializeField] private Button _btnFindPath;
     [SerializeField] private Vector2Int _gridTopRight;
     [SerializeField] private Vector2Int _gridBottomLeft;
-    [SerializeField] private AStarAgent[] _enemies;
 
     public Vector2Int GridTopRight => _gridTopRight;
-
     public Vector2Int GridBottomLeft => _gridBottomLeft;
 
 
@@ -39,24 +36,7 @@ public class AStarAlgorithmTestScene : SceneBase, IAStarGridSettings
     public override async UniTask DebugMode()
     {
         AStarAlgorithmManager.Instance.CreateGridFromTilemap(this);
-        _btnFindPath.onClick.AddListener(StartDrawPath);
 
         await UniTask.Yield();
-    }
-
-    private void StartDrawPath()
-    {
-        var hash = GetEnemyHashSet();
-        AStarAlgorithmManager.Instance.GetPath(_startChracter, hash, true, true);
-    }
-
-    HashSet<AStarAgent> GetEnemyHashSet()
-    {
-        HashSet<AStarAgent> newHashSet = new HashSet<AStarAgent>();
-
-        foreach (var enemy in _enemies)
-            newHashSet.Add(enemy);
-
-        return newHashSet;
     }
 }

@@ -3,12 +3,10 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     [SerializeField] private TeamType team;
+    [SerializeField] private AStarAgent _aStarAgent;
 
-    public TeamType Team { get; private set; }
-    public AStarAgent Agent {get; private set;}
-
-    private void Awake() 
+    private void OnMouseDown() 
     {
-        Agent = gameObject.AddComponent<AStarAgent>();
+        _aStarAgent.FollowPath(team);
     }
 }

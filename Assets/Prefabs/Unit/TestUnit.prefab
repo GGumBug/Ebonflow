@@ -98,6 +98,7 @@ GameObject:
   - component: {fileID: 4815134586304894160}
   - component: {fileID: 3542983333781875800}
   - component: {fileID: 4125280722326735279}
+  - component: {fileID: 4697440951524578920}
   m_Layer: 0
   m_Name: TestUnit
   m_TagString: Untagged
@@ -170,3 +171,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 0
+  _aStarAgent: {fileID: 4697440951524578920}
+--- !u!114 &4697440951524578920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8180892972014700886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5dbce464621eb4d53aeb906e195973b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  stepDelay: 0.5
