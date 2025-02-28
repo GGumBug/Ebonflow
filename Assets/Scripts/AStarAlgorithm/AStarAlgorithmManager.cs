@@ -28,30 +28,6 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         _gridBottomLeft = gridSettings.GridBottomLeft;
     }
 
-    public void CreateGridFromTilemap()
-    {
-        int sizeX = _gridTopRight.x - _gridBottomLeft.x + 1;
-        int sizeY = _gridTopRight.y - _gridBottomLeft.y + 1;
-        _gridNodes = new AStarNode[sizeX, sizeY];
-
-        int blockLayer = LayerMask.NameToLayer("Block");
-        int unitLayer = LayerMask.NameToLayer("Unit");
-        int mask = (1 << blockLayer) | (1 << unitLayer);
-
-        for (int i = 0; i < sizeX; i++)
-        {
-            for (int j = 0; j < sizeY; j++)
-            {
-                Vector2 tilePosition = new Vector2(i + _gridBottomLeft.x, j + _gridBottomLeft.y);
-
-                Collider2D[] colliders = Physics2D.OverlapCircleAll(tilePosition, 0.4f, mask);
-                bool isBlock = colliders.Length > 0;
-
-                _gridNodes[i, j] = new AStarNode(isBlock, i + _gridBottomLeft.x, j + _gridBottomLeft.y);
-            }
-        }
-    }
-
     public List<AStarNode> GetPath(AStarAgent startPoint, AStarAgent targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
         return FindPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
@@ -62,10 +38,12 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return FindClosestTargetPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
     }
 
-    private List<AStarNode> FindPath(AStarAgent startPoint, AStarAgent targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    private List<AStarNode> FindPath(AStarAgent startAgent, AStarAgent targetAgent, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
-        Vector2Int startVector = startPoint.PathPoint;
-        Vector2Int targetVector = targetPoint.PathPoint;
+        CreateGridFromTilemap(startAgent, targetAgent);
+
+        Vector2Int startVector = startAgent.PathPoint;
+        Vector2Int targetVector = targetAgent.PathPoint;
 
         _allowDiagonal = allowDiagonal;
         _dontCrossCorner = dontCrossCorner;
@@ -92,6 +70,34 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         }
 
         return null;
+    }
+
+    private void CreateGridFromTilemap(AStarAgent startAgent, AStarAgent targetAgent)
+    {
+        startAgent.gameObject.layer = Constants.START_AGENT_LAYER;
+        targetAgent.gameObject.layer = Constants.TARGET_AGENT_LAYER;
+
+        int sizeX = _gridTopRight.x - _gridBottomLeft.x + 1;
+        int sizeY = _gridTopRight.y - _gridBottomLeft.y + 1;
+        _gridNodes = new AStarNode[sizeX, sizeY];
+
+        int mask = (1 << Constants.BLOCK_LAYER) | (1 << Constants.AGENT_LAYER);
+
+        for (int i = 0; i < sizeX; i++)
+        {
+            for (int j = 0; j < sizeY; j++)
+            {
+                Vector2 tilePosition = new Vector2(i + _gridBottomLeft.x, j + _gridBottomLeft.y);
+
+                Collider2D[] colliders = Physics2D.OverlapCircleAll(tilePosition, 0.4f, mask);
+                bool isBlock = colliders.Length > 0;
+
+                _gridNodes[i, j] = new AStarNode(isBlock, i + _gridBottomLeft.x, j + _gridBottomLeft.y);
+            }
+        }
+
+        startAgent.gameObject.layer = Constants.AGENT_LAYER;
+        targetAgent.gameObject.layer = Constants.AGENT_LAYER;
     }
 
     private List<AStarNode> FindClosestTargetPath(AStarAgent startPoint, HashSet<AStarAgent> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
@@ -181,6 +187,11 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
                 return;
         }
 
+        UpdateNeighborNodeCost(neighborNode, checkX, checkY);
+    }
+
+    private void UpdateNeighborNodeCost(AStarNode neighborNode, int checkX, int checkY)
+    {
         int moveCost = _currentNode.G + CalculateMoveCost(_currentNode.X, _currentNode.Y, checkX, checkY);
 
         if (moveCost < neighborNode.G || !_openNodeQueue.Contains(neighborNode))

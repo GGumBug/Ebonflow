@@ -8,7 +8,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     [SerializeField] private float stepDelay = 0.5f;
 
     private bool _isMove;
-    private AStarAlgorithmManager _aStarAlgorithmManager;
     private List<AStarNode> _currentPath;
     private int _currentPathIndex = 0;
 
@@ -16,11 +15,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         Mathf.RoundToInt(transform.position.x),
         Mathf.RoundToInt(transform.position.y)
     );
-
-    private void Awake() 
-    {
-        _aStarAlgorithmManager = AStarAlgorithmManager.Instance;
-    }
 
     private void Update() 
     {
@@ -30,7 +24,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     public void FollowPath(TeamType team)
     {
-        AStarAlgorithmManager.Instance.CreateGridFromTilemap();
         _currentPath = AStarAgentCommandManager.Instance.FindNearestEnemy(this, team, true, true);
         _isMove = true;
     }
