@@ -23,22 +23,10 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         base.Init();
     }
 
-    public void DrawPath(IAStarPathPoint startPoint, IAStarPathPoint targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    public void CreateGridFromTilemap(IGridSettings gridSettings)
     {
-        var finalPath = FindPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
-        _drawPathNodeList = finalPath;
-    }
-
-    public void DrawPath(IAStarPathPoint startPoint, HashSet<IAStarPathPoint> targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
-    {
-        var finalPath = FindClosestTargetPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
-        _drawPathNodeList = finalPath;
-    }
-
-    public void CreateGridFromTilemap(Vector2Int gridTopRight, Vector2Int gridBottomLeft)
-    {
-        _gridTopRight = gridTopRight;
-        _gridBottomLeft = gridBottomLeft;
+        _gridTopRight = gridSettings.GridTopRight;
+        _gridBottomLeft = gridSettings.GridBottomLeft;
 
         int sizeX = _gridTopRight.x - _gridBottomLeft.x + 1;
         int sizeY = _gridTopRight.y - _gridBottomLeft.y + 1;
@@ -65,6 +53,18 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
                 _gridNodes[i, j] = new AStarNode(isBlock, i + _gridBottomLeft.x, j + _gridBottomLeft.y);
             }
         }
+    }
+
+    public void DrawPath(IAStarPathPoint startPoint, IAStarPathPoint targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    {
+        var finalPath = FindPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
+        _drawPathNodeList = finalPath;
+    }
+
+    public void DrawPath(IAStarPathPoint startPoint, HashSet<IAStarPathPoint> targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    {
+        var finalPath = FindClosestTargetPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
+        _drawPathNodeList = finalPath;
     }
 
     private List<AStarNode> FindPath(IAStarPathPoint startPoint, IAStarPathPoint targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)

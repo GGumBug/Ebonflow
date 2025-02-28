@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AStarAlgorithmTestScene : SceneBase
+public class AStarAlgorithmTestScene : SceneBase, IGridSettings
 {
-    [SerializeField] private TestCharacter startChracter;
-    [SerializeField] private TestCharacter targetChracter;
-    [SerializeField] private Button btnFindPath;
+    [SerializeField] private TestCharacter _startChracter;
+    [SerializeField] private TestCharacter _targetChracter;
+    [SerializeField] private Button _btnFindPath;
+    [SerializeField] private Vector2Int _gridTopRight;
+    [SerializeField] private Vector2Int _gridBottomLeft;
 
     [SerializeField] private TestCharacter[] enemies;
+
+    public Vector2Int GridTopRight => _gridTopRight;
+
+    public Vector2Int GridBottomLeft => _gridBottomLeft;
+
 
     public override UniTask FinalizeLoading()
     {
@@ -33,8 +40,8 @@ public class AStarAlgorithmTestScene : SceneBase
 
     public override async UniTask DebugMode()
     {
-        AStarAlgorithmManager.Instance.CreateGridFromTilemap(new Vector2Int(6, 6), new Vector2Int(0, 0));
-        btnFindPath.onClick.AddListener(StartDrawPath);
+        AStarAlgorithmManager.Instance.CreateGridFromTilemap(this);
+        _btnFindPath.onClick.AddListener(StartDrawPath);
 
         await UniTask.Yield();
     }
@@ -42,7 +49,7 @@ public class AStarAlgorithmTestScene : SceneBase
     private void StartDrawPath()
     {
         var hash = GetEnemyHashSet();
-        AStarAlgorithmManager.Instance.DrawPath(startChracter, hash, true, true);
+        AStarAlgorithmManager.Instance.DrawPath(_startChracter, hash, true, true);
     }
 
     HashSet<IAStarPathPoint> GetEnemyHashSet()
