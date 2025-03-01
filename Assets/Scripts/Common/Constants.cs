@@ -5,7 +5,7 @@ public static class Constants
     public const string LOADING_SCENE_NAME = "LoadingScene";
 
     public static readonly int BLOCK_LAYER = LayerMask.NameToLayer("Block");
-    public static readonly int AGENT_LAYER = LayerMask.NameToLayer("AStarAgent");
+    public static readonly int AGENT_LAYER = LayerMask.NameToLayer("Unit");
     public static readonly int START_AGENT_LAYER = LayerMask.NameToLayer("StartAgent");
     public static readonly int TARGET_AGENT_LAYER = LayerMask.NameToLayer("TargetAgent");
 

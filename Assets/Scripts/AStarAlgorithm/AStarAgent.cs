@@ -1,13 +1,21 @@
+using System;
 using System.Collections.Generic;
-using TreeEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 {
+    [Header("Team Settings")]
+    [Tooltip("이 에이전트의 팀 타입 (예: 아군 또는 적군)")]
     [SerializeField] private TeamType team;
-    [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] private float stepDelay = 0.3f;
+
+    [Header("Movement Settings")]
+    [Tooltip("초당 이동 속도 (단위: 유닛)")]
+    [SerializeField] private float moveSpeed = 6f;
+    [Tooltip("각 타일로 이동할 때 적용되는 지연 시간 (초 단위)")]
+    [SerializeField] private float stepDelay = 0.5f;
+
+    [Header("Debug Settings")]
+    [Tooltip("경로를 Gizmos로 그릴지 여부 (디버깅용)")]
     [SerializeField] private bool isDrawLine;
 
     private bool _isMove;
@@ -15,8 +23,17 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private List<AStarNode> _currentPath;
     private int _currentPathIndex = 1;
 
-    bool HasNextNode => _currentPathIndex < _currentPath.Count - 1;
-    bool IsAtEndOfPath => _currentPathIndex == _currentPath.Count - 1;
+    public Action OnStepCompleted;
+
+    /// <summary>
+    /// 현재 경로에서 다음 노드가 존재하는지 여부
+    /// </summary>
+    private bool HasNextNode => _currentPathIndex < _currentPath.Count - 1;
+
+    /// <summary>
+    /// 현재 경로의 마지막 노드에 도달했는지 여부
+    /// </summary>
+    private bool IsAtEndOfPath => _currentPathIndex == _currentPath.Count - 1;
 
     public Vector2Int PathPoint => new Vector2Int(
         Mathf.RoundToInt(transform.position.x),
@@ -25,7 +42,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     private void Awake() 
     {
-        _currentStepDelay = stepDelay;    
+        _currentStepDelay = stepDelay;
     }
 
     private void Update() 
@@ -42,8 +59,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     private void ProcessMovement()
     {
-        AStarNode currentNode = _currentPath[_currentPathIndex];
-        Vector2Int destPos = new Vector2Int(currentNode.X, currentNode.Y);
+        Vector2Int destPos = GetCurrentDestination();
 
         if (!IsAtEndOfPath && IsTargetTileOccupied(destPos))
             RecalculatePath();
@@ -52,6 +68,13 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
             MoveTowardsNextNode(destPos);
         else if (IsAtEndOfPath)
             EndMovement();
+    }
+
+    private Vector2Int GetCurrentDestination()
+    {
+        AStarNode currentNode = _currentPath[_currentPathIndex];
+        Vector2Int destPos = new Vector2Int(currentNode.X, currentNode.Y);
+        return destPos;
     }
 
     private void MoveTowardsNextNode(Vector2Int destPos)
@@ -66,10 +89,17 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
         if (Vector2.Distance(transform.position, destPos) < 0.1f)
         {
-            transform.position = new Vector2(destPos.x, destPos.y);
-            _currentStepDelay = 0f;
-            _currentPathIndex++;
+            SnapToDestinationAndAdvance(destPos);
         }
+    }
+
+    private void SnapToDestinationAndAdvance(Vector2Int destPos)
+    {
+        transform.position = new Vector2(destPos.x, destPos.y);
+        _currentStepDelay = 0f;
+        _currentPathIndex++;
+
+        OnStepCompleted?.Invoke();
     }
 
     bool IsTargetTileOccupied(Vector2Int destPos)
@@ -114,7 +144,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         _currentPath = null;
         _currentPathIndex = 1;
     }
-
 
     private void OnDrawGizmos()
     {
