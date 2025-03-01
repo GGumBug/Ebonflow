@@ -1,10 +1,14 @@
 using System.Collections.Generic;
+using TreeEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 {
+    [SerializeField] private TeamType team;
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private float stepDelay = 0.3f;
+    [SerializeField] private bool isDrawLine;
 
     private bool _isMove;
     private float _currentStepDelay;
@@ -12,7 +16,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private int _currentPathIndex = 1;
 
     bool HasNextNode => _currentPathIndex < _currentPath.Count - 1;
-    bool IsAtEndOfPath => _currentPathIndex >= _currentPath.Count - 1;
+    bool IsAtEndOfPath => _currentPathIndex == _currentPath.Count - 1;
 
     public Vector2Int PathPoint => new Vector2Int(
         Mathf.RoundToInt(transform.position.x),
@@ -26,11 +30,11 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     private void Update() 
     {
-        if (_currentPath != null && _isMove)
+        if (_isMove && _currentPath != null)
             ProcessMovement();
     }
 
-    public void FollowPath(TeamType team)
+    public void FollowPath()
     {
         _currentPath = AStarAgentCommandManager.Instance.FindNearestEnemy(this, team, true, true);
         _isMove = true;
@@ -38,22 +42,25 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     private void ProcessMovement()
     {
+        AStarNode currentNode = _currentPath[_currentPathIndex];
+        Vector2Int destPos = new Vector2Int(currentNode.X, currentNode.Y);
+
+        if (!IsAtEndOfPath && IsTargetTileOccupied(destPos))
+            RecalculatePath();
+
+        if (HasNextNode)
+            MoveTowardsNextNode(destPos);
+        else if (IsAtEndOfPath)
+            EndMovement();
+    }
+
+    private void MoveTowardsNextNode(Vector2Int destPos)
+    {
         if (_currentStepDelay < stepDelay)
         {
             _currentStepDelay += Time.deltaTime;
             return;
         }
-
-        if (HasNextNode)
-            MoveTowardsNextNode();
-        else if (IsAtEndOfPath)
-            EndMovement();
-    }
-
-    private void MoveTowardsNextNode()
-    {
-        AStarNode currentNode = _currentPath[_currentPathIndex];
-        Vector2Int destPos = new Vector2Int(currentNode.X, currentNode.Y);
 
         transform.position = Vector2.MoveTowards(transform.position, destPos, moveSpeed * Time.deltaTime);
 
@@ -65,18 +72,53 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         }
     }
 
+    bool IsTargetTileOccupied(Vector2Int destPos)
+    {
+        int mask = (1 << Constants.AGENT_LAYER);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(destPos, 0.4f, mask);
+        foreach (var col in colliders)
+        {
+            if (col.gameObject != gameObject)
+                return true;
+        }
+
+        return false;
+    }
+
+    void RecalculatePath()
+    {
+        if (_currentPath[_currentPathIndex - 1] != null)
+        {
+            AStarNode prevNode = _currentPath[_currentPathIndex - 1];
+            transform.position = new Vector2(prevNode.X, prevNode.Y);
+        }
+        else
+        {
+            AStarNode currentNode = _currentPath[_currentPathIndex];
+            transform.position = new Vector2(currentNode.X, currentNode.Y);
+        }
+
+        ClearFllowing();
+        FollowPath();
+    }
+
     private void EndMovement()
+    {
+        ClearFllowing();
+        _currentStepDelay = stepDelay;
+    }
+
+    private void ClearFllowing()
     {
         _isMove = false;
         _currentPath = null;
         _currentPathIndex = 1;
-        _currentStepDelay = stepDelay;
     }
 
-    private bool IsDrawLine => _currentPath != null && _currentPath.Count > 0;
+
     private void OnDrawGizmos()
     {
-        if (IsDrawLine)
+        if (isDrawLine && _currentPath != null)
         {
             for (int i = 0; i < _currentPath.Count - 1; i++)
             {
