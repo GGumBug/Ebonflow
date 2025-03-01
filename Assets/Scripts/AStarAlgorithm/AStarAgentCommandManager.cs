@@ -16,6 +16,19 @@ public class AStarAgentCommandManager : Singleton<AStarAgentCommandManager>
         _aStarAlgorithmManager = AStarAlgorithmManager.Instance;
     }
 
+    private void Start()
+    {
+        foreach (var agent in allys)
+        {
+            agent.FollowPath();
+        }
+
+        foreach (var agent in enemies)
+        {
+            agent.FollowPath();
+        }
+    }
+
     public List<AStarNode> FindNearestEnemy(AStarAgent startAgent, TeamType team, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
         HashSet<AStarAgent> targetUnits = team == TeamType.Ally ? GetEnemyHashSet(enemies) : GetEnemyHashSet(allys);

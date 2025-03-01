@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    [SerializeField] private TeamType team;
-    [SerializeField] private AStarAgent _aStarAgent;
+    [SerializeField] private AStarAgent aStarAgent;
+    [SerializeField] private RangeDetector rangeDetector;
 
     private void OnMouseDown() 
     {
-        _aStarAgent.FollowPath(team);
+        aStarAgent.FollowPath();
     }
 }
