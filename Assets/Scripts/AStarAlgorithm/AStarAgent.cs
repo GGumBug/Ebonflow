@@ -23,7 +23,8 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private List<AStarNode> _currentPath;
     private int _currentPathIndex = 1;
 
-    public Action OnStepCompleted;
+    public event Func<bool> OnTargetTileOccupied;
+    public event Action OnStepCompleted;
 
     /// <summary>
     /// 현재 경로에서 다음 노드가 존재하는지 여부
@@ -61,7 +62,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     {
         Vector2Int destPos = GetCurrentDestination();
 
-        if (!IsAtEndOfPath && IsTargetTileOccupied(destPos))
+        if (!IsAtEndOfPath && OnTargetTileOccupied.Invoke())
             RecalculatePath();
 
         if (HasNextNode)
@@ -100,19 +101,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         _currentPathIndex++;
 
         OnStepCompleted?.Invoke();
-    }
-
-    bool IsTargetTileOccupied(Vector2Int destPos)
-    {
-        int mask = (1 << Constants.AGENT_LAYER);
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(destPos, 0.4f, mask);
-        foreach (var col in colliders)
-        {
-            if (col.gameObject != gameObject)
-                return true;
-        }
-
-        return false;
     }
 
     void RecalculatePath()

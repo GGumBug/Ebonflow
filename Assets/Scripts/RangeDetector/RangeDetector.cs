@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RangeDetector : MonoBehaviour
+public class RangeDetector : MonoBehaviour, IRangeDetector
 {
     [Header("Detection Settings")]
     [Tooltip("월드 단위의 감지 반지름입니다.")]
@@ -14,7 +14,7 @@ public class RangeDetector : MonoBehaviour
         return Physics2D.OverlapCircleAll(transform.position, detectionRadius, detectionLayer);
     }
 
-    public bool IsObjectInRange()
+    public bool IsOtherObjectInRange()
     {
         var colliders = GetObjectsInRange();
         foreach (var col in colliders)
