@@ -8,8 +8,6 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
     private const int TARGET_COUNT_THRESHOLD = 20;
 
     private bool _allowDiagonal, _dontCrossCorner;
-    private Vector2Int _gridBottomLeft;
-    private Vector2Int _gridTopRight;
     
     private AStarNode _startNode, _targetNode, _currentNode;
     private HashSet<AStarNode> _closedSet;
@@ -140,7 +138,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
     private void TryAddToOpenQueue(int checkX, int checkY)
     {
         // 그리드 범위 내에 있는지 검사
-        if (!IsWithinGridBounds(checkX, checkY))
+        if (Grid.IsOutOfBounds(checkX, checkY))
             return;
 
         AStarNode neighborNode = Grid.GetNodeAt(checkX, checkY);
@@ -183,12 +181,6 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
             if (!_openNodeQueue.Contains(neighborNode))
                 _openNodeQueue.Enqueue(neighborNode, neighborNode.F);
         }
-    }
-
-    // 그리드 범위 체크를 위한 헬퍼 메서드
-    private bool IsWithinGridBounds(int x, int y)
-    {
-        return x >= _gridBottomLeft.x && x <= _gridTopRight.x && y >= _gridBottomLeft.y && y <= _gridTopRight.y;
     }
 
     // 이동 비용 계산 (상하좌우와 대각선 이동 비용 차이를 적용)

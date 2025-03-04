@@ -8,7 +8,11 @@ public class AStarGrid
     private Vector2Int _gridTopRight;
     private AStarNode[,] _grid;
 
-    private bool IsOutOfBounds(Vector2Int toGridIndex) => 
+    public bool IsOutOfBounds(int x, int y) => 
+        x < 0 || x >= _grid.GetLength(0) || 
+        y < 0 || y >= _grid.GetLength(1);
+
+    public bool IsOutOfBounds(Vector2Int toGridIndex) => 
         toGridIndex.x < 0 || toGridIndex.x >= _grid.GetLength(0) || 
         toGridIndex.y < 0 || toGridIndex.y >= _grid.GetLength(1);
 
@@ -52,7 +56,12 @@ public class AStarGrid
 
     public AStarNode GetNodeAt(int x, int y)
     {
-        return _grid[x - _gridBottomLeft.x, y - _gridBottomLeft.y];
+        Vector2Int gridIndex = WorldToGridIndex(new Vector2Int(x, y));
+
+        if (IsOutOfBounds(gridIndex))
+            throw new System.Exception("SetNodeBlock: 주어진 좌표가 그리드 범위를 벗어났습니다.");
+        else
+            return _grid[gridIndex.x, gridIndex.y];
     }
 
     public void SetNodeBlock(Vector2Int worldCoordinate, bool isBlock)
