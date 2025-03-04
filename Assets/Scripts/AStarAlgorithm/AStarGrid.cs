@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class AStarGrid
+public class AStarGrid : MonoBehaviour
 {
     private const float TILE_COLLIDER_RADIUS = 0.4f;
 
@@ -16,7 +16,7 @@ public class AStarGrid
         toGridIndex.x < 0 || toGridIndex.x >= _grid.GetLength(0) || 
         toGridIndex.y < 0 || toGridIndex.y >= _grid.GetLength(1);
 
-    public AStarGrid(IAStarGridSettings gridSettings)
+    public void Init(IAStarGridSettings gridSettings)
     {
         _gridBottomLeft = gridSettings.GridBottomLeft;
         _gridTopRight = gridSettings.GridTopRight;
@@ -27,6 +27,37 @@ public class AStarGrid
         _grid = new AStarNode[sizeX, sizeY];
 
         CreateGridFromTilemap(sizeX, sizeY);
+    }
+
+    /// <summary>
+    /// 주어진 월드 좌표에 해당하는 AStarNode가 Block 상태인지 확인합니다.
+    /// </summary>
+    /// <param name="worldCoordinate">확인할 월드 좌표</param>
+    /// <returns>해당 노드가 Block이면 true, 아니면 false</returns>
+    public bool IsNodeBlocked(Vector2Int worldCoordinate)
+    {
+        Vector2Int gridIndex = WorldToGridIndex(worldCoordinate);
+
+        if (IsOutOfBounds(gridIndex))
+        {
+            Debug.LogError("IsNodeBlocked: 주어진 좌표가 그리드 범위를 벗어났습니다.");
+            return false;
+        }
+
+        return _grid[gridIndex.x, gridIndex.y].GetBlock;
+    }
+
+    public AStarAgent ReturnAgent(Vector2Int worldCoordinate)
+    {
+        Vector2Int gridIndex = WorldToGridIndex(worldCoordinate);
+
+        if (IsOutOfBounds(gridIndex))
+        {
+            Debug.LogError("IsNodeBlocked: 주어진 좌표가 그리드 범위를 벗어났습니다.");
+            return null;
+        }
+
+        return _grid[gridIndex.x, gridIndex.y].Agent;
     }
 
     private Vector2Int WorldToGridIndex(Vector2Int worldCoordinate)
@@ -64,14 +95,21 @@ public class AStarGrid
             return _grid[gridIndex.x, gridIndex.y];
     }
 
-    public void SetNodeBlock(Vector2Int worldCoordinate, bool isBlock)
+    public void SetNodeBlock(Vector2Int worldCoordinate, bool isBlock, AStarAgent agent = null)
     {
         Vector2Int gridIndex = WorldToGridIndex(worldCoordinate);
 
         if (IsOutOfBounds(worldCoordinate))
+        {
             Debug.LogError("SetNodeBlock: 주어진 좌표가 그리드 범위를 벗어났습니다.");
+        }
         else
-            _grid[gridIndex.x, gridIndex.y].IsBlock = isBlock;
+        {
+            var targetNode = _grid[gridIndex.x, gridIndex.y];
+            targetNode.SetBlock = isBlock;
+            targetNode.Agent = agent;
+            Debug.Log($"SetNodeBlock: Node at grid index ({gridIndex.x}, {gridIndex.y}) set to block state: {isBlock}");
+        }
     }
 
     /// <summary>
@@ -79,25 +117,26 @@ public class AStarGrid
     /// </summary>
     /// <param name="fromWorldCoordinate">블록이 현재 위치한 월드 좌표</param>
     /// <param name="toWorldCoordinate">블록이 이동할 목표 월드 좌표</param>
-    public void UpdateAgentGridPosition(Vector2Int fromWorldCoordinate, Vector2Int toWorldCoordinate)
+    public void UpdateAgentGridPosition(AStarAgent agent, Vector2Int toWorldCoordinate)
     {
+        Vector2Int fromGridIndex = WorldToGridIndex(agent.PathPoint);
         Vector2Int toGridIndex = WorldToGridIndex(toWorldCoordinate);
 
-        if (IsOutOfBounds(toWorldCoordinate))
+        if (IsOutOfBounds(toGridIndex))
         {
             Debug.LogError("MoveBlock: 대상 좌표가 그리드 범위를 벗어났습니다.");
             return;
         }
 
-        if (_grid[toGridIndex.x, toGridIndex.y].IsBlock)
+        if (_grid[toGridIndex.x, toGridIndex.y].GetBlock)
         {
             Debug.LogWarning("MoveBlock: 대상 셀이 이미 Block 상태입니다.");
             return;
         }
 
-        SetNodeBlock(fromWorldCoordinate, false);
+        SetNodeBlock(fromGridIndex, false);
 
-        SetNodeBlock(toWorldCoordinate, true);
+        SetNodeBlock(toGridIndex, true, agent);
     }
 
     /// <summary>
@@ -112,5 +151,26 @@ public class AStarGrid
     {
         SetNodeBlock(startWorldCoordinate, lockEndpoints);
         SetNodeBlock(endWorldCoordinate, lockEndpoints);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (_grid == null)
+            return;
+
+        // _grid 배열의 모든 셀을 순회
+        for (int i = 0; i < _grid.GetLength(0); i++)
+        {
+            for (int j = 0; j < _grid.GetLength(1); j++)
+            {
+                AStarNode node = _grid[i, j];
+                // 노드의 좌표를 Vector2로 변환 (노드에 저장된 좌표는 world 좌표여야 합니다)
+                Vector2 pos = new Vector2(node.X, node.Y);
+                // isBlock 상태에 따라 색상을 설정
+                Gizmos.color = node.GetBlock ? Color.red : Color.green;
+                // 0.4f 반지름의 원을 그립니다.
+                Gizmos.DrawWireSphere(pos, TILE_COLLIDER_RADIUS);
+            }
+        }
     }
 }

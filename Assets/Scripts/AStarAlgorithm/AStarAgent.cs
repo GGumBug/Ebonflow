@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 {
-    [Header("Team Settings")]
-    [Tooltip("이 에이전트의 팀 타입 (예: 아군 또는 적군)")]
-    [SerializeField] private TeamType team;
-
     [Header("Movement Settings")]
     [Tooltip("초당 이동 속도 (단위: 유닛)")]
     [SerializeField] private float moveSpeed = 6f;
@@ -18,10 +15,14 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     [Tooltip("경로를 Gizmos로 그릴지 여부 (디버깅용)")]
     [SerializeField] private bool isDrawLine;
 
+    [field: SerializeField] public TeamType Team { get; private set; }
+
     private bool _isMove;
     private float _currentStepDelay;
     private List<AStarNode> _currentPath;
     private int _currentPathIndex = 1;
+    private AStarAlgorithmManager _aStarAlgorithmManager;
+    private AStarAgentCommandManager _aStarAgentCommandManager;
 
     public event Func<bool> OnTargetTileOccupied;
     public event Func<bool> OnEnemyInRange;
@@ -44,27 +45,43 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     private void Awake() 
     {
+        _aStarAlgorithmManager = AStarAlgorithmManager.Instance;
+        _aStarAgentCommandManager = AStarAgentCommandManager.Instance;
         _currentStepDelay = stepDelay;
     }
 
-    private void Update() 
+    public void MarkCurrentPositionAsBlocked()
     {
-        if (_isMove && _currentPath != null)
-            ProcessMovement();
+        _aStarAlgorithmManager.Grid.SetNodeBlock(PathPoint, true, this);
     }
 
     public void FollowPath()
     {
-        _currentPath = AStarAgentCommandManager.Instance.FindNearestEnemy(this, team, true, true);
+        _currentPath = _aStarAgentCommandManager.FindNearestEnemy(this, Team, true, true);
         _isMove = true;
+
+        if (_currentPath != null)
+            ExecuteGridMove();
     }
 
-    private void ProcessMovement()
+    /// <summary>
+    /// 주어진 목표 월드 좌표로 이동하기 전에, 그리드 상에서 해당 칸을 점유(예약)하고,
+    /// 이동이 가능하면 에이전트의 위치를 업데이트합니다.
+    /// </summary>
+    /// <param name="targetWorldCoordinate">이동하려는 목표 월드 좌표</param>
+    public void ExecuteGridMove()
     {
-        Vector2Int destPos = GetCurrentDestination();
+        AStarNode currentNode = _currentPath[_currentPathIndex];
+        Vector2Int destPos = new Vector2Int(currentNode.X, currentNode.Y);
 
-        if (!IsAtEndOfPath && OnTargetTileOccupied.Invoke())
-            HandleOccupiedTileResponse();
+        if (!IsAtEndOfPath && _aStarAlgorithmManager.Grid.IsNodeBlocked(destPos))
+        {
+            //로직 업데이트 필요
+            HandleOccupiedTileResponse(destPos);
+            return;
+        }
+
+        _aStarAlgorithmManager.Grid.UpdateAgentGridPosition(this, destPos);
 
         if (HasNextNode)
             MoveTowardsNextNode(destPos);
@@ -72,27 +89,19 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
             EndMovement();
     }
 
-    private Vector2Int GetCurrentDestination()
-    {
-        AStarNode currentNode = _currentPath[_currentPathIndex];
-        Vector2Int destPos = new Vector2Int(currentNode.X, currentNode.Y);
-        return destPos;
-    }
-
     private void MoveTowardsNextNode(Vector2Int destPos)
     {
-        if (_currentStepDelay < stepDelay)
-        {
-            _currentStepDelay += Time.deltaTime;
-            return;
-        }
+        // 목표 위치를 Vector3로 변환 (z값은 현재 위치 유지)
+        Vector3 destination = new Vector3(destPos.x, destPos.y, transform.position.z);
 
-        transform.position = Vector2.MoveTowards(transform.position, destPos, moveSpeed * Time.deltaTime);
+        // 현재 위치와 목표 위치 사이의 거리를 계산하고, 이동 시간(duration)을 결정합니다.
+        float distance = Vector2.Distance(transform.position, new Vector2(destPos.x, destPos.y));
+        float duration = distance / moveSpeed;
 
-        if (Vector2.Distance(transform.position, destPos) < 0.1f)
-        {
-            SnapToDestinationAndAdvance(destPos);
-        }
+        // DOTween을 사용하여 선형 보간으로 이동시키고, 이동이 완료되면 SnapToDestinationAndAdvance를 호출합니다.
+        transform.DOMove(destination, duration)
+                 .SetEase(Ease.Linear);
+                //  .OnComplete(() => SnapToDestinationAndAdvance(destPos));
     }
 
     private void SnapToDestinationAndAdvance(Vector2Int destPos)
@@ -118,9 +127,11 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         }
     }
 
-    private void HandleOccupiedTileResponse()
+    private void HandleOccupiedTileResponse(Vector2Int destPos)
     {
-        if (OnEnemyInRange.Invoke())
+        TeamType crushAgentTeam = _aStarAlgorithmManager.Grid.ReturnAgent(destPos).Team;
+
+        if (crushAgentTeam != Team)
         {
             SnapToLastValidNode();
             EndMovement();

@@ -24,7 +24,8 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 
     public void InitializeGrid(IAStarGridSettings gridSettings)
     {
-        Grid = new AStarGrid(gridSettings);
+        Grid = gameObject.AddComponent<AStarGrid>();
+        Grid.Init(gridSettings);
     }
 
     public List<AStarNode> GetPath(AStarAgent startPoint, AStarAgent targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
@@ -32,9 +33,9 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return FindPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
     }
 
-    public List<AStarNode> GetPath(AStarAgent startPoint, HashSet<AStarAgent> targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    public List<AStarNode> GetPath(AStarAgent startPoint, HashSet<AStarAgent> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
-        return FindClosestTargetPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
+        return FindClosestTargetPath(startPoint, targetPoints, allowDiagonal, dontCrossCorner);
     }
 
     private List<AStarNode> FindPath(AStarAgent startAgent, AStarAgent targetAgent, bool allowDiagonal = false, bool dontCrossCorner = false)
@@ -46,6 +47,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         _dontCrossCorner = dontCrossCorner;
 
         Grid.SetPathEndpointsLockState(false, startVector, targetVector);
+        Debug.Log($"{startAgent.name} 스타트포인트 {targetAgent.name} 타겟포인트 경로 탐색을 위한 fasle");
 
         _startNode = Grid.GetNodeAt(startVector.x, startVector.y);
         _targetNode = Grid.GetNodeAt(targetVector.x, targetVector.y);
@@ -63,6 +65,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
             if (_currentNode == _targetNode)
             {
                 Grid.SetPathEndpointsLockState(true, startVector, targetVector);
+                Debug.Log($"{startAgent.name} 스타트포인트 {targetAgent.name} 타겟포인트 경로 탐색을 위한 true");
                 return ConstructFinalPath();
             }
 
@@ -70,6 +73,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         }
 
         Grid.SetPathEndpointsLockState(true, startVector, targetVector);
+        Debug.Log($"{startAgent.name} 스타트포인트 {targetAgent.name} 타겟포인트 경로 탐색을 위한 true");
         return null;
     }
 
@@ -144,7 +148,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         AStarNode neighborNode = Grid.GetNodeAt(checkX, checkY);
 
         // 블록이거나 이미 처리한 노드면 건너뜁니다.
-        if (neighborNode.IsBlock || _closedSet.Contains(neighborNode))
+        if (neighborNode.GetBlock || _closedSet.Contains(neighborNode))
             return;
 
         // 대각선 이동 시, 코너 크로싱 제한 검사
@@ -152,7 +156,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         {
             AStarNode adjacent1 = Grid.GetNodeAt(_currentNode.X, checkY);
             AStarNode adjacent2 = Grid.GetNodeAt(checkX, _currentNode.Y);
-            if (adjacent1.IsBlock && adjacent2.IsBlock)
+            if (adjacent1.GetBlock && adjacent2.GetBlock)
                 return;
         }
 
@@ -161,7 +165,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         {
             AStarNode adjacent1 = Grid.GetNodeAt(_currentNode.X, checkY);
             AStarNode adjacent2 = Grid.GetNodeAt(checkX, _currentNode.Y);
-            if (adjacent1.IsBlock || adjacent2.IsBlock)
+            if (adjacent1.GetBlock || adjacent2.GetBlock)
                 return;
         }
 
