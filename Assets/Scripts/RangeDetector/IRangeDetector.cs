@@ -2,7 +2,7 @@ using UnityEngine;
 
 public interface IRangeDetector
 {
-    public bool IsOtherObjectInRange();
+    bool IsOtherObjectInRange();
 
-    public GameObject GetClosestObjectInRange();
+    GameObject GetClosestObjectInRange(Collider2D[] colliders);
 }

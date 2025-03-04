@@ -24,6 +24,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private int _currentPathIndex = 1;
 
     public event Func<bool> OnTargetTileOccupied;
+    public event Func<bool> OnEnemyInRange;
     public event Action OnStepCompleted;
 
     /// <summary>
@@ -63,7 +64,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         Vector2Int destPos = GetCurrentDestination();
 
         if (!IsAtEndOfPath && OnTargetTileOccupied.Invoke())
-            RecalculatePath();
+            HandleOccupiedTileResponse();
 
         if (HasNextNode)
             MoveTowardsNextNode(destPos);
@@ -103,7 +104,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         OnStepCompleted?.Invoke();
     }
 
-    void RecalculatePath()
+    private void SnapToLastValidNode()
     {
         if (_currentPath[_currentPathIndex - 1] != null)
         {
@@ -115,7 +116,25 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
             AStarNode currentNode = _currentPath[_currentPathIndex];
             transform.position = new Vector2(currentNode.X, currentNode.Y);
         }
+    }
 
+    private void HandleOccupiedTileResponse()
+    {
+        if (OnEnemyInRange.Invoke())
+        {
+            SnapToLastValidNode();
+            EndMovement();
+            Debug.Log("공격 스테이트로 전환");
+        }
+        else
+        {
+            SnapToLastValidNode();
+            RecalculatePath();
+        }
+    }
+
+    private void RecalculatePath()
+    {
         ClearFllowing();
         FollowPath();
     }
