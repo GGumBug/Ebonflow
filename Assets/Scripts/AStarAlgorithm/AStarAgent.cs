@@ -17,13 +17,12 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     [field: SerializeField] public TeamType Team { get; private set; }
 
-    private bool _isMove;
-    private float _currentStepDelay;
     private List<AStarNode> _currentPath;
     private int _currentPathIndex = 1;
-    private AStarAlgorithmManager _aStarAlgorithmManager;
+    private AStarGrid _grid;
     private AStarAgentCommandManager _aStarAgentCommandManager;
 
+    public Vector2Int CurrentGridPosition { get; private set; }
     public event Func<bool> OnTargetTileOccupied;
     public event Func<bool> OnEnemyInRange;
     public event Action OnStepCompleted;
@@ -45,20 +44,21 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     private void Awake() 
     {
-        _aStarAlgorithmManager = AStarAlgorithmManager.Instance;
+        _grid = AStarAlgorithmManager.Instance.Grid;
         _aStarAgentCommandManager = AStarAgentCommandManager.Instance;
-        _currentStepDelay = stepDelay;
+        transform.position = (Vector3Int)PathPoint;
+        CurrentGridPosition = PathPoint;
     }
 
     public void MarkCurrentPositionAsBlocked()
     {
-        _aStarAlgorithmManager.Grid.SetNodeBlock(PathPoint, true, this);
+        _grid ??= AStarAlgorithmManager.Instance.Grid;
+        _grid.SetNodeBlock(PathPoint, true, this);
     }
 
-    public void FollowPath()
+    public void BeginPathFollowing()
     {
         _currentPath = _aStarAgentCommandManager.FindNearestEnemy(this, Team, true, true);
-        _isMove = true;
 
         if (_currentPath != null)
             ExecuteGridMove();
@@ -74,23 +74,36 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         AStarNode currentNode = _currentPath[_currentPathIndex];
         Vector2Int destPos = new Vector2Int(currentNode.X, currentNode.Y);
 
-        if (!IsAtEndOfPath && _aStarAlgorithmManager.Grid.IsNodeBlocked(destPos))
+        if (!IsAtEndOfPath && _grid.IsNodeBlocked(destPos))
         {
             //로직 업데이트 필요
-            HandleOccupiedTileResponse(destPos);
+            ProcessOccupiedTileResponse(destPos);
             return;
         }
 
-        _aStarAlgorithmManager.Grid.UpdateAgentGridPosition(this, destPos);
-
         if (HasNextNode)
-            MoveTowardsNextNode(destPos);
+            MoveToNextNode(destPos);
         else if (IsAtEndOfPath)
-            EndMovement();
+            StopMovement();
     }
 
-    private void MoveTowardsNextNode(Vector2Int destPos)
+    /// <summary>
+    /// 현재 그리드 위치를 지정된 destPos로 업데이트하고, AStarGrid에도 해당 위치로 에이전트 정보를 갱신합니다.
+    /// </summary>
+    /// <param name="destPos">업데이트할 목표 월드 좌표</param>
+    private void UpdateAgentGridPosition(Vector2Int destPos)
     {
+        // 현재 그리드 위치를 업데이트
+        CurrentGridPosition = destPos;
+
+        // 그리드 시스템에 에이전트의 새로운 위치를 반영
+        _grid.UpdateAgentGridPosition(this, destPos);
+    }
+
+    private void MoveToNextNode(Vector2Int destPos)
+    {
+        UpdateAgentGridPosition(destPos);
+
         // 목표 위치를 Vector3로 변환 (z값은 현재 위치 유지)
         Vector3 destination = new Vector3(destPos.x, destPos.y, transform.position.z);
 
@@ -100,20 +113,20 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
         // DOTween을 사용하여 선형 보간으로 이동시키고, 이동이 완료되면 SnapToDestinationAndAdvance를 호출합니다.
         transform.DOMove(destination, duration)
-                 .SetEase(Ease.Linear);
-                //  .OnComplete(() => SnapToDestinationAndAdvance(destPos));
+                 .SetEase(Ease.Linear)
+                 .SetDelay(stepDelay)
+                 .OnComplete(() => SnapAndAdvance(destPos));
     }
 
-    private void SnapToDestinationAndAdvance(Vector2Int destPos)
+    private void SnapAndAdvance(Vector2Int destPos)
     {
         transform.position = new Vector2(destPos.x, destPos.y);
-        _currentStepDelay = 0f;
         _currentPathIndex++;
 
-        OnStepCompleted?.Invoke();
+        ExecuteGridMove();
     }
 
-    private void SnapToLastValidNode()
+    private void SnapToLastValidPosition()
     {
         if (_currentPath[_currentPathIndex - 1] != null)
         {
@@ -127,19 +140,19 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         }
     }
 
-    private void HandleOccupiedTileResponse(Vector2Int destPos)
+    private void ProcessOccupiedTileResponse(Vector2Int destPos)
     {
-        TeamType crushAgentTeam = _aStarAlgorithmManager.Grid.ReturnAgent(destPos).Team;
+        TeamType crushAgentTeam = _grid.ReturnAgent(destPos).Team;
 
         if (crushAgentTeam != Team)
         {
-            SnapToLastValidNode();
-            EndMovement();
+            SnapToLastValidPosition();
+            StopMovement();
             Debug.Log("공격 스테이트로 전환");
         }
         else
         {
-            SnapToLastValidNode();
+            SnapToLastValidPosition();
             RecalculatePath();
         }
     }
@@ -147,18 +160,16 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private void RecalculatePath()
     {
         ClearFllowing();
-        FollowPath();
+        BeginPathFollowing();
     }
 
-    private void EndMovement()
+    private void StopMovement()
     {
         ClearFllowing();
-        _currentStepDelay = stepDelay;
     }
 
     private void ClearFllowing()
     {
-        _isMove = false;
         _currentPath = null;
         _currentPathIndex = 1;
     }

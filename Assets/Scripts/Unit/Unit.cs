@@ -16,6 +16,6 @@ public class Unit : MonoBehaviour
 
     private void OnMouseDown() 
     {
-        aStarAgent.FollowPath();
+        aStarAgent.BeginPathFollowing();
     }
 }

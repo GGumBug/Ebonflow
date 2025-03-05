@@ -32,12 +32,12 @@ public class AStarAgentCommandManager : Singleton<AStarAgentCommandManager>
 
         foreach (var agent in allys)
         {
-            agent.FollowPath();
+            agent.BeginPathFollowing();
         }
 
         foreach (var agent in enemies)
         {
-            agent.FollowPath();
+            agent.BeginPathFollowing();
         }
     }
 

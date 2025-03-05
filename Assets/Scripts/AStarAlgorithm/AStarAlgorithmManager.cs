@@ -40,8 +40,8 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 
     private List<AStarNode> FindPath(AStarAgent startAgent, AStarAgent targetAgent, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
-        Vector2Int startVector = startAgent.PathPoint;
-        Vector2Int targetVector = targetAgent.PathPoint;
+        Vector2Int startVector = startAgent.CurrentGridPosition;
+        Vector2Int targetVector = targetAgent.CurrentGridPosition;
 
         _allowDiagonal = allowDiagonal;
         _dontCrossCorner = dontCrossCorner;
