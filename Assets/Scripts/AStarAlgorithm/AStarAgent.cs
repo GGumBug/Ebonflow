@@ -44,7 +44,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     private void Awake() 
     {
-        _grid = AStarAlgorithmManager.Instance.Grid;
         _aStarAgentCommandManager = AStarAgentCommandManager.Instance;
         transform.position = (Vector3Int)PathPoint;
         CurrentGridPosition = PathPoint;
