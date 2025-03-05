@@ -8,24 +8,24 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
     private const int TARGET_COUNT_THRESHOLD = 20;
 
     private bool _allowDiagonal, _dontCrossCorner;
-    private Vector2Int _gridBottomLeft;
-    private Vector2Int _gridTopRight;
-    private AStarNode[,] _gridNodes;
+    
     private AStarNode _startNode, _targetNode, _currentNode;
     private HashSet<AStarNode> _closedSet;
     private PriorityQueue<AStarNode> _openNodeQueue;
 
     private float GetFinalPathCost => _targetNode.F;
 
+    public AStarGrid Grid { get; private set; }
+
     protected override void Init()
     {
         base.Init();
     }
 
-    public void SetGridBounds(IAStarGridSettings gridSettings)
+    public void InitializeGrid(IAStarGridSettings gridSettings)
     {
-        _gridTopRight = gridSettings.GridTopRight;
-        _gridBottomLeft = gridSettings.GridBottomLeft;
+        Grid = gameObject.AddComponent<AStarGrid>();
+        Grid.Init(gridSettings);
     }
 
     public List<AStarNode> GetPath(AStarAgent startPoint, AStarAgent targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
@@ -33,23 +33,24 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return FindPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
     }
 
-    public List<AStarNode> GetPath(AStarAgent startPoint, HashSet<AStarAgent> targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    public List<AStarNode> GetPath(AStarAgent startPoint, HashSet<AStarAgent> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
-        return FindClosestTargetPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
+        return FindClosestTargetPath(startPoint, targetPoints, allowDiagonal, dontCrossCorner);
     }
 
     private List<AStarNode> FindPath(AStarAgent startAgent, AStarAgent targetAgent, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
-        CreateGridFromTilemap(startAgent, targetAgent);
-
-        Vector2Int startVector = startAgent.PathPoint;
-        Vector2Int targetVector = targetAgent.PathPoint;
+        Vector2Int startVector = startAgent.CurrentGridPosition;
+        Vector2Int targetVector = targetAgent.CurrentGridPosition;
 
         _allowDiagonal = allowDiagonal;
         _dontCrossCorner = dontCrossCorner;
 
-        _startNode = GetNodeAt(startVector.x, startVector.y);
-        _targetNode = GetNodeAt(targetVector.x, targetVector.y);
+        Grid.SetPathEndpointsLockState(false, startVector, targetVector);
+        Debug.Log($"{startAgent.name} 스타트포인트 {targetAgent.name} 타겟포인트 경로 탐색을 위한 fasle");
+
+        _startNode = Grid.GetNodeAt(startVector.x, startVector.y);
+        _targetNode = Grid.GetNodeAt(targetVector.x, targetVector.y);
 
         _openNodeQueue = new PriorityQueue<AStarNode>(5, SortOrder.Ascending);
         _closedSet = new HashSet<AStarNode>();
@@ -63,41 +64,17 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 
             if (_currentNode == _targetNode)
             {
+                Grid.SetPathEndpointsLockState(true, startVector, targetVector);
+                Debug.Log($"{startAgent.name} 스타트포인트 {targetAgent.name} 타겟포인트 경로 탐색을 위한 true");
                 return ConstructFinalPath();
             }
 
             EvaluateAdjacentNodes(_currentNode);
         }
 
+        Grid.SetPathEndpointsLockState(true, startVector, targetVector);
+        Debug.Log($"{startAgent.name} 스타트포인트 {targetAgent.name} 타겟포인트 경로 탐색을 위한 true");
         return null;
-    }
-
-    private void CreateGridFromTilemap(AStarAgent startAgent, AStarAgent targetAgent)
-    {
-        startAgent.gameObject.layer = Constants.START_AGENT_LAYER;
-        targetAgent.gameObject.layer = Constants.TARGET_AGENT_LAYER;
-
-        int sizeX = _gridTopRight.x - _gridBottomLeft.x + 1;
-        int sizeY = _gridTopRight.y - _gridBottomLeft.y + 1;
-        _gridNodes = new AStarNode[sizeX, sizeY];
-
-        int mask = (1 << Constants.BLOCK_LAYER) | (1 << Constants.AGENT_LAYER);
-
-        for (int i = 0; i < sizeX; i++)
-        {
-            for (int j = 0; j < sizeY; j++)
-            {
-                Vector2 tilePosition = new Vector2(i + _gridBottomLeft.x, j + _gridBottomLeft.y);
-
-                Collider2D[] colliders = Physics2D.OverlapCircleAll(tilePosition, 0.4f, mask);
-                bool isBlock = colliders.Length > 0;
-
-                _gridNodes[i, j] = new AStarNode(isBlock, i + _gridBottomLeft.x, j + _gridBottomLeft.y);
-            }
-        }
-
-        startAgent.gameObject.layer = Constants.AGENT_LAYER;
-        targetAgent.gameObject.layer = Constants.AGENT_LAYER;
     }
 
     private List<AStarNode> FindClosestTargetPath(AStarAgent startPoint, HashSet<AStarAgent> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
@@ -165,30 +142,30 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
     private void TryAddToOpenQueue(int checkX, int checkY)
     {
         // 그리드 범위 내에 있는지 검사
-        if (!IsWithinGridBounds(checkX, checkY))
+        if (Grid.IsOutOfBounds(checkX, checkY))
             return;
 
-        AStarNode neighborNode = GetNodeAt(checkX, checkY);
+        AStarNode neighborNode = Grid.GetNodeAt(checkX, checkY);
 
         // 블록이거나 이미 처리한 노드면 건너뜁니다.
-        if (neighborNode.IsBlock || _closedSet.Contains(neighborNode))
+        if (neighborNode.GetBlock || _closedSet.Contains(neighborNode))
             return;
 
         // 대각선 이동 시, 코너 크로싱 제한 검사
         if (_allowDiagonal)
         {
-            AStarNode adjacent1 = GetNodeAt(_currentNode.X, checkY);
-            AStarNode adjacent2 = GetNodeAt(checkX, _currentNode.Y);
-            if (adjacent1.IsBlock && adjacent2.IsBlock)
+            AStarNode adjacent1 = Grid.GetNodeAt(_currentNode.X, checkY);
+            AStarNode adjacent2 = Grid.GetNodeAt(checkX, _currentNode.Y);
+            if (adjacent1.GetBlock && adjacent2.GetBlock)
                 return;
         }
 
         // 코너 크로싱 금지 옵션 검사
         if (_dontCrossCorner)
         {
-            AStarNode adjacent1 = GetNodeAt(_currentNode.X, checkY);
-            AStarNode adjacent2 = GetNodeAt(checkX, _currentNode.Y);
-            if (adjacent1.IsBlock || adjacent2.IsBlock)
+            AStarNode adjacent1 = Grid.GetNodeAt(_currentNode.X, checkY);
+            AStarNode adjacent2 = Grid.GetNodeAt(checkX, _currentNode.Y);
+            if (adjacent1.GetBlock || adjacent2.GetBlock)
                 return;
         }
 
@@ -208,18 +185,6 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
             if (!_openNodeQueue.Contains(neighborNode))
                 _openNodeQueue.Enqueue(neighborNode, neighborNode.F);
         }
-    }
-
-    // 그리드 범위 체크를 위한 헬퍼 메서드
-    private bool IsWithinGridBounds(int x, int y)
-    {
-        return x >= _gridBottomLeft.x && x <= _gridTopRight.x && y >= _gridBottomLeft.y && y <= _gridTopRight.y;
-    }
-
-    // 주어진 그리드 좌표에 해당하는 노드를 반환
-    private AStarNode GetNodeAt(int x, int y)
-    {
-        return _gridNodes[x - _gridBottomLeft.x, y - _gridBottomLeft.y];
     }
 
     // 이동 비용 계산 (상하좌우와 대각선 이동 비용 차이를 적용)

@@ -20,12 +20,24 @@ public class AStarAgentCommandManager : Singleton<AStarAgentCommandManager>
     {
         foreach (var agent in allys)
         {
-            agent.FollowPath();
+            agent.MarkCurrentPositionAsBlocked();
         }
 
         foreach (var agent in enemies)
         {
-            agent.FollowPath();
+            agent.MarkCurrentPositionAsBlocked();
+        }
+
+        Debug.Log($"Agent 위치에 IsBlock 설정");
+
+        foreach (var agent in allys)
+        {
+            agent.BeginPathFollowing();
+        }
+
+        foreach (var agent in enemies)
+        {
+            agent.BeginPathFollowing();
         }
     }
 

@@ -1,5 +1,4 @@
 using Cysharp.Threading.Tasks;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,7 +34,7 @@ public class AStarAlgorithmTestScene : SceneBase, IAStarGridSettings
 
     public override async UniTask DebugMode()
     {
-        AStarAlgorithmManager.Instance.SetGridBounds(this);
+        AStarAlgorithmManager.Instance.InitializeGrid(this);
 
         await UniTask.Yield();  
     }

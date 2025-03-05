@@ -9,7 +9,7 @@ public class RangeDetector : MonoBehaviour, IRangeDetector
     [Tooltip("감지할 오브젝트의 레이어 마스크입니다.")]
     [SerializeField] private LayerMask detectionLayer;
 
-    private Collider2D[] GetObjectsInRange()
+    protected Collider2D[] GetObjectsInRange()
     {
         return Physics2D.OverlapCircleAll(transform.position, detectionRadius, detectionLayer);
     }
@@ -26,9 +26,8 @@ public class RangeDetector : MonoBehaviour, IRangeDetector
         return false;
     }
 
-    public GameObject GetClosestObjectInRange()
+    public GameObject GetClosestObjectInRange(Collider2D[] colliders)
     {
-        Collider2D[] colliders = GetObjectsInRange();
         GameObject closestObject = null;
         float minDistance = Mathf.Infinity;
 

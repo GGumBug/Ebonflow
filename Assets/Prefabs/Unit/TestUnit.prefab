@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: 3542983333781875800}
   - component: {fileID: 4125280722326735279}
   - component: {fileID: 4697440951524578920}
-  - component: {fileID: -7045510558102382969}
+  - component: {fileID: 6902109236593201855}
   m_Layer: 7
   m_Name: TestUnit
   m_TagString: Untagged
@@ -171,8 +171,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c30ce559d6e214dbe97c4ed75b5506fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  team: 0
   aStarAgent: {fileID: 4697440951524578920}
-  rangeDetector: {fileID: -7045510558102382969}
+  unitRangeDetector: {fileID: 6902109236593201855}
 --- !u!114 &4697440951524578920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,7 +190,7 @@ MonoBehaviour:
   moveSpeed: 5
   stepDelay: 0.5
   isDrawLine: 0
---- !u!114 &-7045510558102382969
+--- !u!114 &6902109236593201855
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -198,7 +199,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8180892972014700886}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79105b7d633b1d04c8a418f3d81b3479, type: 3}
+  m_Script: {fileID: 11500000, guid: 275ebfbefb08e8741b8c0fb1c55adb04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   detectionRadius: 1
