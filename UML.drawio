@@ -1,9 +1,110 @@
 <mxfile host="65bd71144e">
     <diagram id="AsPXl29V62PPbq8mqMU4" name="AStarAlgorithm">
-        <mxGraphModel dx="615" dy="320" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="5171" dy="1851" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="&lt;div style=&quot;font-family: JetBrainsMono, Menlo, Monaco, &amp;quot;Courier New&amp;quot;, monospace, Menlo, Monaco, &amp;quot;Courier New&amp;quot;, monospace; font-weight: normal; line-height: 18px; white-space: pre;&quot;&gt;&lt;span style=&quot;background-color: light-dark(rgb(29, 36, 51), transparent);&quot;&gt;&lt;font style=&quot;color: light-dark(rgb(255, 213, 128), rgb(230, 126, 34));&quot;&gt;AStarAlgorithmManager&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-297" y="160" width="820" height="152" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(255, 255, 255), rgb(255, 255, 255));&quot;&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(255, 255, 255), rgb(34, 139, 34));&quot;&gt;Grid&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(255, 255, 255), rgb(255, 255, 255));&quot;&gt;: &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(255, 255, 255), rgb(230, 126, 34));&quot;&gt;AStarGrid&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(255, 255, 255), rgb(255, 255, 255));&quot;&gt; { get; private set; }&lt;/font&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                    <mxGeometry y="26" width="820" height="34" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="2" vertex="1">
+                    <mxGeometry y="60" width="820" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;InitializeGrid&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(gridSettings: IAStarGridSettings): void&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;GetPath&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(startPoint: AStarAgent, targetPoint: AStarAgent, allowDiagonal: bool = false, dontCrossCorner: bool = false): List&amp;lt;AStarNode&amp;gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;GetPath&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(startPoint: AStarAgent, targetPoints: HashSet&amp;lt;AStarAgent&amp;gt;, allowDiagonal: bool = false, dontCrossCorner: bool = false): List&amp;lt;AStarNode&amp;gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                    <mxGeometry y="68" width="820" height="84" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;" parent="1" edge="1" target="5" source="7">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="112" y="440" as="sourcePoint"/>
+                        <mxPoint x="112.02000000000021" y="291.91599999999994" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="7" value="&lt;div style=&quot;font-family: JetBrainsMono, Menlo, Monaco, &amp;quot;Courier New&amp;quot;, monospace, Menlo, Monaco, &amp;quot;Courier New&amp;quot;, monospace; font-weight: normal; line-height: 18px; white-space: pre;&quot;&gt;&lt;span style=&quot;background-color: light-dark(rgb(29, 36, 51), transparent);&quot;&gt;&lt;font style=&quot;color: light-dark(rgb(255, 213, 128), rgb(230, 126, 34));&quot;&gt;AStarGrid&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-227" y="400" width="680" height="258" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="- TILE_COLLIDER_RADIUS: float = 0.4f&lt;br&gt;- _gridBottomLeft: Vector2Int&lt;br&gt;- _gridTopRight: Vector2Int&lt;br&gt;- _grid: &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(230, 126, 34));&quot;&gt;AStarNode&lt;/font&gt;[,]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="7" vertex="1">
+                    <mxGeometry y="26" width="680" height="74" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="7" vertex="1">
+                    <mxGeometry y="100" width="680" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;IsOutOfBounds&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(x: int, y: int): bool&lt;br&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;IsOutOfBounds&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(toGridIndex: Vector2Int): bool&lt;br&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;Init&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(gridSettings: IAStarGridSettings): void&lt;br&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;IsNodeBlocked&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(worldCoordinate: Vector2Int): bool&lt;br&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;ReturnAgent&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(worldCoordinate: Vector2Int): AStarAgent&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;GetNodeAt&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(x: int, y: int): AStarNode&lt;br&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;SetNodeBlock&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(worldCoordinate: Vector2Int, isBlock: bool, agent: AStarAgent = null): void&lt;br&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;UpdateAgentGridPosition&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(agent: AStarAgent, toWorldCoordinate: Vector2Int): void&lt;br&gt;+ &lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;SetPathEndpointsLockState&lt;/font&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;(lockEndpoints: bool, startWorldCoordinate: Vector2Int, endWorldCoordinate: Vector2Int): void&lt;/font&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="7" vertex="1">
+                    <mxGeometry y="108" width="680" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(230, 126, 34));&quot;&gt;AStarAgentCommandManager&lt;/font&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="-1372" y="150" width="790" height="124" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="- allys: &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(230, 126, 34));&quot;&gt;AStarAgent&lt;/font&gt;[] { SerializeField }&lt;br&gt;- enemies: &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(230, 126, 34));&quot;&gt;AStarAgent&lt;/font&gt;[] { SerializeField }&lt;br&gt;- _aStarAlgorithmManager: &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(230, 126, 34));&quot;&gt;AStarAlgorithmManager&lt;/font&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="11">
+                    <mxGeometry y="26" width="790" height="64" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="11">
+                    <mxGeometry y="90" width="790" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="+ &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;FindNearestEnemy&lt;/font&gt;(startAgent: AStarAgent, team: TeamType, allowDiagonal: bool = false, dontCrossCorner: bool = false): List&amp;lt;AStarNode&amp;gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="11">
+                    <mxGeometry y="98" width="790" height="26" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(230, 126, 34));&quot;&gt;AStarNode&lt;/font&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;direction=east;" vertex="1" parent="1">
+                    <mxGeometry x="-12" y="720" width="280" height="230" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="- _isBlock: bool { SerializeField }&lt;br/&gt;+ X: int { get; private set; SerializeField }&lt;br/&gt;+ Y: int { get; private set; SerializeField }&lt;br/&gt;+ Agent: AStarAgent { get; set; SerializeField }&lt;br/&gt;+ G: int { get; set; SerializeField }&lt;br/&gt;+ H: int { get; set; SerializeField }&lt;br/&gt;+ GetBlock: bool { get; }&lt;br/&gt;+ SetBlock: bool { set; }&lt;br/&gt;+ ParentNode: AStarNode { get; set; }&lt;br/&gt;+ F: int { get; }" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="16">
+                    <mxGeometry y="26" width="280" height="164" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="16">
+                    <mxGeometry y="190" width="280" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="+ AStarNode(isBlock: bool, x: int, y: int)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="16">
+                    <mxGeometry y="198" width="280" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="endArrow=diamondThin;endFill=1;endSize=24;html=1;exitX=0.439;exitY=-0.001;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="16" target="10">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="122" y="790" as="sourcePoint"/>
+                        <mxPoint x="122.02000000000021" y="697.9959999999999" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="5" target="12">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="-552" y="320" as="sourcePoint"/>
+                        <mxPoint x="-392" y="320" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="24" value="&lt;div style=&quot;font-family: JetBrainsMono, Menlo, Monaco, &amp;quot;Courier New&amp;quot;, monospace, Menlo, Monaco, &amp;quot;Courier New&amp;quot;, monospace; font-weight: normal; line-height: 18px; white-space: pre;&quot;&gt;&lt;span style=&quot;background-color: light-dark(rgb(29, 36, 51), transparent);&quot;&gt;&lt;font style=&quot;color: light-dark(rgb(255, 213, 128), rgb(230, 126, 34));&quot;&gt;AStarAgent&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="-1162" y="340" width="370" height="450" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="- moveSpeed: float { SerializeField }&lt;br&gt;- stepDelay: float { SerializeField }&lt;br&gt;- isDrawLine: bool { SerializeField }&lt;br&gt;- _currentPath: List&amp;lt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(230, 126, 34));&quot;&gt;AStarNode&lt;/font&gt;&amp;gt;&lt;br&gt;- _currentPathIndex: int&lt;br&gt;- _grid: &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(230, 126, 34));&quot;&gt;AStarGrid&lt;/font&gt;&lt;br&gt;+ Team: TeamType { get; private set; SerializeField }&lt;br&gt;+ CurrentGridPosition: Vector2Int { get; private set; }&lt;br&gt;+ PathPoint: Vector2Int { get; }&lt;br&gt;+ OnTargetTileOccupied: event Func&amp;lt;bool&amp;gt;&lt;br&gt;+ OnEnemyInRange: event Func&amp;lt;bool&amp;gt;&lt;br&gt;+ OnStepCompleted: event Action" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="24">
+                    <mxGeometry y="26" width="370" height="204" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="24">
+                    <mxGeometry y="230" width="370" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="- &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;Awake&lt;/font&gt;(): void&lt;br&gt;+ &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;MarkCurrentPositionAsBlocked&lt;/font&gt;(): void&lt;br&gt;+ &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;BeginPathFollowing&lt;/font&gt;(): void&lt;br&gt;+ &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;ExecuteGridMove&lt;/font&gt;(): void&lt;br&gt;- &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;UpdateAgentGridPosition&lt;/font&gt;(destPos: Vector2Int): void&lt;br&gt;- &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;MoveToNextNode&lt;/font&gt;(destPos: Vector2Int): void&lt;br&gt;- &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;SnapAndAdvance&lt;/font&gt;(destPos: Vector2Int): void&lt;br&gt;- &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;SnapToLastValidPosition&lt;/font&gt;(): void&lt;br&gt;- &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;ProcessOccupiedTileResponse&lt;/font&gt;(destPos: Vector2Int): void&lt;br&gt;- &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;RecalculatePath&lt;/font&gt;(): void&lt;br&gt;- &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;StopMovement&lt;/font&gt;(): void&lt;br&gt;- &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;ClearFllowing&lt;/font&gt;(): void&lt;br&gt;- &lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(0, 122, 204));&quot;&gt;OnDrawGizmos&lt;/font&gt;(): void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="24">
+                    <mxGeometry y="238" width="370" height="212" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" style="edgeStyle=none;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;endArrow=none;endFill=0;" edge="1" parent="1" source="17" target="27">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="-521.333333333333" y="810" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="34" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="25" target="5">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="-542" y="540" as="sourcePoint"/>
+                        <mxPoint x="-382" y="540" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="37" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="8" target="25">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="-582" y="530" as="sourcePoint"/>
+                        <mxPoint x="-592" y="560" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="38" value="" style="endArrow=diamondThin;endFill=0;endSize=24;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="24" target="14">
+                    <mxGeometry width="160" relative="1" as="geometry">
+                        <mxPoint x="-972" y="310" as="sourcePoint"/>
+                        <mxPoint x="-812" y="310" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
