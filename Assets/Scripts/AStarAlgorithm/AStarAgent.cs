@@ -20,7 +20,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private List<AStarNode> _currentPath;
     private int _currentPathIndex = 1;
     private AStarGrid _grid;
-    private AStarAgentCommandManager _aStarAgentCommandManager;
 
     public Vector2Int CurrentGridPosition { get; private set; }
     public event Func<bool> OnTargetTileOccupied;
@@ -44,7 +43,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     private void Awake() 
     {
-        _aStarAgentCommandManager = AStarAgentCommandManager.Instance;
         transform.position = (Vector3Int)PathPoint;
         CurrentGridPosition = PathPoint;
     }
@@ -55,10 +53,13 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         _grid.SetNodeBlock(PathPoint, true, this);
     }
 
+    public void SetCurrentPath(List<AStarNode> currentPath)
+    {
+        _currentPath = currentPath;
+    }
+
     public void BeginPathFollowing()
     {
-        _currentPath = _aStarAgentCommandManager.FindNearestEnemy(this, Team, true, true);
-
         if (_currentPath != null)
             ExecuteGridMove();
     }
