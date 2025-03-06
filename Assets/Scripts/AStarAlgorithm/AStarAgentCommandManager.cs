@@ -14,6 +14,18 @@ public class AStarAgentCommandManager : Singleton<AStarAgentCommandManager>
     private void Awake() 
     {
         _aStarAlgorithmManager = AStarAlgorithmManager.Instance;
+
+        foreach (var agent in allys)
+        {
+            agent.MarkCurrentPositionAsBlocked();
+            agent.OnTargetLost += FindNearestEnemy;
+        }
+
+        foreach (var agent in enemies)
+        {
+            agent.MarkCurrentPositionAsBlocked();
+            agent.OnTargetLost += FindNearestEnemy;
+        }
     }
 
     private void Start()

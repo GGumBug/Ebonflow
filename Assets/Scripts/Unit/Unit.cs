@@ -8,12 +8,6 @@ public class Unit : MonoBehaviour
 
     public TeamType Team => team;
 
-    private void Awake()
-    {
-        aStarAgent.OnTargetTileOccupied += unitRangeDetector.IsOtherObjectInRange;
-        aStarAgent.OnEnemyInRange += unitRangeDetector.IsEnemyInRange;
-    }
-
     private void OnMouseDown() 
     {
         aStarAgent.BeginPathFollowing();
