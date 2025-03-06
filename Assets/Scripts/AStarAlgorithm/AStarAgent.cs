@@ -22,9 +22,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private AStarGrid _grid;
 
     public Vector2Int CurrentGridPosition { get; private set; }
-    public event Func<bool> OnTargetTileOccupied;
-    public event Func<bool> OnEnemyInRange;
-    public event Action OnStepCompleted;
+    public event Func<AStarAgent, bool, bool, List<AStarNode>> OnTargetLost;
 
     /// <summary>
     /// 현재 경로에서 다음 노드가 존재하는지 여부
@@ -69,10 +67,12 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     /// 이동이 가능하면 에이전트의 위치를 업데이트합니다.
     /// </summary>
     /// <param name="targetWorldCoordinate">이동하려는 목표 월드 좌표</param>
-    public void ExecuteGridMove()
+    private void ExecuteGridMove()
     {
         AStarNode currentNode = _currentPath[_currentPathIndex];
         Vector2Int destPos = new Vector2Int(currentNode.X, currentNode.Y);
+
+        CheckTargetOccupancyAndRecalculate(destPos);
 
         if (!IsAtEndOfPath && _grid.IsNodeBlocked(destPos))
         {
@@ -85,6 +85,17 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
             MoveToNextNode(destPos);
         else if (IsAtEndOfPath)
             StopMovement();
+    }
+
+    /// <summary>
+    /// 지정된 목적지 좌표에 해당하는 노드가 점유되어 있지 않으면 경로를 재탐색합니다.
+    /// </summary>
+    /// <param name="destPos">목적지 월드 좌표</param>
+    private void CheckTargetOccupancyAndRecalculate(Vector2Int destPos)
+    {
+        AStarNode targetNode = _grid.GetNodeAt(destPos.x, destPos.y);
+        if (targetNode.Agent == null)
+            OnTargetLost.Invoke(this, true, true);
     }
 
     /// <summary>
