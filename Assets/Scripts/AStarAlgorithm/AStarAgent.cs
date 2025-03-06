@@ -17,12 +17,14 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     [field: SerializeField] public TeamType Team { get; private set; }
 
-    private List<AStarNode> _currentPath;
     private int _currentPathIndex = 1;
+    private List<AStarNode> _currentPath;
     private AStarGrid _grid;
 
     public Vector2Int CurrentGridPosition { get; private set; }
     public event Func<AStarAgent, bool, bool, List<AStarNode>> OnTargetLost;
+    public event Func<bool> OnRequestAllowDiagonal;
+    public event Func<bool> OnRequestDontCrossCorner;
 
     /// <summary>
     /// 현재 경로에서 다음 노드가 존재하는지 여부
@@ -45,10 +47,14 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         CurrentGridPosition = PathPoint;
     }
 
-    public void MarkCurrentPositionAsBlocked()
+    public void LockCurrentGridPositionWithSettings(Func<bool> requestAllowDiagonal, Func<bool> requestDontCrossCorner, Func<AStarAgent, bool, bool, List<AStarNode>> targetLostCallback)
     {
         _grid ??= AStarAlgorithmManager.Instance.Grid;
         _grid.SetNodeBlock(PathPoint, true, this);
+
+        OnRequestAllowDiagonal = requestAllowDiagonal;
+        OnRequestDontCrossCorner = requestDontCrossCorner;
+        OnTargetLost = targetLostCallback;
     }
 
     public void SetCurrentPath(List<AStarNode> currentPath)
@@ -58,7 +64,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     public void BeginPathFollowing()
     {
-        if (_currentPath != null)
+        if (_currentPath != null && _currentPath.Count > 0 )
             ExecuteGridMove();
     }
 
@@ -95,7 +101,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     {
         AStarNode targetNode = _grid.GetNodeAt(destPos.x, destPos.y);
         if (targetNode.Agent == null)
-            OnTargetLost.Invoke(this, true, true);
+            OnTargetLost.Invoke(this, OnRequestAllowDiagonal.Invoke(), OnRequestDontCrossCorner.Invoke());
     }
 
     /// <summary>
@@ -122,7 +128,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         float distance = Vector2.Distance(transform.position, new Vector2(destPos.x, destPos.y));
         float duration = distance / moveSpeed;
 
-        // DOTween을 사용하여 선형 보간으로 이동시키고, 이동이 완료되면 SnapToDestinationAndAdvance를 호출합니다.
+        // DOTween을 사용하여 선형 보간으로 이동시키고, 이동이 완료되면 SnapAndAdvance를 호출합니다.
         transform.DOMove(destination, duration)
                  .SetEase(Ease.Linear)
                  .SetDelay(stepDelay)

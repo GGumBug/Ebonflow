@@ -47,7 +47,6 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         _dontCrossCorner = dontCrossCorner;
 
         Grid.SetPathEndpointsLockState(false, startVector, targetVector);
-        Debug.Log($"{startAgent.name} 스타트포인트 {targetAgent.name} 타겟포인트 경로 탐색을 위한 fasle");
 
         _startNode = Grid.GetNodeAt(startVector.x, startVector.y);
         _targetNode = Grid.GetNodeAt(targetVector.x, targetVector.y);
@@ -65,7 +64,6 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
             if (_currentNode == _targetNode)
             {
                 Grid.SetPathEndpointsLockState(true, startVector, targetVector);
-                Debug.Log($"{startAgent.name} 스타트포인트 {targetAgent.name} 타겟포인트 경로 탐색을 위한 true");
                 return ConstructFinalPath();
             }
 
@@ -73,7 +71,6 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         }
 
         Grid.SetPathEndpointsLockState(true, startVector, targetVector);
-        Debug.Log($"{startAgent.name} 스타트포인트 {targetAgent.name} 타겟포인트 경로 탐색을 위한 true");
         return null;
     }
 
@@ -99,7 +96,11 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         }
 
         if (pathQueue == null || pathQueue.Count <= 0)
-            throw new System.ArgumentNullException(nameof(pathQueue), "찾은 경로가 없습니다.");
+        {
+            Debug.Log($"{startPoint.name}의 경로를 찾을 수 없습니다.");
+            return null;
+        }
+            
         
         return pathQueue.Dequeue(); 
     }
