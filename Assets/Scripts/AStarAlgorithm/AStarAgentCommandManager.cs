@@ -5,52 +5,32 @@ public class AStarAgentCommandManager : Singleton<AStarAgentCommandManager>
 {
     [SerializeField] private AStarAgent[] allys;
     [SerializeField] private AStarAgent[] enemies;
-
-    // [SerializeField] private HashSet<AStarAgent> allyUnits;
-    // [SerializeField] private HashSet<AStarAgent> enemyUnits;
+    [SerializeField] private bool allowDiagonal;
+    [SerializeField] private bool dontCrossCorner;
 
     private AStarAlgorithmManager _aStarAlgorithmManager;
+
+    private bool GetAllowDiagonal() { return allowDiagonal; }
+    private bool GetDontCrossCorner() { return dontCrossCorner; }
 
     private void Awake() 
     {
         _aStarAlgorithmManager = AStarAlgorithmManager.Instance;
-
-        foreach (var agent in allys)
-        {
-            agent.MarkCurrentPositionAsBlocked();
-            agent.OnTargetLost += FindNearestEnemy;
-        }
-
-        foreach (var agent in enemies)
-        {
-            agent.MarkCurrentPositionAsBlocked();
-            agent.OnTargetLost += FindNearestEnemy;
-        }
     }
 
     private void Start()
     {
         foreach (var agent in allys)
-        {
-            agent.MarkCurrentPositionAsBlocked();
-        }
+            agent.LockCurrentGridPositionWithSettings(GetAllowDiagonal, GetDontCrossCorner, FindNearestEnemy);
 
         foreach (var agent in enemies)
-        {
-            agent.MarkCurrentPositionAsBlocked();
-        }
-
-        Debug.Log($"Agent 위치에 IsBlock 설정");
+            agent.LockCurrentGridPositionWithSettings(GetAllowDiagonal, GetDontCrossCorner, FindNearestEnemy);
 
         foreach (var agent in allys)
-        {
             StartAgentPathFollowing(agent);
-        }
 
         foreach (var agent in enemies)
-        {
             StartAgentPathFollowing(agent);
-        }
     }
 
     private List<AStarNode> FindNearestEnemy(AStarAgent startAgent, bool allowDiagonal = false, bool dontCrossCorner = false)
@@ -67,7 +47,7 @@ public class AStarAgentCommandManager : Singleton<AStarAgentCommandManager>
     /// <param name="agent">경로 탐색을 수행할 AStarAgent</param>
     private void StartAgentPathFollowing(AStarAgent agent)
     {
-        List<AStarNode> currentPath = FindNearestEnemy(agent);
+        List<AStarNode> currentPath = FindNearestEnemy(agent, allowDiagonal, dontCrossCorner);
 
         if (currentPath == null || currentPath.Count == 0)
         {
@@ -78,8 +58,6 @@ public class AStarAgentCommandManager : Singleton<AStarAgentCommandManager>
         agent.SetCurrentPath(currentPath);
         agent.BeginPathFollowing();
     }
-
-
 
     HashSet<AStarAgent> GetEnemyHashSet(AStarAgent[] aStarAgentArray)
     {

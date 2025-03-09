@@ -108,7 +108,6 @@ public class AStarGrid : MonoBehaviour
             var targetNode = _grid[gridIndex.x, gridIndex.y];
             targetNode.SetBlock = isBlock;
             targetNode.Agent = agent;
-            Debug.Log($"SetNodeBlock: Node at grid index ({gridIndex.x}, {gridIndex.y}) set to block state: {isBlock}");
         }
     }
 
