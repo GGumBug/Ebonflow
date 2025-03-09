@@ -22,7 +22,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private AStarGrid _grid;
 
     public Vector2Int CurrentGridPosition { get; private set; }
-    public event Func<AStarAgent, bool, bool, List<AStarNode>> OnTargetLost;
+    public event Func<AStarAgent, bool, bool, List<AStarNode>> OnFindNearestEnemy;
     public event Func<bool> OnRequestAllowDiagonal;
     public event Func<bool> OnRequestDontCrossCorner;
 
@@ -47,14 +47,14 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         CurrentGridPosition = PathPoint;
     }
 
-    public void LockCurrentGridPositionWithSettings(Func<bool> requestAllowDiagonal, Func<bool> requestDontCrossCorner, Func<AStarAgent, bool, bool, List<AStarNode>> targetLostCallback)
+    public void LockCurrentGridPositionWithSettings(Func<bool> requestAllowDiagonal, Func<bool> requestDontCrossCorner, Func<AStarAgent, bool, bool, List<AStarNode>> requestFindNearestEnemy)
     {
         _grid ??= AStarAlgorithmManager.Instance.Grid;
         _grid.SetNodeBlock(PathPoint, true, this);
 
         OnRequestAllowDiagonal = requestAllowDiagonal;
         OnRequestDontCrossCorner = requestDontCrossCorner;
-        OnTargetLost = targetLostCallback;
+        OnFindNearestEnemy = requestFindNearestEnemy;
     }
 
     public void SetCurrentPath(List<AStarNode> currentPath)
@@ -82,7 +82,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
         if (!IsAtEndOfPath && _grid.IsNodeBlocked(destPos))
         {
-            //로직 업데이트 필요
             ProcessOccupiedTileResponse(destPos);
             return;
         }
@@ -101,7 +100,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     {
         AStarNode targetNode = _grid.GetNodeAt(destPos.x, destPos.y);
         if (targetNode.Agent == null)
-            OnTargetLost.Invoke(this, OnRequestAllowDiagonal.Invoke(), OnRequestDontCrossCorner.Invoke());
+            OnFindNearestEnemy.Invoke(this, OnRequestAllowDiagonal.Invoke(), OnRequestDontCrossCorner.Invoke());
     }
 
     /// <summary>
@@ -161,15 +160,16 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     {
         TeamType crushAgentTeam = _grid.ReturnAgent(destPos).Team;
 
+        SnapToLastValidPosition();
+
         if (crushAgentTeam != Team)
         {
-            SnapToLastValidPosition();
+            Debug.Log($"적군 충돌 {gameObject.name} 공격 스테이트로 전환");
             StopMovement();
-            Debug.Log("공격 스테이트로 전환");
         }
         else
         {
-            SnapToLastValidPosition();
+            Debug.Log($"아군 충돌 {gameObject.name} 경로 재탐색");
             RecalculatePath();
         }
     }
@@ -177,6 +177,8 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private void RecalculatePath()
     {
         ClearFllowing();
+        List<AStarNode> newPath = OnFindNearestEnemy.Invoke(this, OnRequestAllowDiagonal.Invoke(), OnRequestDontCrossCorner.Invoke());
+        SetCurrentPath(newPath);
         BeginPathFollowing();
     }
 
