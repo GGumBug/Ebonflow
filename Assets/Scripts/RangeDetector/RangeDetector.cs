@@ -1,6 +1,8 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class RangeDetector : MonoBehaviour, IRangeDetector
+public class RangeDetector : MonoBehaviour
 {
     [Header("Detection Settings")]
     [Tooltip("월드 단위의 감지 반지름입니다.")]
@@ -9,42 +11,47 @@ public class RangeDetector : MonoBehaviour, IRangeDetector
     [Tooltip("감지할 오브젝트의 레이어 마스크입니다.")]
     [SerializeField] private LayerMask detectionLayer;
 
-    protected Collider2D[] GetObjectsInRange()
+    [Header("Collider Settings")]
+    [Tooltip("RangeDetector 전용 2D 콜라이더입니다.")]
+    [SerializeField] private CircleCollider2D col;
+
+    private HashSet<Unit> _enemyUnits;
+
+    public event Func<TeamType> OnRequestTeamType;
+
+    private void Awake()
     {
-        return Physics2D.OverlapCircleAll(transform.position, detectionRadius, detectionLayer);
+        Init();
     }
 
-    public bool IsOtherObjectInRange()
+    private void Init()
     {
-        var colliders = GetObjectsInRange();
-        foreach (var col in colliders)
-        {
-            if (col.gameObject != gameObject)
-                return true;
-        }
-
-        return false;
+        col.radius = detectionRadius;
+        _enemyUnits = new HashSet<Unit>();
     }
 
-    public GameObject GetClosestObjectInRange(Collider2D[] colliders)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        GameObject closestObject = null;
-        float minDistance = Mathf.Infinity;
-
-        foreach (var col in colliders)
+        if (collision.TryGetComponent<Unit>(out Unit otherUnit))
         {
-            if (col.gameObject == gameObject)
-                continue;
-
-            float distance = Vector2.Distance(transform.position, col.transform.position);
-            if (distance < minDistance)
+            if (otherUnit.Team != OnRequestTeamType.Invoke())
             {
-                minDistance = distance;
-                closestObject = col.gameObject;
+                _enemyUnits.Add(otherUnit);
+                Debug.Log($"_enemyUnits에 {otherUnit.name} 추가");
             }
         }
+    }
 
-        return closestObject;
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent<Unit>(out Unit otherUnit))
+        {
+            if (otherUnit.Team != OnRequestTeamType.Invoke() && _enemyUnits.Contains(otherUnit))
+            {
+                _enemyUnits.Remove(otherUnit);
+                Debug.Log($"_enemyUnits에 {otherUnit.name} 제거");
+            }
+        }
     }
 
     private void OnDrawGizmos()
