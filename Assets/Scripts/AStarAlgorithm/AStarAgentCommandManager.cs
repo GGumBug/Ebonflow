@@ -35,7 +35,7 @@ public class AStarAgentCommandManager : Singleton<AStarAgentCommandManager>
 
     private List<AStarNode> FindNearestEnemy(AStarAgent startAgent, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
-        HashSet<AStarAgent> targetUnits = startAgent.Team == TeamType.Ally ? GetEnemyHashSet(enemies) : GetEnemyHashSet(allys);
+        HashSet<AStarAgent> targetUnits = startAgent.GetTeam() == TeamType.Ally ? GetEnemyHashSet(enemies) : GetEnemyHashSet(allys);
 
         return _aStarAlgorithmManager.GetPath(startAgent, targetUnits, allowDiagonal, dontCrossCorner);
     }

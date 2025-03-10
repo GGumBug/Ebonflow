@@ -15,8 +15,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     [Tooltip("경로를 Gizmos로 그릴지 여부 (디버깅용)")]
     [SerializeField] private bool isDrawLine;
 
-    [field: SerializeField] public TeamType Team { get; private set; }
-
     private int _currentPathIndex = 1;
     private List<AStarNode> _currentPath;
     private AStarGrid _grid;
@@ -25,6 +23,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     public event Func<AStarAgent, bool, bool, List<AStarNode>> OnFindNearestEnemy;
     public event Func<bool> OnRequestAllowDiagonal;
     public event Func<bool> OnRequestDontCrossCorner;
+    public event Func<TeamType> OnRequestTeamType;
 
     /// <summary>
     /// 현재 경로에서 다음 노드가 존재하는지 여부
@@ -40,6 +39,8 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         Mathf.RoundToInt(transform.position.x),
         Mathf.RoundToInt(transform.position.y)
     );
+
+    public TeamType GetTeam() => OnRequestTeamType.Invoke();
 
     private void Awake() 
     {
@@ -158,11 +159,11 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     private void ProcessOccupiedTileResponse(Vector2Int destPos)
     {
-        TeamType crushAgentTeam = _grid.ReturnAgent(destPos).Team;
+        TeamType crushAgentTeam = _grid.ReturnAgent(destPos).GetTeam();
 
         SnapToLastValidPosition();
 
-        if (crushAgentTeam != Team)
+        if (crushAgentTeam != GetTeam())
         {
             Debug.Log($"적군 충돌 {gameObject.name} 공격 스테이트로 전환");
             StopMovement();

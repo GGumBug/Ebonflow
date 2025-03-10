@@ -34,7 +34,7 @@ public class RangeDetector : MonoBehaviour
     {
         if (collision.TryGetComponent<Unit>(out Unit otherUnit))
         {
-            if (otherUnit.Team != OnRequestTeamType.Invoke())
+            if (otherUnit.GetTeam() != OnRequestTeamType.Invoke())
             {
                 _enemyUnits.Add(otherUnit);
                 Debug.Log($"_enemyUnits에 {otherUnit.name} 추가");
@@ -46,7 +46,7 @@ public class RangeDetector : MonoBehaviour
     {
         if (collision.TryGetComponent<Unit>(out Unit otherUnit))
         {
-            if (otherUnit.Team != OnRequestTeamType.Invoke() && _enemyUnits.Contains(otherUnit))
+            if (otherUnit.GetTeam() != OnRequestTeamType.Invoke() && _enemyUnits.Contains(otherUnit))
             {
                 _enemyUnits.Remove(otherUnit);
                 Debug.Log($"_enemyUnits에 {otherUnit.name} 제거");

@@ -6,10 +6,11 @@ public class Unit : MonoBehaviour
     [SerializeField] private AStarAgent aStarAgent;
     [SerializeField] private RangeDetector rangeDetector;
 
-    public TeamType Team => team;
+    public TeamType GetTeam() => team;
 
     private void Awake()
     {
-        rangeDetector.OnRequestTeamType += () => { return Team; };
+        aStarAgent.OnRequestTeamType += GetTeam;
+        rangeDetector.OnRequestTeamType += GetTeam;
     }
 }
