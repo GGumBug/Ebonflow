@@ -108,7 +108,6 @@ public class AStarGrid : MonoBehaviour
             var targetNode = _grid[gridIndex.x, gridIndex.y];
             targetNode.SetBlock = isBlock;
             targetNode.Agent = agent;
-            Debug.Log($"SetNodeBlock: Node at grid index ({gridIndex.x}, {gridIndex.y}) set to block state: {isBlock}");
         }
     }
 
@@ -149,8 +148,11 @@ public class AStarGrid : MonoBehaviour
     /// <param name="endWorldCoordinate">종료 위치의 월드 좌표</param>
     public void SetPathEndpointsLockState(bool lockEndpoints, Vector2Int startWorldCoordinate, Vector2Int endWorldCoordinate)
     {
-        SetNodeBlock(startWorldCoordinate, lockEndpoints);
-        SetNodeBlock(endWorldCoordinate, lockEndpoints);
+        AStarNode startNode = GetNodeAt(startWorldCoordinate.x, startWorldCoordinate.y);
+        startNode.SetBlock = lockEndpoints;
+
+        AStarNode targetNode = GetNodeAt(endWorldCoordinate.x, endWorldCoordinate.y);
+        targetNode.SetBlock = lockEndpoints;
     }
 
     private void OnDrawGizmos()
@@ -167,7 +169,13 @@ public class AStarGrid : MonoBehaviour
                 // 노드의 좌표를 Vector2로 변환 (노드에 저장된 좌표는 world 좌표여야 합니다)
                 Vector2 pos = new Vector2(node.X, node.Y);
                 // isBlock 상태에 따라 색상을 설정
-                Gizmos.color = node.GetBlock ? Color.red : Color.green;
+                if (node.GetBlock && node.Agent)
+                    Gizmos.color = Color.red;
+                else if (node.GetBlock)
+                    Gizmos.color = Color.yellow;
+                else
+                    Gizmos.color = Color.green;
+
                 // 0.4f 반지름의 원을 그립니다.
                 Gizmos.DrawWireSphere(pos, TILE_COLLIDER_RADIUS);
             }

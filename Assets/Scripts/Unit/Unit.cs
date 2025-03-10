@@ -10,16 +10,6 @@ public class Unit : MonoBehaviour
 
     private void Awake()
     {
-<<<<<<< Updated upstream
-        aStarAgent.OnTargetTileOccupied += unitRangeDetector.IsOtherObjectInRange;
-        aStarAgent.OnEnemyInRange += unitRangeDetector.IsEnemyInRange;
-=======
         rangeDetector.OnRequestTeamType += () => { return Team; };
->>>>>>> Stashed changes
-    }
-
-    private void OnMouseDown() 
-    {
-        aStarAgent.BeginPathFollowing();
     }
 }

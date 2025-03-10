@@ -17,15 +17,14 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     [field: SerializeField] public TeamType Team { get; private set; }
 
-    private List<AStarNode> _currentPath;
     private int _currentPathIndex = 1;
+    private List<AStarNode> _currentPath;
     private AStarGrid _grid;
-    private AStarAgentCommandManager _aStarAgentCommandManager;
 
     public Vector2Int CurrentGridPosition { get; private set; }
-    public event Func<bool> OnTargetTileOccupied;
-    public event Func<bool> OnEnemyInRange;
-    public event Action OnStepCompleted;
+    public event Func<AStarAgent, bool, bool, List<AStarNode>> OnFindNearestEnemy;
+    public event Func<bool> OnRequestAllowDiagonal;
+    public event Func<bool> OnRequestDontCrossCorner;
 
     /// <summary>
     /// 현재 경로에서 다음 노드가 존재하는지 여부
@@ -44,22 +43,28 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     private void Awake() 
     {
-        _aStarAgentCommandManager = AStarAgentCommandManager.Instance;
         transform.position = (Vector3Int)PathPoint;
         CurrentGridPosition = PathPoint;
     }
 
-    public void MarkCurrentPositionAsBlocked()
+    public void LockCurrentGridPositionWithSettings(Func<bool> requestAllowDiagonal, Func<bool> requestDontCrossCorner, Func<AStarAgent, bool, bool, List<AStarNode>> requestFindNearestEnemy)
     {
         _grid ??= AStarAlgorithmManager.Instance.Grid;
         _grid.SetNodeBlock(PathPoint, true, this);
+
+        OnRequestAllowDiagonal = requestAllowDiagonal;
+        OnRequestDontCrossCorner = requestDontCrossCorner;
+        OnFindNearestEnemy = requestFindNearestEnemy;
+    }
+
+    public void SetCurrentPath(List<AStarNode> currentPath)
+    {
+        _currentPath = currentPath;
     }
 
     public void BeginPathFollowing()
     {
-        _currentPath = _aStarAgentCommandManager.FindNearestEnemy(this, Team, true, true);
-
-        if (_currentPath != null)
+        if (_currentPath != null && _currentPath.Count > 0 )
             ExecuteGridMove();
     }
 
@@ -68,14 +73,15 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     /// 이동이 가능하면 에이전트의 위치를 업데이트합니다.
     /// </summary>
     /// <param name="targetWorldCoordinate">이동하려는 목표 월드 좌표</param>
-    public void ExecuteGridMove()
+    private void ExecuteGridMove()
     {
         AStarNode currentNode = _currentPath[_currentPathIndex];
         Vector2Int destPos = new Vector2Int(currentNode.X, currentNode.Y);
 
+        CheckTargetOccupancyAndRecalculate(destPos);
+
         if (!IsAtEndOfPath && _grid.IsNodeBlocked(destPos))
         {
-            //로직 업데이트 필요
             ProcessOccupiedTileResponse(destPos);
             return;
         }
@@ -84,6 +90,17 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
             MoveToNextNode(destPos);
         else if (IsAtEndOfPath)
             StopMovement();
+    }
+
+    /// <summary>
+    /// 지정된 목적지 좌표에 해당하는 노드가 점유되어 있지 않으면 경로를 재탐색합니다.
+    /// </summary>
+    /// <param name="destPos">목적지 월드 좌표</param>
+    private void CheckTargetOccupancyAndRecalculate(Vector2Int destPos)
+    {
+        AStarNode targetNode = _grid.GetNodeAt(destPos.x, destPos.y);
+        if (targetNode.Agent == null)
+            OnFindNearestEnemy.Invoke(this, OnRequestAllowDiagonal.Invoke(), OnRequestDontCrossCorner.Invoke());
     }
 
     /// <summary>
@@ -110,7 +127,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         float distance = Vector2.Distance(transform.position, new Vector2(destPos.x, destPos.y));
         float duration = distance / moveSpeed;
 
-        // DOTween을 사용하여 선형 보간으로 이동시키고, 이동이 완료되면 SnapToDestinationAndAdvance를 호출합니다.
+        // DOTween을 사용하여 선형 보간으로 이동시키고, 이동이 완료되면 SnapAndAdvance를 호출합니다.
         transform.DOMove(destination, duration)
                  .SetEase(Ease.Linear)
                  .SetDelay(stepDelay)
@@ -143,15 +160,16 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     {
         TeamType crushAgentTeam = _grid.ReturnAgent(destPos).Team;
 
+        SnapToLastValidPosition();
+
         if (crushAgentTeam != Team)
         {
-            SnapToLastValidPosition();
+            Debug.Log($"적군 충돌 {gameObject.name} 공격 스테이트로 전환");
             StopMovement();
-            Debug.Log("공격 스테이트로 전환");
         }
         else
         {
-            SnapToLastValidPosition();
+            Debug.Log($"아군 충돌 {gameObject.name} 경로 재탐색");
             RecalculatePath();
         }
     }
@@ -159,6 +177,8 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private void RecalculatePath()
     {
         ClearFllowing();
+        List<AStarNode> newPath = OnFindNearestEnemy.Invoke(this, OnRequestAllowDiagonal.Invoke(), OnRequestDontCrossCorner.Invoke());
+        SetCurrentPath(newPath);
         BeginPathFollowing();
     }
 
