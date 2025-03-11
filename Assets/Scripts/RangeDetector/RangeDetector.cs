@@ -48,8 +48,11 @@ public class RangeDetector : MonoBehaviour
         {
             if (otherUnit.GetTeam() != OnRequestTeamType.Invoke() && _enemyUnits.Contains(otherUnit))
             {
-                _enemyUnits.Remove(otherUnit);
-                Debug.Log($"_enemyUnits에 {otherUnit.name} 제거");
+                bool removed = _enemyUnits.Remove(otherUnit);
+                if (removed)
+                    Debug.Log($"_enemyUnits에서 {otherUnit.name} 제거됨.");
+                else
+                    Debug.LogWarning($"_enemyUnits에서 {otherUnit.name} 제거에 실패했습니다.");
             }
         }
     }
