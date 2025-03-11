@@ -18,6 +18,7 @@ public class RangeDetector : MonoBehaviour
     private HashSet<Unit> _enemyUnits;
 
     public event Func<TeamType> OnRequestTeamType;
+    public event Action<Unit> OnEnemyUnitAdded;
 
     private void Awake()
     {
@@ -38,6 +39,7 @@ public class RangeDetector : MonoBehaviour
             {
                 _enemyUnits.Add(otherUnit);
                 Debug.Log($"_enemyUnits에 {otherUnit.name} 추가");
+                OnEnemyUnitAdded?.Invoke(otherUnit);
             }
         }
     }
