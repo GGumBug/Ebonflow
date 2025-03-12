@@ -19,6 +19,7 @@ public class RangeDetector : MonoBehaviour
 
     public event Func<TeamType> OnRequestTeamType;
     public event Action<Unit> OnEnemyUnitAdded;
+    public event Action OnEnemyListEmpty;
 
     private void Awake()
     {
@@ -55,6 +56,9 @@ public class RangeDetector : MonoBehaviour
                     Debug.Log($"_enemyUnits에서 {otherUnit.name} 제거됨.");
                 else
                     Debug.LogWarning($"_enemyUnits에서 {otherUnit.name} 제거에 실패했습니다.");
+
+                if (_enemyUnits.Count <= 0)
+                    OnEnemyListEmpty.Invoke();
             }
         }
     }
