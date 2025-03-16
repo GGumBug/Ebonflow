@@ -244,6 +244,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RangeDetector
       objectReference: {fileID: 0}
+    - target: {fileID: 4698945460856950554, guid: 97d4a28b9edc1b94cb90284fee3ed68a, type: 3}
+      propertyPath: detectionRadius
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 5769357658532335531, guid: 97d4a28b9edc1b94cb90284fee3ed68a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

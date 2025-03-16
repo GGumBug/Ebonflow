@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -12,6 +13,27 @@ public class Unit : MonoBehaviour
     private void Awake()
     {
         aStarAgent.OnRequestTeamType += GetTeam;
+        aStarAgent.OnBeginWalk += () => unitStateController.State = UnitState.Walk;
+        aStarAgent.OnAttackInitiated += CanAttack;
         rangeDetector.OnRequestTeamType += GetTeam;
+    }
+
+    private bool CanAttack()
+    {
+        if (rangeDetector.HasEnemies())
+        {
+            unitStateController.State = UnitState.Attack;
+            Attack();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void Attack()
+    {
+        Unit targetEnemy = rangeDetector.GetClosestEnemy();
+
+        Debug.Log($"{name} 이 {targetEnemy.name}을 공격합니다.");
     }
 }

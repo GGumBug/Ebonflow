@@ -18,12 +18,15 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private int _currentPathIndex = 1;
     private List<AStarNode> _currentPath;
     private AStarGrid _grid;
+    private Tween _moveTween;
 
     public Vector2Int CurrentGridPosition { get; private set; }
+    public event Action OnBeginWalk;
     public event Func<AStarAgent, bool, bool, List<AStarNode>> OnFindNearestEnemy;
     public event Func<bool> OnRequestAllowDiagonal;
     public event Func<bool> OnRequestDontCrossCorner;
     public event Func<TeamType> OnRequestTeamType;
+    public event Func<bool> OnAttackInitiated;
 
     /// <summary>
     /// 현재 경로에서 다음 노드가 존재하는지 여부
@@ -128,18 +131,26 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         float distance = Vector2.Distance(transform.position, new Vector2(destPos.x, destPos.y));
         float duration = distance / moveSpeed;
 
+        OnBeginWalk.Invoke();
+
         // DOTween을 사용하여 선형 보간으로 이동시키고, 이동이 완료되면 SnapAndAdvance를 호출합니다.
-        transform.DOMove(destination, duration)
-                 .SetEase(Ease.Linear)
-                 .SetDelay(stepDelay)
-                 .OnComplete(() => SnapAndAdvance(destPos));
+        _moveTween = transform.DOMove(destination, duration)
+                    .SetEase(Ease.Linear)
+                    .SetDelay(stepDelay)
+                    .OnComplete(() => SnapAndAdvance(destPos));
     }
 
     private void SnapAndAdvance(Vector2Int destPos)
     {
         transform.position = new Vector2(destPos.x, destPos.y);
-        _currentPathIndex++;
 
+        if (OnAttackInitiated.Invoke())
+        {
+            StopMovement();
+            return;
+        }
+
+        _currentPathIndex++;
         ExecuteGridMove();
     }
 
@@ -165,8 +176,8 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
         if (crushAgentTeam != GetTeam())
         {
-            Debug.Log($"적군 충돌 {gameObject.name} 공격 스테이트로 전환");
             StopMovement();
+            OnAttackInitiated?.Invoke();
         }
         else
         {
@@ -183,9 +194,12 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         BeginPathFollowing();
     }
 
-    private void StopMovement()
+    public void StopMovement()
     {
         ClearFllowing();
+
+        if (_moveTween != null)
+            _moveTween.Kill();
     }
 
     private void ClearFllowing()

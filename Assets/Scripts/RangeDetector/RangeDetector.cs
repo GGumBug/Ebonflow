@@ -18,8 +18,9 @@ public class RangeDetector : MonoBehaviour
     private HashSet<Unit> _enemyUnits;
 
     public event Func<TeamType> OnRequestTeamType;
-    public event Action<Unit> OnEnemyUnitAdded;
     public event Action OnEnemyListEmpty;
+
+    public bool HasEnemies() => _enemyUnits != null && _enemyUnits.Count > 0;
 
     private void Awake()
     {
@@ -39,8 +40,6 @@ public class RangeDetector : MonoBehaviour
             if (otherUnit.GetTeam() != OnRequestTeamType.Invoke())
             {
                 _enemyUnits.Add(otherUnit);
-                Debug.Log($"_enemyUnits에 {otherUnit.name} 추가");
-                OnEnemyUnitAdded?.Invoke(otherUnit);
             }
         }
     }
@@ -52,16 +51,34 @@ public class RangeDetector : MonoBehaviour
             if (otherUnit.GetTeam() != OnRequestTeamType.Invoke() && _enemyUnits.Contains(otherUnit))
             {
                 bool removed = _enemyUnits.Remove(otherUnit);
-                if (removed)
-                    Debug.Log($"_enemyUnits에서 {otherUnit.name} 제거됨.");
-                else
+
+                if (!removed)
                     Debug.LogWarning($"_enemyUnits에서 {otherUnit.name} 제거에 실패했습니다.");
 
                 if (_enemyUnits.Count <= 0)
-                    OnEnemyListEmpty.Invoke();
+                    OnEnemyListEmpty?.Invoke();
             }
         }
+    }    
+
+    public Unit GetClosestEnemy()
+    {
+        Unit closestEnemy = null;
+        float minDistance = float.MaxValue;
+
+        foreach (Unit enemy in _enemyUnits)
+        {
+            float distance = Vector2.Distance(transform.position, enemy.transform.position);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestEnemy = enemy;
+            }
+        }
+
+        return closestEnemy;
     }
+
 
     private void OnDrawGizmos()
     {
