@@ -26,4 +26,8 @@ public class UnitStateController : MonoBehaviour
             }
         }
     }
+
+    public bool IsIdle() => State == UnitState.Idle;
+    public bool IsWalk() => State == UnitState.Walk;
+    public bool IsAttack() => State == UnitState.Attack;
 }
