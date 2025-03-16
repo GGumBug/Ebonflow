@@ -82,7 +82,7 @@ public class RangeDetector : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
+        Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
 }
