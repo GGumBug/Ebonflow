@@ -5,6 +5,7 @@ public class Unit : MonoBehaviour
     [SerializeField] private TeamType team;
     [SerializeField] private AStarAgent aStarAgent;
     [SerializeField] private RangeDetector rangeDetector;
+    [SerializeField] private UnitStateController unitStateController;
 
     public TeamType GetTeam() => team;
 
