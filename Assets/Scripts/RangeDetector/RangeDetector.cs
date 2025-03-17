@@ -79,7 +79,6 @@ public class RangeDetector : MonoBehaviour
         return closestEnemy;
     }
 
-
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.white;
