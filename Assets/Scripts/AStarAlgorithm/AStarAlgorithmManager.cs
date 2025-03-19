@@ -1,8 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 {
+    [SerializeField] private bool allowDiagonal;
+    [SerializeField] private bool dontCrossCorner;
+
     private const int COST_STRAIGHT = 10;
     private const int COST_DIAGONAL = 14;
     private const int TARGET_COUNT_THRESHOLD = 20;
@@ -14,6 +18,9 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
     private PriorityQueue<AStarNode> _openNodeQueue;
 
     private float GetFinalPathCost => _targetNode.F;
+
+    public Func<HashSet<Unit>> OnRequestAllyUnits;
+    public Func<HashSet<Unit>> OnRequestEnemyUnits;
 
     public AStarGrid Grid { get; private set; }
 
@@ -28,17 +35,19 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         Grid.Init(gridSettings);
     }
 
-    public List<AStarNode> GetPath(AStarAgent startPoint, AStarAgent targetPoint, bool allowDiagonal = false, bool dontCrossCorner = false)
+    public List<AStarNode> GetPath(AStarAgent startPoint, AStarAgent targetPoint)
     {
-        return FindPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
+        return FindPath(startPoint, targetPoint);
     }
 
-    public List<AStarNode> GetPath(AStarAgent startPoint, HashSet<Unit> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
+    public List<AStarNode> GetPath(AStarAgent startPoint)
     {
-        return FindClosestTargetPath(startPoint, targetPoints, allowDiagonal, dontCrossCorner);
+        HashSet<Unit> targetUnits = startPoint.GetTeam() == TeamType.Ally ? OnRequestEnemyUnits.Invoke() : OnRequestAllyUnits.Invoke();
+
+        return FindClosestTargetPath(startPoint, targetUnits, allowDiagonal, dontCrossCorner);
     }
 
-    private List<AStarNode> FindPath(AStarAgent startAgent, AStarAgent targetAgent, bool allowDiagonal = false, bool dontCrossCorner = false)
+    private List<AStarNode> FindPath(AStarAgent startAgent, AStarAgent targetAgent)
     {
         Vector2Int startVector = startAgent.CurrentGridPosition;
         Vector2Int targetVector = targetAgent.CurrentGridPosition;
@@ -86,7 +95,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 
         foreach (var target in targetPoints)
         {
-            var finalPath = FindPath(startPoint, target.Agent, allowDiagonal, dontCrossCorner);
+            var finalPath = FindPath(startPoint, target.Agent);
 
             if (finalPath != null && finalPath.Count > 1)
             {

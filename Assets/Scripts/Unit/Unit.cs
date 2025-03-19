@@ -20,6 +20,19 @@ public class Unit : MonoBehaviour
         rangeDetector.OnRequestTeamType += GetTeam;
     }
 
+    public void Setup()
+    {
+        Agent.ReserveCurrentGridCell();
+    }
+
+    public void StartBattle()
+    {
+        if (CanAttack())
+            Attack();
+        else
+            Agent.StartFollowPath();
+    }
+
     private bool CanAttack()
     {
         if (rangeDetector.HasEnemies())

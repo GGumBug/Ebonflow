@@ -6,7 +6,7 @@ public class AutoBattleManager : Singleton<AutoBattleManager>
     [SerializeField] Unit[] allyArray;
     [SerializeField] Unit[] enemyArray;
 
-    private AStarAgentCommandManager _aStarAgentCommandManager;
+    private AStarAlgorithmManager _aStarAlgorithmManager;
 
     public HashSet<Unit> AllyUnits { get; private set; }
     public HashSet<Unit> EnemyUnits { get; private set; }
@@ -18,28 +18,28 @@ public class AutoBattleManager : Singleton<AutoBattleManager>
         EnemyUnits = new HashSet<Unit>(enemyArray);
         StateController = new AutoBattleStateController();
 
-        _aStarAgentCommandManager = AStarAgentCommandManager.Instance;
-        _aStarAgentCommandManager.OnRequestAllyUnits += () => { return AllyUnits; };
-        _aStarAgentCommandManager.OnRequestEnemyUnits += () => { return EnemyUnits; };
+        _aStarAlgorithmManager = AStarAlgorithmManager.Instance;
+        _aStarAlgorithmManager.OnRequestAllyUnits += () => { return AllyUnits; };
+        _aStarAlgorithmManager.OnRequestEnemyUnits += () => { return EnemyUnits; };
     }
 
     public void Setup()
     {
-        foreach (var unit in AllyUnits)
-            _aStarAgentCommandManager.SetupAgent(unit.Agent);
+        foreach (var ally in AllyUnits)
+            ally.Setup();
 
-        foreach (var unit in EnemyUnits)
-            _aStarAgentCommandManager.SetupAgent(unit.Agent);
+        foreach (var enemy in EnemyUnits)
+            enemy.Setup();
     }
 
     public void StartBattle()
     {
         StateController.GameState = AutoBattleGameState.InProgress;
 
-        foreach (var unit in AllyUnits)
-            _aStarAgentCommandManager.StartAgentPathFollowing(unit.Agent);
+        foreach (var ally in AllyUnits)
+            ally.StartBattle();
 
-        foreach (var unit in EnemyUnits)
-            _aStarAgentCommandManager.StartAgentPathFollowing(unit.Agent);
+        foreach (var enemy in EnemyUnits)
+            enemy.StartBattle();
     }
 }
