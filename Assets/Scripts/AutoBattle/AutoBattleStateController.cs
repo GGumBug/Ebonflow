@@ -1,6 +1,6 @@
 public class AutoBattleStateController
 {
-    private AutoBattleGameState _gameState;
+    private AutoBattleGameState _gameState = AutoBattleGameState.Setup;
 
     public AutoBattleGameState GameState
     {

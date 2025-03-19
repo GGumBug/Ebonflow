@@ -8,6 +8,8 @@ public class Unit : MonoBehaviour
     [SerializeField] private RangeDetector rangeDetector;
     [SerializeField] private UnitStateController unitStateController;
 
+    public AStarAgent Agent => aStarAgent;
+
     public TeamType GetTeam() => team;
 
     private void Awake()

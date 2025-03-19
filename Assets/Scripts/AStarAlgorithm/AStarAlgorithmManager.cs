@@ -33,7 +33,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return FindPath(startPoint, targetPoint, allowDiagonal, dontCrossCorner);
     }
 
-    public List<AStarNode> GetPath(AStarAgent startPoint, HashSet<AStarAgent> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
+    public List<AStarNode> GetPath(AStarAgent startPoint, HashSet<Unit> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
         return FindClosestTargetPath(startPoint, targetPoints, allowDiagonal, dontCrossCorner);
     }
@@ -74,7 +74,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return null;
     }
 
-    private List<AStarNode> FindClosestTargetPath(AStarAgent startPoint, HashSet<AStarAgent> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
+    private List<AStarNode> FindClosestTargetPath(AStarAgent startPoint, HashSet<Unit> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
         if (targetPoints == null || targetPoints.Count == 0)
             throw new System.ArgumentNullException(nameof(targetPoints), "The targets set cannot be null.");
@@ -86,7 +86,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 
         foreach (var target in targetPoints)
         {
-            var finalPath = FindPath(startPoint, target, allowDiagonal, dontCrossCorner);
+            var finalPath = FindPath(startPoint, target.Agent, allowDiagonal, dontCrossCorner);
 
             if (finalPath != null && finalPath.Count > 1)
             {
@@ -105,17 +105,17 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return pathQueue.Dequeue(); 
     }
 
-    private HashSet<AStarAgent> FilterTargetsByHeuristic(AStarAgent startPoint, HashSet<AStarAgent> targetPoints)
+    private HashSet<Unit> FilterTargetsByHeuristic(AStarAgent startPoint, HashSet<Unit> targetPoints)
     {
-        PriorityQueue<AStarAgent> targetQueue = new PriorityQueue<AStarAgent>(targetPoints.Count, SortOrder.Ascending);
+        PriorityQueue<Unit> targetQueue = new PriorityQueue<Unit>(targetPoints.Count, SortOrder.Ascending);
         foreach (var target in targetPoints)
         {
-            int distance = Mathf.Abs(startPoint.PathPoint.x - target.PathPoint.x) +
-                           Mathf.Abs(startPoint.PathPoint.y - target.PathPoint.y);
+            int distance = Mathf.Abs(startPoint.PathPoint.x - target.Agent.PathPoint.x) +
+                           Mathf.Abs(startPoint.PathPoint.y - target.Agent.PathPoint.y);
             targetQueue.Enqueue(target, distance);
         }
 
-        HashSet<AStarAgent> filteredTargets = new HashSet<AStarAgent>();
+        HashSet<Unit> filteredTargets = new HashSet<Unit>();
         int count = Mathf.Min(TARGET_COUNT_THRESHOLD, targetQueue.Count);
         for (int i = 0; i < count; i++)
         {

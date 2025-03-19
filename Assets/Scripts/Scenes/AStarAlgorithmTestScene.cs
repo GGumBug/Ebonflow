@@ -35,6 +35,8 @@ public class AStarAlgorithmTestScene : SceneBase, IAStarGridSettings
     public override async UniTask DebugMode()
     {
         AStarAlgorithmManager.Instance.InitializeGrid(this);
+        AutoBattleManager.Instance.Setup();
+        AutoBattleManager.Instance.StartBattle();
 
         await UniTask.Yield();  
     }
