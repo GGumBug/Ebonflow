@@ -38,9 +38,4 @@ public class AStarAlgorithmTestScene : SceneBase, IAStarGridSettings
         AutoBattleManager.Instance.Setup();
         await UniTask.Yield();  
     }
-
-    private void Start()
-    {
-        AutoBattleManager.Instance.StartBattle();
-    }
 }
