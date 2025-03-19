@@ -36,8 +36,11 @@ public class AStarAlgorithmTestScene : SceneBase, IAStarGridSettings
     {
         AStarAlgorithmManager.Instance.InitializeGrid(this);
         AutoBattleManager.Instance.Setup();
-        AutoBattleManager.Instance.StartBattle();
-
         await UniTask.Yield();  
+    }
+
+    private void Start()
+    {
+        AutoBattleManager.Instance.StartBattle();
     }
 }
