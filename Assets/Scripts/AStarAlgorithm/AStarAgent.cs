@@ -22,7 +22,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private Tween _moveTween;
 
     public Vector2Int CurrentGridPosition { get; private set; }
-    public event Action OnBeginWalk;
+    public event Action OnEndWalk;
     public event Func<TeamType> OnRequestTeamType;
     public event Func<bool> OnAttackInitiated;
 
@@ -128,8 +128,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         float distance = Vector2.Distance(transform.position, new Vector2(destPos.x, destPos.y));
         float duration = distance / moveSpeed;
 
-        OnBeginWalk?.Invoke();
-
         // DOTween을 사용하여 선형 보간으로 이동시키고, 이동이 완료되면 SnapAndAdvance를 호출합니다.
         _moveTween = transform.DOMove(destination, duration)
                     .SetEase(Ease.Linear)
@@ -195,6 +193,9 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
         if (_moveTween != null)
             _moveTween.Kill();
+
+        OnEndWalk?.Invoke();
+        Debug.Log("이동을 종료합니다.");
     }
 
     private void ClearFllowing()

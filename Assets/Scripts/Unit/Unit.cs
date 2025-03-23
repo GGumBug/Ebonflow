@@ -15,7 +15,7 @@ public class Unit : MonoBehaviour
     private void Awake()
     {
         aStarAgent.OnRequestTeamType += GetTeam;
-        aStarAgent.OnBeginWalk += () => unitStateController.State = UnitState.Walk;
+        aStarAgent.OnEndWalk += () => unitStateController.State = UnitState.Idle;
         aStarAgent.OnAttackInitiated += CanAttack;
         rangeDetector.OnRequestTeamType += GetTeam;
     }
@@ -30,7 +30,7 @@ public class Unit : MonoBehaviour
         if (CanAttack())
             Attack();
         else
-            Agent.StartFollowPath();
+            Walk();
     }
 
     private bool CanAttack()
@@ -47,5 +47,15 @@ public class Unit : MonoBehaviour
         Unit targetEnemy = rangeDetector.GetClosestEnemy();
 
         Debug.Log($"{name} 이 {targetEnemy.name}을 공격합니다.");
+    }
+
+    private void Walk()
+    {
+        if (unitStateController.State == UnitState.Walk)
+            return;
+
+        Debug.Log("이동을 시작합니다.");
+        unitStateController.State = UnitState.Walk;
+        Agent.StartFollowPath();
     }
 }
