@@ -36,17 +36,14 @@ public class Unit : MonoBehaviour
     private bool CanAttack()
     {
         if (rangeDetector.HasEnemies())
-        {
-            unitStateController.State = UnitState.Attack;
-            Attack();
             return true;
-        }
 
         return false;
     }
 
     private void Attack()
     {
+        unitStateController.State = UnitState.Attack;
         Unit targetEnemy = rangeDetector.GetClosestEnemy();
 
         Debug.Log($"{name} 이 {targetEnemy.name}을 공격합니다.");

@@ -85,11 +85,16 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         AStarNode currentNode = _currentPath[_currentPathIndex];
         Vector2Int destPos = new Vector2Int(currentNode.X, currentNode.Y);
 
-        RecalculatePathIfTargetMissing();
-
         if (!IsAtEndOfPath && _grid.IsNodeBlocked(destPos))
         {
             ProcessOccupiedTileResponse(destPos);
+            return;
+        }
+
+        AStarNode endNode = _currentPath[_currentPath.Count - 1];
+        if (endNode.Agent == null)
+        {
+            RecalculatePath();
             return;
         }
 
@@ -97,13 +102,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
             MoveToNextNode(destPos);
         else if (IsAtEndOfPath)
             StopMovement();
-    }
-
-    private void RecalculatePathIfTargetMissing()
-    {
-        AStarNode endNode = _currentPath[_currentPath.Count - 1];
-        if (endNode.Agent == null)
-            StartFollowPath();
     }
 
     /// <summary>
@@ -130,7 +128,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         float distance = Vector2.Distance(transform.position, new Vector2(destPos.x, destPos.y));
         float duration = distance / moveSpeed;
 
-        OnBeginWalk.Invoke();
+        OnBeginWalk?.Invoke();
 
         // DOTween을 사용하여 선형 보간으로 이동시키고, 이동이 완료되면 SnapAndAdvance를 호출합니다.
         _moveTween = transform.DOMove(destination, duration)
