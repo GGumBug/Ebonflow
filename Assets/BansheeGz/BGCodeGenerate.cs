@@ -8,13 +8,13 @@ using BansheeGz.BGDatabase;
 
 #pragma warning disable 414
 
-public partial class DB_TastTable : BGEntity
+public partial class DB_Units : BGEntity
 {
 
 	public class Factory : BGEntity.EntityFactory
 	{
-		public BGEntity NewEntity(BGMetaEntity meta) => new DB_TastTable(meta);
-		public BGEntity NewEntity(BGMetaEntity meta, BGId id) => new DB_TastTable(meta, id);
+		public BGEntity NewEntity(BGMetaEntity meta) => new DB_Units(meta);
+		public BGEntity NewEntity(BGMetaEntity meta, BGId id) => new DB_Units(meta, id);
 	}
 	private static BansheeGz.BGDatabase.BGMetaRow _metaDefault;
 	public static BansheeGz.BGDatabase.BGMetaRow MetaDefault => _metaDefault ?? (_metaDefault = BGCodeGenUtils.GetMeta<BansheeGz.BGDatabase.BGMetaRow>(new BGId(5137741180518508714UL,3834452103278930110UL), () => _metaDefault = null));
@@ -25,45 +25,45 @@ public partial class DB_TastTable : BGEntity
 		get => _f_name[Index];
 		set => _f_name[Index] = value;
 	}
-	public System.Int32 f_TestInt
+	public System.Int32 f_UnitId
 	{
-		get => _f_TestInt[Index];
-		set => _f_TestInt[Index] = value;
+		get => _f_UnitId[Index];
+		set => _f_UnitId[Index] = value;
 	}
 	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
 	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(4762821637793240553UL, 2073662938292457094UL), () => _ufle12jhs77_f_name = null));
-	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_TestInt;
-	public static BansheeGz.BGDatabase.BGFieldInt _f_TestInt => _ufle12jhs77_f_TestInt ?? (_ufle12jhs77_f_TestInt = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4982881180119014248UL, 9151380069589941418UL), () => _ufle12jhs77_f_TestInt = null));
-	private static readonly DB_TastTable.Factory _factory0_PFS = new DB_TastTable.Factory();
-	private DB_TastTable() : base(MetaDefault)
+	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_UnitId;
+	public static BansheeGz.BGDatabase.BGFieldInt _f_UnitId => _ufle12jhs77_f_UnitId ?? (_ufle12jhs77_f_UnitId = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4982881180119014248UL, 9151380069589941418UL), () => _ufle12jhs77_f_UnitId = null));
+	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
+	private DB_Units() : base(MetaDefault)
 	{
 	}
-	private DB_TastTable(BGId id) : base(MetaDefault, id)
+	private DB_Units(BGId id) : base(MetaDefault, id)
 	{
 	}
-	private DB_TastTable(BGMetaEntity meta) : base(meta)
+	private DB_Units(BGMetaEntity meta) : base(meta)
 	{
 	}
-	private DB_TastTable(BGMetaEntity meta, BGId id) : base(meta, id)
+	private DB_Units(BGMetaEntity meta, BGId id) : base(meta, id)
 	{
 	}
-	public static DB_TastTable FindEntity(Predicate<DB_TastTable> filter)
+	public static DB_Units FindEntity(Predicate<DB_Units> filter)
 	{
-		return MetaDefault.FindEntity(entity => filter==null || filter((DB_TastTable) entity)) as DB_TastTable;
+		return MetaDefault.FindEntity(entity => filter==null || filter((DB_Units) entity)) as DB_Units;
 	}
-	public static List<DB_TastTable> FindEntities(Predicate<DB_TastTable> filter, List<DB_TastTable> result=null, Comparison<DB_TastTable> sort=null) => BGCodeGenUtils.FindEntities(MetaDefault, filter, result, sort);
-	public static void ForEachEntity(Action<DB_TastTable> action, Predicate<DB_TastTable> filter=null, Comparison<DB_TastTable> sort=null)
+	public static List<DB_Units> FindEntities(Predicate<DB_Units> filter, List<DB_Units> result=null, Comparison<DB_Units> sort=null) => BGCodeGenUtils.FindEntities(MetaDefault, filter, result, sort);
+	public static void ForEachEntity(Action<DB_Units> action, Predicate<DB_Units> filter=null, Comparison<DB_Units> sort=null)
 	{
-		MetaDefault.ForEachEntity(entity => action((DB_TastTable) entity), filter == null ? null : (Predicate<BGEntity>) (entity => filter((DB_TastTable) entity)), sort==null?(Comparison<BGEntity>) null:(e1,e2) => sort((DB_TastTable)e1,(DB_TastTable)e2));
+		MetaDefault.ForEachEntity(entity => action((DB_Units) entity), filter == null ? null : (Predicate<BGEntity>) (entity => filter((DB_Units) entity)), sort==null?(Comparison<BGEntity>) null:(e1,e2) => sort((DB_Units)e1,(DB_Units)e2));
 	}
-	public static DB_TastTable GetEntity(BGId entityId) => (DB_TastTable) MetaDefault.GetEntity(entityId);
-	public static DB_TastTable GetEntity(int index) => (DB_TastTable) MetaDefault[index];
-	public static DB_TastTable GetEntity(string entityName) => (DB_TastTable) MetaDefault.GetEntity(entityName);
-	public static DB_TastTable NewEntity() => (DB_TastTable) MetaDefault.NewEntity();
-	public static DB_TastTable NewEntity(BGId entityId) => (DB_TastTable) MetaDefault.NewEntity(entityId);
-	public static DB_TastTable NewEntity(Action<DB_TastTable> callback)
+	public static DB_Units GetEntity(BGId entityId) => (DB_Units) MetaDefault.GetEntity(entityId);
+	public static DB_Units GetEntity(int index) => (DB_Units) MetaDefault[index];
+	public static DB_Units GetEntity(string entityName) => (DB_Units) MetaDefault.GetEntity(entityName);
+	public static DB_Units NewEntity() => (DB_Units) MetaDefault.NewEntity();
+	public static DB_Units NewEntity(BGId entityId) => (DB_Units) MetaDefault.NewEntity(entityId);
+	public static DB_Units NewEntity(Action<DB_Units> callback)
 	{
-		return (DB_TastTable) MetaDefault.NewEntity(new BGMetaEntity.NewEntityContext(entity => callback((DB_TastTable)entity)));
+		return (DB_Units) MetaDefault.NewEntity(new BGMetaEntity.NewEntityContext(entity => callback((DB_Units)entity)));
 	}
 }
 #pragma warning restore 414
