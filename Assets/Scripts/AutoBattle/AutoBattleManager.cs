@@ -7,6 +7,7 @@ public class AutoBattleManager : Singleton<AutoBattleManager>
     [SerializeField] Unit[] enemyArray;
 
     private AStarAlgorithmManager _aStarAlgorithmManager;
+    private DamageCalculator _damageCalculator;
 
     public HashSet<Unit> AllyUnits { get; private set; }
     public HashSet<Unit> EnemyUnits { get; private set; }
@@ -14,6 +15,8 @@ public class AutoBattleManager : Singleton<AutoBattleManager>
 
     private void Awake()
     {
+        _damageCalculator = new DamageCalculator();
+
         AllyUnits = new HashSet<Unit>(allyArray);
         EnemyUnits = new HashSet<Unit>(enemyArray);
         StateController = new AutoBattleStateController();
@@ -41,5 +44,14 @@ public class AutoBattleManager : Singleton<AutoBattleManager>
 
         foreach (var enemy in EnemyUnits)
             enemy.StartBattle();
+    }
+
+    public void Attack(Unit attacker, Unit defender)
+    {
+        var atkStats = attacker.Stat.Data;
+        var defStats = defender.Stat.Data;
+
+        int damage = _damageCalculator.CalculateDamage(atkStats, defStats);
+        //defender.ApplyDamage(damage);
     }
 }

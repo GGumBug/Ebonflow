@@ -190,7 +190,7 @@ public partial class DB_UnitStats : BGEntity
 		get => _f_Health[Index];
 		set => _f_Health[Index] = value;
 	}
-	public System.Single f_Attack
+	public System.Int32 f_Attack
 	{
 		get => _f_Attack[Index];
 		set => _f_Attack[Index] = value;
@@ -203,8 +203,8 @@ public partial class DB_UnitStats : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldInt _f_StarLevel => _ufle12jhs77_f_StarLevel ?? (_ufle12jhs77_f_StarLevel = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(5044325088556667171UL, 4305122867038705287UL), () => _ufle12jhs77_f_StarLevel = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_Health;
 	public static BansheeGz.BGDatabase.BGFieldInt _f_Health => _ufle12jhs77_f_Health ?? (_ufle12jhs77_f_Health = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4975478997348932006UL, 16465069808607322766UL), () => _ufle12jhs77_f_Health = null));
-	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_Attack;
-	public static BansheeGz.BGDatabase.BGFieldFloat _f_Attack => _ufle12jhs77_f_Attack ?? (_ufle12jhs77_f_Attack = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(4870036421143210701UL, 9225858769497029536UL), () => _ufle12jhs77_f_Attack = null));
+	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_Attack;
+	public static BansheeGz.BGDatabase.BGFieldInt _f_Attack => _ufle12jhs77_f_Attack ?? (_ufle12jhs77_f_Attack = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4870036421143210701UL, 9225858769497029536UL), () => _ufle12jhs77_f_Attack = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();

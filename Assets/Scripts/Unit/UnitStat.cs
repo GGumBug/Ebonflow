@@ -6,6 +6,8 @@ public class UnitStat
     private int _starLevel;
     private UnitStatData _data;
 
+    public UnitStatData Data => _data;
+
     public UnitStat(int unitID, int starLevel)
     {
         _unitID = unitID;
@@ -16,7 +18,7 @@ public class UnitStat
     public void LevelUpUnitStat(int starLevel)
     {
         _starLevel = starLevel;
-        LoadUnitStatData(_unitID, _starLevel);   
+        LoadUnitStatData(_unitID, _starLevel);
     }
 
     private void LoadUnitStatData(int unitID, int starLevel)

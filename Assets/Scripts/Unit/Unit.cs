@@ -10,6 +10,7 @@ public class Unit : MonoBehaviour
     private RangeDetector _rangeDetector;
     private UnitStateController _unitStateController;
 
+    public UnitStat Stat => _stat;
     public AStarAgent Agent => _aStarAgent;
 
     public TeamType GetTeam() => team;

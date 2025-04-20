@@ -9,7 +9,9 @@ public class UnitStatData
 
     public int Health { get; private set; }
 
-    public float Attack { get; private set; }
+    public int Attack { get; private set; }
+
+    public void SetHP(int newHP) { Health = newHP; } 
 
     public UnitStatData(DB_UnitStats unitStats)
     {
