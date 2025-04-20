@@ -50,6 +50,7 @@ public partial class DB_Units : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldInt _f_NameKey => _ufle12jhs77_f_NameKey ?? (_ufle12jhs77_f_NameKey = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4865234553763274604UL, 17058006971073422733UL), () => _ufle12jhs77_f_NameKey = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
+	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
 	private DB_Units() : base(MetaDefault)
 	{
 	}
@@ -124,6 +125,7 @@ public partial class DB_LocalizationEntries : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldString _f_Ko => _ufle12jhs77_f_Ko ?? (_ufle12jhs77_f_Ko = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldString>(MetaDefault, new BGId(5379720108034722626UL, 9729953022484816816UL), () => _ufle12jhs77_f_Ko = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
+	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
 	private DB_LocalizationEntries() : base(MetaDefault)
 	{
 	}
@@ -153,6 +155,88 @@ public partial class DB_LocalizationEntries : BGEntity
 	public static DB_LocalizationEntries NewEntity(Action<DB_LocalizationEntries> callback)
 	{
 		return (DB_LocalizationEntries) MetaDefault.NewEntity(new BGMetaEntity.NewEntityContext(entity => callback((DB_LocalizationEntries)entity)));
+	}
+}
+
+public partial class DB_UnitStats : BGEntity
+{
+
+	public class Factory : BGEntity.EntityFactory
+	{
+		public BGEntity NewEntity(BGMetaEntity meta) => new DB_UnitStats(meta);
+		public BGEntity NewEntity(BGMetaEntity meta, BGId id) => new DB_UnitStats(meta, id);
+	}
+	private static BansheeGz.BGDatabase.BGMetaRow _metaDefault;
+	public static BansheeGz.BGDatabase.BGMetaRow MetaDefault => _metaDefault ?? (_metaDefault = BGCodeGenUtils.GetMeta<BansheeGz.BGDatabase.BGMetaRow>(new BGId(5665728590160682846UL,16377324882931091591UL), () => _metaDefault = null));
+	public static BansheeGz.BGDatabase.BGRepoEvents Events => BGRepo.I.Events;
+	public static int CountEntities => MetaDefault.CountEntities;
+	public System.String f_name
+	{
+		get => _f_name[Index];
+		set => _f_name[Index] = value;
+	}
+	public System.Int32 f_UnitId
+	{
+		get => _f_UnitId[Index];
+		set => _f_UnitId[Index] = value;
+	}
+	public System.Int32 f_StarLevel
+	{
+		get => _f_StarLevel[Index];
+		set => _f_StarLevel[Index] = value;
+	}
+	public System.Int32 f_Health
+	{
+		get => _f_Health[Index];
+		set => _f_Health[Index] = value;
+	}
+	public System.Single f_Attack
+	{
+		get => _f_Attack[Index];
+		set => _f_Attack[Index] = value;
+	}
+	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
+	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(5507304839897652857UL, 4685881140701435545UL), () => _ufle12jhs77_f_name = null));
+	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_UnitId;
+	public static BansheeGz.BGDatabase.BGFieldInt _f_UnitId => _ufle12jhs77_f_UnitId ?? (_ufle12jhs77_f_UnitId = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4935012563684004686UL, 4885294402700957113UL), () => _ufle12jhs77_f_UnitId = null));
+	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_StarLevel;
+	public static BansheeGz.BGDatabase.BGFieldInt _f_StarLevel => _ufle12jhs77_f_StarLevel ?? (_ufle12jhs77_f_StarLevel = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(5044325088556667171UL, 4305122867038705287UL), () => _ufle12jhs77_f_StarLevel = null));
+	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_Health;
+	public static BansheeGz.BGDatabase.BGFieldInt _f_Health => _ufle12jhs77_f_Health ?? (_ufle12jhs77_f_Health = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4975478997348932006UL, 16465069808607322766UL), () => _ufle12jhs77_f_Health = null));
+	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_Attack;
+	public static BansheeGz.BGDatabase.BGFieldFloat _f_Attack => _ufle12jhs77_f_Attack ?? (_ufle12jhs77_f_Attack = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(4870036421143210701UL, 9225858769497029536UL), () => _ufle12jhs77_f_Attack = null));
+	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
+	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
+	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
+	private DB_UnitStats() : base(MetaDefault)
+	{
+	}
+	private DB_UnitStats(BGId id) : base(MetaDefault, id)
+	{
+	}
+	private DB_UnitStats(BGMetaEntity meta) : base(meta)
+	{
+	}
+	private DB_UnitStats(BGMetaEntity meta, BGId id) : base(meta, id)
+	{
+	}
+	public static DB_UnitStats FindEntity(Predicate<DB_UnitStats> filter)
+	{
+		return MetaDefault.FindEntity(entity => filter==null || filter((DB_UnitStats) entity)) as DB_UnitStats;
+	}
+	public static List<DB_UnitStats> FindEntities(Predicate<DB_UnitStats> filter, List<DB_UnitStats> result=null, Comparison<DB_UnitStats> sort=null) => BGCodeGenUtils.FindEntities(MetaDefault, filter, result, sort);
+	public static void ForEachEntity(Action<DB_UnitStats> action, Predicate<DB_UnitStats> filter=null, Comparison<DB_UnitStats> sort=null)
+	{
+		MetaDefault.ForEachEntity(entity => action((DB_UnitStats) entity), filter == null ? null : (Predicate<BGEntity>) (entity => filter((DB_UnitStats) entity)), sort==null?(Comparison<BGEntity>) null:(e1,e2) => sort((DB_UnitStats)e1,(DB_UnitStats)e2));
+	}
+	public static DB_UnitStats GetEntity(BGId entityId) => (DB_UnitStats) MetaDefault.GetEntity(entityId);
+	public static DB_UnitStats GetEntity(int index) => (DB_UnitStats) MetaDefault[index];
+	public static DB_UnitStats GetEntity(string entityName) => (DB_UnitStats) MetaDefault.GetEntity(entityName);
+	public static DB_UnitStats NewEntity() => (DB_UnitStats) MetaDefault.NewEntity();
+	public static DB_UnitStats NewEntity(BGId entityId) => (DB_UnitStats) MetaDefault.NewEntity(entityId);
+	public static DB_UnitStats NewEntity(Action<DB_UnitStats> callback)
+	{
+		return (DB_UnitStats) MetaDefault.NewEntity(new BGMetaEntity.NewEntityContext(entity => callback((DB_UnitStats)entity)));
 	}
 }
 #pragma warning restore 414

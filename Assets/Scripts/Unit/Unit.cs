@@ -4,24 +4,28 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     [SerializeField] private TeamType team;
-    [SerializeField] private AStarAgent aStarAgent;
-    [SerializeField] private RangeDetector rangeDetector;
-    [SerializeField] private UnitStateController unitStateController;
 
-    public AStarAgent Agent => aStarAgent;
+    private UnitStat _stat;
+    private AStarAgent _aStarAgent;
+    private RangeDetector _rangeDetector;
+    private UnitStateController _unitStateController;
+
+    public AStarAgent Agent => _aStarAgent;
 
     public TeamType GetTeam() => team;
 
-    private void Awake()
+    public void Setup(int unitID, int starLevel)
     {
-        aStarAgent.OnRequestTeamType += GetTeam;
-        aStarAgent.OnEndWalk += () => unitStateController.State = UnitState.Idle;
-        aStarAgent.OnAttackInitiated += CanAttack;
-        rangeDetector.OnRequestTeamType += GetTeam;
-    }
+        _stat = new UnitStat(unitID, starLevel);
+        _aStarAgent = GetComponent<AStarAgent>();
+        _rangeDetector = GetComponentInChildren<RangeDetector>();
+        _unitStateController = GetComponent<UnitStateController>();
 
-    public void Setup()
-    {
+        _aStarAgent.OnRequestTeamType += GetTeam;
+        _aStarAgent.OnEndWalk += () => _unitStateController.State = UnitState.Idle;
+        _aStarAgent.OnAttackInitiated += CanAttack;
+        _rangeDetector.OnRequestTeamType += GetTeam;
+
         Agent.ReserveCurrentGridCell();
     }
 
@@ -35,7 +39,7 @@ public class Unit : MonoBehaviour
 
     private bool CanAttack()
     {
-        if (rangeDetector.HasEnemies())
+        if (_rangeDetector.HasEnemies())
             return true;
 
         return false;
@@ -43,19 +47,19 @@ public class Unit : MonoBehaviour
 
     private void Attack()
     {
-        unitStateController.State = UnitState.Attack;
-        Unit targetEnemy = rangeDetector.GetClosestEnemy();
+        _unitStateController.State = UnitState.Attack;
+        Unit targetEnemy = _rangeDetector.GetClosestEnemy();
 
         Debug.Log($"{name} 이 {targetEnemy.name}을 공격합니다.");
     }
 
     private void Walk()
     {
-        if (unitStateController.State == UnitState.Walk)
+        if (_unitStateController.State == UnitState.Walk)
             return;
 
         Debug.Log("이동을 시작합니다.");
-        unitStateController.State = UnitState.Walk;
+        _unitStateController.State = UnitState.Walk;
         Agent.StartFollowPath();
     }
 }

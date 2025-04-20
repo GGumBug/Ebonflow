@@ -26,10 +26,10 @@ public class AutoBattleManager : Singleton<AutoBattleManager>
     public void Setup()
     {
         foreach (var ally in AllyUnits)
-            ally.Setup();
+            ally.Setup(0, 1);
 
         foreach (var enemy in EnemyUnits)
-            enemy.Setup();
+            enemy.Setup(1, 1);
     }
 
     public void StartBattle()
