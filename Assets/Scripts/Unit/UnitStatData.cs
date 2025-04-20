@@ -1,21 +1,24 @@
 using System;
 
 [Serializable]
-public struct UnitStatData
+public class UnitStatData
 {
-    public readonly int unitID;
-    public readonly int starLevel;
-    public readonly int health;
-    public readonly float attack;
+    public int UnitId { get; private set; }
+
+    public int StarLevel { get; private set; }
+
+    public int Health { get; private set; }
+
+    public float Attack { get; private set; }
 
     public UnitStatData(DB_UnitStats unitStats)
     {
         if (unitStats == null)
             throw new ArgumentNullException(nameof(unitStats), "DB_UnitStats 인스턴스가 null입니다.");
 
-        this.unitID = unitStats.f_UnitId;
-        this.starLevel = unitStats.f_StarLevel;
-        this.health = unitStats.f_Health;
-        this.attack = unitStats.f_Attack;
+        UnitId = unitStats.f_UnitId;
+        StarLevel = unitStats.f_StarLevel;
+        Health = unitStats.f_Health;
+        Attack = unitStats.f_Attack;
     }
 }

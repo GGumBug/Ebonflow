@@ -11,12 +11,18 @@ public class UnitStat
         _unitID = unitID;
         _starLevel = starLevel;
         LoadUnitStatData(_unitID, _starLevel);
-        Debug.Log($"UnitId={_data.unitID}, ★{_data.starLevel}, HP={_data.health}, ATK={_data.attack:F1}");
+    }
+
+    public void LevelUpUnitStat(int starLevel)
+    {
+        _starLevel = starLevel;
+        LoadUnitStatData(_unitID, _starLevel);   
     }
 
     private void LoadUnitStatData(int unitID, int starLevel)
     {
         var entity = DB_UnitStats.FindEntity((f) => f.f_UnitId == unitID && f.f_StarLevel == starLevel);
         _data = new UnitStatData(entity);
+        Debug.Log($"UnitId={_data.UnitId}, ★{_data.StarLevel}, HP={_data.Health}, ATK={_data.Attack:F1}");
     }
 }
