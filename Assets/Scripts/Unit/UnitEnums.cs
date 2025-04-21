@@ -10,3 +10,15 @@ public enum UnitState
     Walk,
     Attack,
 }
+
+public enum StatType
+{
+    Hp,
+    Attack,
+}
+
+public enum ModifierMode
+{
+    Add, 
+    Mul,
+}

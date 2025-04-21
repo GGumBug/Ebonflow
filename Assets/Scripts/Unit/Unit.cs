@@ -5,19 +5,19 @@ public class Unit : MonoBehaviour
 {
     [SerializeField] private TeamType team;
 
-    private UnitStat _stat;
+    private UnitStats _stats;
     private AStarAgent _aStarAgent;
     private RangeDetector _rangeDetector;
     private UnitStateController _unitStateController;
 
-    public UnitStat Stat => _stat;
+    public UnitStats Stat => _stats;
     public AStarAgent Agent => _aStarAgent;
 
     public TeamType GetTeam() => team;
 
     public void Setup(int unitID, int starLevel)
     {
-        _stat = new UnitStat(unitID, starLevel);
+        //_stats = new UnitStats(unitID, starLevel);
         _aStarAgent = GetComponent<AStarAgent>();
         _rangeDetector = GetComponentInChildren<RangeDetector>();
         _unitStateController = GetComponent<UnitStateController>();

@@ -48,10 +48,10 @@ public class AutoBattleManager : Singleton<AutoBattleManager>
 
     public void Attack(Unit attacker, Unit defender)
     {
-        var atkStats = attacker.Stat.Data;
-        var defStats = defender.Stat.Data;
+        //var atkStats = attacker.Stat.Data;
+        //var defStats = defender.Stat.Data;
 
-        int damage = _damageCalculator.CalculateDamage(atkStats, defStats);
+        //int damage = _damageCalculator.CalculateDamage(atkStats, defStats);
         //defender.ApplyDamage(damage);
     }
 }
