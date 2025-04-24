@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class AutoBattleScene : SceneBase, IAStarGridSettings
 {
-    [SerializeField] private Button _btnFindPath;
+    [SerializeField] private Button _btnStartBattle;
     [SerializeField] private Vector2Int _gridTopRight;
     [SerializeField] private Vector2Int _gridBottomLeft;
 
@@ -37,6 +37,7 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
         AStarAlgorithmManager.Instance.InitializeGrid(this);
         await AutoBattleManager.Instance.LoadAsset();
         AutoBattleManager.Instance.Setup();
-        await UniTask.Yield();  
+        
+        _btnStartBattle.onClick.AddListener(AutoBattleManager.Instance.StartBattle);
     }
 }

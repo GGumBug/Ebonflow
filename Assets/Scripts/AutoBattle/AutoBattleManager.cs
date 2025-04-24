@@ -58,7 +58,7 @@ public class AutoBattleManager : Singleton<AutoBattleManager>
     public Unit SpawnEnemy(int unitId, int starLevel, Vector2Int pos)
     {
         var newEnemy = _spawner.Spawn(unitId, starLevel, TeamType.Enemy, pos);
-        AllyUnits.Add(newEnemy);
+        EnemyUnits.Add(newEnemy);
         return newEnemy;
     }
     
