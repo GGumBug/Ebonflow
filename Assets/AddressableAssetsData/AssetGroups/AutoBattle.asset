@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: AutoBattle
+  m_EditorClassIdentifier: 
+  m_GroupName: AutoBattle
+  m_GUID: ea21c7a6b2e2949f6839691fa067a365
+  m_SerializeEntries:
+  - m_GUID: e2cd77fa1a43e2a4e9b1c83e9f5e722f
+    m_Address: AutoBattleUnitPrefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5f7e8eaa7196342998e793b56501583d, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 0a9f336fa71674b30934a8b4809c674c, type: 2}
+    - {fileID: 11400000, guid: 217f7371fb86546329e128f5c995301f, type: 2}

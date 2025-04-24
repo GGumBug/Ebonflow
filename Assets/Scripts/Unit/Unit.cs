@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    [SerializeField] private TeamType team;
+    [SerializeField] private TeamType _team;
 
     private UnitStats _stats;
     private AStarAgent _aStarAgent;
@@ -13,11 +13,13 @@ public class Unit : MonoBehaviour
     public UnitStats Stat => _stats;
     public AStarAgent Agent => _aStarAgent;
 
-    public TeamType GetTeam() => team;
+    public TeamType GetTeam() => _team;
 
-    public void Setup(int unitID, int starLevel)
+    public void Setup(int unitID, int starLevel, TeamType team)
     {
-        //_stats = new UnitStats(unitID, starLevel);
+        _team = team;
+
+        // _stats = new UnitStats(unitID, starLevel);
         _aStarAgent = GetComponent<AStarAgent>();
         _rangeDetector = GetComponentInChildren<RangeDetector>();
         _unitStateController = GetComponent<UnitStateController>();

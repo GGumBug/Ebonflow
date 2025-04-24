@@ -2,7 +2,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AStarAlgorithmTestScene : SceneBase, IAStarGridSettings
+public class AutoBattleScene : SceneBase, IAStarGridSettings
 {
     [SerializeField] private Button _btnFindPath;
     [SerializeField] private Vector2Int _gridTopRight;
@@ -22,9 +22,9 @@ public class AStarAlgorithmTestScene : SceneBase, IAStarGridSettings
         throw new System.NotImplementedException();
     }
 
-    public override UniTask LoadAssets()
+    public override async UniTask LoadAssets()
     {
-        throw new System.NotImplementedException();
+        await AutoBattleManager.Instance.LoadAsset();
     }
 
     public override UniTask SetupScene()
@@ -35,6 +35,7 @@ public class AStarAlgorithmTestScene : SceneBase, IAStarGridSettings
     public override async UniTask DebugMode()
     {
         AStarAlgorithmManager.Instance.InitializeGrid(this);
+        await AutoBattleManager.Instance.LoadAsset();
         AutoBattleManager.Instance.Setup();
         await UniTask.Yield();  
     }

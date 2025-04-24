@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 7017370457788964135}
   - component: {fileID: 7126042266113756151}
   m_Layer: 0
-  m_Name: Unit
+  m_Name: AutoBattleUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
