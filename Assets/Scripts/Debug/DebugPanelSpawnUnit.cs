@@ -1,7 +1,6 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System.Data;
 
 public class DebugPanelSpawnUnit : MonoBehaviour
 {
@@ -59,8 +58,7 @@ public class DebugPanelSpawnUnit : MonoBehaviour
 
     private void CreateDebugUnit(int unitID , TeamType team, Vector2Int pos)
     {
-        // 예: AutoBattleManager 쪽에서 Addressable 로드가 이미 끝났다고 가정
-        AutoBattleManager mgr = AutoBattleManager.Instance;
+        AutoBattleUnitManager mgr = AutoBattleUnitManager.Instance;
 
         Unit newUnit = team == TeamType.Ally
             ? mgr.SpawnAlly( /*unitID*/ unitID, /*star*/ 1, pos)

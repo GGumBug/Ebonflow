@@ -12,30 +12,37 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
     public Vector2Int GridBottomLeft => _gridBottomLeft;
 
 
-    public override UniTask FinalizeLoading()
+    public override async UniTask FinalizeLoading()
     {
-        throw new System.NotImplementedException();
+        await UniTask.Yield();
     }
 
-    public override UniTask InitializeData()
+    public override async UniTask InitializeData()
     {
-        throw new System.NotImplementedException();
+        await UniTask.Yield();
     }
 
     public override async UniTask LoadAssets()
     {
-        await AutoBattleManager.Instance.LoadAsset();
+        await AutoBattleUnitManager.Instance.LoadAsset();
     }
 
-    public override UniTask SetupScene()
+    public override async UniTask SetupScene()
     {
-        throw new System.NotImplementedException();
+        AStarAlgorithmManager.Instance.InitializeGrid(this);
+        AutoBattleUnitManager.Instance.Setup();
+        AutoBattleManager.Instance.Setup();
+
+        _btnStartBattle.onClick.AddListener(AutoBattleManager.Instance.StartBattle);
+
+        await UniTask.Yield();
     }
 
     public override async UniTask DebugMode()
     {
         AStarAlgorithmManager.Instance.InitializeGrid(this);
-        await AutoBattleManager.Instance.LoadAsset();
+        await AutoBattleUnitManager.Instance.LoadAsset();
+        AutoBattleUnitManager.Instance.Setup();
         AutoBattleManager.Instance.Setup();
         
         _btnStartBattle.onClick.AddListener(AutoBattleManager.Instance.StartBattle);

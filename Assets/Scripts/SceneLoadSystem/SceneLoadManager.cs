@@ -1,7 +1,11 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 
 public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
@@ -28,6 +32,17 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
     private void Awake()
     {
         PreviousSceneLoadProgressAction += () => { Destroy(Camera.main.GetComponent<AudioListener>()); };
+        PreviousSceneLoadProgressAction += () => { DisableEventSystemAndModules(); };
+    }
+
+    public void DisableEventSystemAndModules()
+    {
+        var eventSystem = FindFirstObjectByType<EventSystem>();
+        if (!eventSystem)
+            return;
+
+        eventSystem.GetComponent<InputSystemUIInputModule>().enabled = false;
+        eventSystem.enabled = false;
     }
 
     public async UniTask LoadSceneAsync<T>(bool isLoadingEnabled = true)

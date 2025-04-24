@@ -7,13 +7,15 @@ public interface IUnitSpawner
 
 public class UnitSpawner : IUnitSpawner
 {
-    readonly GameObject _prefab;
-    readonly Transform  _container;
+    private readonly GameObject _prefab;
+    private readonly Transform  _container;
+    private IUnitStatRepository _statRepository;
 
     public UnitSpawner(GameObject prefab, Transform container)
     {        
         _prefab = prefab;
         _container = container;
+        _statRepository = new UnitStatRepository();
     }
 
     public Unit Spawn(int unitId, int starLevel, TeamType team, Vector2Int pos)

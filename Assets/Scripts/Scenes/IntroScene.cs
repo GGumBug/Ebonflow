@@ -12,6 +12,6 @@ public class IntroScene : MonoBehaviour
     {
         await UniTask.Delay(2000);
 
-        await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MenuScene>();
+        await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<AutoBattleScene>();
     }
 }

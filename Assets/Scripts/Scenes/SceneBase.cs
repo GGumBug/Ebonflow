@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public abstract class SceneBase : MonoBehaviour, ILoadableScene
 {
