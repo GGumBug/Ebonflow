@@ -20,6 +20,8 @@ public class UnitStats
         _buckets = new StatModifierBucket[AllStatTypes.Length];
         foreach (var statType in AllStatTypes)
             _buckets[(int)statType] = new StatModifierBucket();
+
+        Debug.Log($"Create to ★{_baseStats.StarLevel}. Current HP={CurrentHP}, ATK={CurrentAttack}");
     }
 
     /// <summary>현재 HP (버프/디버프 적용 후 값)</summary>

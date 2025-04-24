@@ -19,6 +19,7 @@ public class Unit : MonoBehaviour
     {
         _team = team;
 
+        _stats = new UnitStats(unitStatData);
         _aStarAgent = GetComponent<AStarAgent>();
         _rangeDetector = GetComponentInChildren<RangeDetector>();
         _unitStateController = GetComponent<UnitStateController>();
