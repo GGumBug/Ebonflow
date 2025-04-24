@@ -15,7 +15,7 @@ public class Unit : MonoBehaviour
 
     public TeamType GetTeam() => _team;
 
-    public void Setup(int unitID, int starLevel, TeamType team)
+    public void Setup(TeamType team, UnitStatData unitStatData)
     {
         _team = team;
 

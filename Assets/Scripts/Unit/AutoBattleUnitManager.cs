@@ -6,30 +6,34 @@ public class AutoBattleUnitManager : Singleton<AutoBattleUnitManager>
 {
     private Transform _allyContainer;
     private Transform _enemyContainer;
-    private IUnitSpawner _spawner;
     private AStarAlgorithmManager _aStarAlgorithmManager;
+    private GameObject _unitPrefab;
+    private IUnitSpawner _spawner;
+    private IUnitStatRepository _statRepository;
 
     public Transform AllyContainer => _allyContainer;
     public Transform EnemyContainer => _enemyContainer;
+    public IUnitStatRepository UnitStatRepository => _statRepository;
     public HashSet<Unit> AllyUnits { get; private set; }
     public HashSet<Unit> EnemyUnits { get; private set; }
 
     public async UniTask LoadAsset()
     {
-        GameObject unitPrefab = await AddressableManager.Instance
+        _unitPrefab = await AddressableManager.Instance
             .Load<GameObject>(AddressableKey.AutoBattleUnitPrefab.ToString());
 
-        if (unitPrefab == null)
+        if (_unitPrefab == null)
         {
             Debug.LogError("AutoBattleUnitPrefab을 로드하지 못했습니다.");
             return;
         }
-
-        _spawner = new UnitSpawner(unitPrefab, AllyContainer);
     }
 
     public void Setup()
     {
+        _statRepository = new UnitStatRepository();
+        _spawner = new UnitSpawner(_unitPrefab, AllyContainer, UnitStatRepository.GetUnitStatData);
+
         _allyContainer  = new GameObject("AllyUnits").transform;
         _enemyContainer = new GameObject("EnemyUnits").transform;
         _allyContainer .SetParent(transform, false);

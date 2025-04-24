@@ -11,15 +11,12 @@ public class UnitStats
     private static readonly StatType[] AllStatTypes =
         (StatType[])Enum.GetValues(typeof(StatType));
 
-    private readonly IUnitStatRepository _repository;
     private readonly StatModifierBucket[] _buckets;
     private UnitStatData _baseStats;
 
-    public UnitStats(int unitId, int starLevel, IUnitStatRepository repository)
+    public UnitStats(UnitStatData unitStatData)
     {
-        _repository = repository;
-        Load(unitId, starLevel);
-
+        _baseStats = unitStatData;
         _buckets = new StatModifierBucket[AllStatTypes.Length];
         foreach (var statType in AllStatTypes)
             _buckets[(int)statType] = new StatModifierBucket();
@@ -37,24 +34,18 @@ public class UnitStats
     public void RemoveModifier(StatModifier modifier)
         => _buckets[(int)modifier.StatType].Remove(modifier);
 
-    private void Load(int unitId, int starLevel)
-    {
-        _baseStats = _repository.GetUnitStatData(unitId, starLevel);
-        Debug.Log($"Loaded Stat ▶ UnitId={_baseStats.UnitId}, ★{_baseStats.StarLevel}, HP={_baseStats.BaseHp}, ATK={_baseStats.BaseAtk:F1}");
-    }
-
     /// <summary>
     /// 유닛의 ★레벨을 변경하고, 그에 맞는 기본 스탯을 다시 로드합니다.
     /// 기존에 추가된 모든 ModifierBucket(버프/디버프)들은 유지됩니다.
     /// </summary>
     /// <param name="newStarLevel">새로 적용할 별레벨</param>
-    public void ChangeLevel(int newStarLevel)
+    public void ChangeLevel(UnitStatData unitStatData)
     {
         // _baseStats 를 새 레벨에 맞춰 다시 불러옵니다.
-        Load(_baseStats.UnitId, newStarLevel);
+        _baseStats = unitStatData;
 
         // _buckets 는 재생성하지 않으므로 기존 버프/디버프 유지
-        Debug.Log($"Changed to ★{newStarLevel}. Current HP={CurrentHP}, ATK={CurrentAttack}");
+        Debug.Log($"Changed to ★{_baseStats.StarLevel}. Current HP={CurrentHP}, ATK={CurrentAttack}");
     }
 
     /// <summary>

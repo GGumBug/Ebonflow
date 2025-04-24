@@ -8,6 +8,10 @@ public class DebugPanelSpawnUnit : MonoBehaviour
     [Tooltip("스폰 할 유닛 ID를 입력하세요.")]
     [SerializeField] private TMP_InputField _inputID;
 
+    [Header("Spawn 유닛 StarLevel")]
+    [Tooltip("스폰 할 유닛 ID를 입력하세요.")]
+    [SerializeField] private TMP_InputField _inputStarLevel;
+
     [Header("Spawn 위치 설정")]
     [Tooltip("스폰할 X 좌표를 입력하세요.")]
     [SerializeField] private TMP_InputField _inputX;
@@ -32,6 +36,9 @@ public class DebugPanelSpawnUnit : MonoBehaviour
 
         // 버튼 콜백 연결
         _btnCreate.onClick.AddListener(OnCreateButtonClicked);
+
+        _inputID.SetTextWithoutNotify("0");
+        _inputStarLevel.SetTextWithoutNotify("1");
     }
 
     private void OnDestroy()
@@ -41,7 +48,8 @@ public class DebugPanelSpawnUnit : MonoBehaviour
 
     private void OnCreateButtonClicked()
     {
-        if (!int.TryParse(_inputX.text, out int id) || 
+        if (!int.TryParse(_inputID.text, out int id) || 
+            !int.TryParse(_inputStarLevel.text, out int starLevel) || 
             !int.TryParse(_inputX.text, out int x) ||
             !int.TryParse(_inputY.text, out int y))
         {
@@ -49,20 +57,19 @@ public class DebugPanelSpawnUnit : MonoBehaviour
             return;
         }
 
-        int unitID = id;
         TeamType team = (TeamType)_teamDropdown.value;
         Vector2Int spawnPos = new Vector2Int(x, y);
 
-        CreateDebugUnit(unitID, team, spawnPos);
+        CreateDebugUnit(id, starLevel, team, spawnPos);
     }
 
-    private void CreateDebugUnit(int unitID , TeamType team, Vector2Int pos)
+    private void CreateDebugUnit(int unitID, int starLevel, TeamType team, Vector2Int pos)
     {
         AutoBattleUnitManager mgr = AutoBattleUnitManager.Instance;
 
         Unit newUnit = team == TeamType.Ally
-            ? mgr.SpawnAlly( /*unitID*/ unitID, /*star*/ 1, pos)
-            : mgr.SpawnEnemy(/*unitID*/ unitID, /*star*/ 1, pos);
+            ? mgr.SpawnAlly( /*unitID*/ unitID, /*star*/ starLevel, pos)
+            : mgr.SpawnEnemy(/*unitID*/ unitID, /*star*/ starLevel, pos);
 
         Debug.Log($"DebugUI: {team} 유닛 생성 완료 @ {pos}");
     }
