@@ -4,18 +4,20 @@ public class Unit : MonoBehaviour
 {
     [SerializeField] private TeamType _team;
 
-    private bool _isBattleActive;
-    private AStarAgent _aStarAgent;
-    private RangeDetector _rangeDetector;
-    private CombatComponent   _combatComponent;
-    private MovementComponent _movementComponent;
-    private HealthComponent   _healthComponent;
-    private UnitStateMachine  _stateMachine;
-    private UnitStats         _stats;
+    private bool                    _isDead;
+    private bool                    _isBattleActive;
+    private AStarAgent              _aStarAgent;
+    private RangeDetector           _rangeDetector;
+    private CombatComponent         _combatComponent;
+    private MovementComponent       _movementComponent;
+    private HealthComponent         _healthComponent;
+    private UnitStateMachine        _stateMachine;
+    private UnitStats               _stats;
 
-    public UnitStats Stat => _stats;
-    public AStarAgent Agent => _aStarAgent;
+    public bool IsDead => _isDead;
     public TeamType GetTeam() => _team;
+    public UnitStats Stat =>        _stats;
+    public AStarAgent Agent =>      _aStarAgent;
 
     public void Setup(TeamType team, UnitStatData statData)
     {
@@ -48,12 +50,11 @@ public class Unit : MonoBehaviour
     private void RegisterEventHandlers()
     {
         _aStarAgent.OnRequestTeamType       += GetTeam;
+        _rangeDetector.OnRequestTeamType    += GetTeam;
         _aStarAgent.OnAttackInitiated       += _combatComponent.CanAttack;
         _aStarAgent.OnEndWalk               += _stateMachine.ChangeToIdle;
         _aStarAgent.OnChangeToAttack        += _stateMachine.ChangeToAttack;
-        
-        _rangeDetector.OnRequestTeamType    += GetTeam;
-
+        _healthComponent.OnDied             += _stateMachine.ChangeToDead;
         _combatComponent.OnAttackEnded      += TransitionToState;
     }
 
@@ -86,6 +87,15 @@ public class Unit : MonoBehaviour
             return;
 
         _stateMachine.Update();
+    }
+
+    public void HandleDeath()
+    {
+        _isDead = true;
+        Agent.UnreserveCurrentGridCell();
+        
+        // 나중에 풀링으로 수정
+        Destroy(gameObject, 1f);
     }
 
     public void OnEnterWalk()   => _movementComponent.StartWalking();

@@ -111,6 +111,21 @@ public class AStarGrid : MonoBehaviour
         }
     }
 
+    public void RemoveNodeBlock(Vector2Int worldCoordinate)
+    {
+        Vector2Int gridIndex = WorldToGridIndex(worldCoordinate);
+
+        if (IsOutOfBounds(worldCoordinate))
+        {
+            Debug.LogError("RemoveNodeBlock: 주어진 좌표가 그리드 범위를 벗어났습니다.");
+            return;
+        }
+
+        var targetNode = _grid[gridIndex.x, gridIndex.y];
+        targetNode.SetBlock = false;
+        targetNode.Agent = null;
+    }
+
     /// <summary>
     /// 지정된 'fromWorldCoordinate' 위치에 있는 블록(isBlock)이 'toWorldCoordinate'로 이동하도록 업데이트합니다.
     /// </summary>

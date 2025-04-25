@@ -6,6 +6,7 @@ public class UnitStateMachine
     private readonly IUnitState _idleState  = IdleState.Instance;
     private readonly IUnitState _walkState  = WalkState.Instance;
     private readonly IUnitState _attackState = AttackState.Instance;
+    private readonly IUnitState _deadState = DeadState.Instance;
 
     public IUnitState CurrentState { get; private set; }
 
@@ -19,6 +20,7 @@ public class UnitStateMachine
     public void ChangeToIdle()   => ChangeState(_idleState);
     public void ChangeToWalk()   => ChangeState(_walkState);
     public void ChangeToAttack() => ChangeState(_attackState);
+    public void ChangeToDead() => ChangeState(_deadState);
 
     public void Update()         => CurrentState.Execute(_host);
 

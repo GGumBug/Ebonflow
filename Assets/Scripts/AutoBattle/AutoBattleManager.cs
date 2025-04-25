@@ -24,6 +24,9 @@ public class AutoBattleManager : Singleton<AutoBattleManager>
 
     public void Attack(Unit attacker, Unit defender)
     {
+        if (defender == null || defender.IsDead)
+            throw new Exception("defender was null or dead.");
+
         var atkStats = attacker.Stat;
         var defStats = defender.Stat;
 

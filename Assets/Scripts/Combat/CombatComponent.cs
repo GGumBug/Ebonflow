@@ -11,6 +11,11 @@ public class CombatComponent
     private Unit _unit;
     private Unit _currentTarget;
 
+    private bool HasValidTarget =>
+    _currentTarget != null
+    && !_currentTarget.IsDead
+    && _detector.IsTargetInRange(_currentTarget);
+
     public CombatComponent(Unit host, RangeDetector detector)
     {
         _unit = host;
@@ -28,7 +33,7 @@ public class CombatComponent
 
     public void TryAttack()
     {
-        _currentTarget = _currentTarget != null && _detector.IsTargetInRange(_currentTarget)
+        _currentTarget = HasValidTarget
             ? _currentTarget
             : _detector.GetClosestEnemy();
 
@@ -44,7 +49,7 @@ public class CombatComponent
         .AppendCallback(
             () => {
                 _autoBattleManager.Attack(_unit, _currentTarget);
-                if (_currentTarget != null && _detector.IsTargetInRange(_currentTarget))
+                if (HasValidTarget)
                 {
                     TryAttack();
                 }
