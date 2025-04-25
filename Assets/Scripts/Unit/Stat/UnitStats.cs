@@ -14,11 +14,10 @@ public class UnitStats
     private readonly StatModifierBucket[] _buckets;
     private UnitStatData _baseStats;
 
-    /// <summary>버프/디버프가 적용된 최대 HP</summary>
     public int MaxHP => _buckets[(int)StatType.Hp].Apply(_baseStats.BaseHp);
-
-    /// <summary>버프/디버프가 적용된 공격력</summary>
     public int Attack => _buckets[(int)StatType.Attack].Apply(_baseStats.BaseAtk);
+    public int Range => _buckets[(int)StatType.Range].Apply(_baseStats.BaseRange);
+    public float AttackDelay => _buckets[(int)StatType.AttackDelay].Apply(_baseStats.BaseAttackDelay);
 
     /// <summary>현재 남아 있는 HP. 데미지를 받거나 회복하면 이 값을 변경합니다.</summary>
     public int CurrentHP { get; private set; }

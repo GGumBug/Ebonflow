@@ -7841,7 +7841,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1f151f21abcd4462b9493c68d9581d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDebugMode: 0
+  isDebugMode: 1
   _btnStartBattle: {fileID: 2002450206}
   _gridTopRight: {x: 5, y: 7}
   _gridBottomLeft: {x: 0, y: 0}

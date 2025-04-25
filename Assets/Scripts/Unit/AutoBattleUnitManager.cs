@@ -4,15 +4,11 @@ using System.Collections.Generic;
 
 public class AutoBattleUnitManager : Singleton<AutoBattleUnitManager>
 {
-    private Transform _allyContainer;
-    private Transform _enemyContainer;
     private AStarAlgorithmManager _aStarAlgorithmManager;
     private GameObject _unitPrefab;
     private IUnitSpawner _spawner;
     private IUnitStatRepository _statRepository;
 
-    public Transform AllyContainer => _allyContainer;
-    public Transform EnemyContainer => _enemyContainer;
     public IUnitStatRepository UnitStatRepository => _statRepository;
     public HashSet<Unit> AllyUnits { get; private set; }
     public HashSet<Unit> EnemyUnits { get; private set; }
@@ -31,13 +27,13 @@ public class AutoBattleUnitManager : Singleton<AutoBattleUnitManager>
 
     public void Setup()
     {
-        _statRepository = new UnitStatRepository();
-        _spawner = new UnitSpawner(_unitPrefab, AllyContainer, UnitStatRepository.GetUnitStatData);
-
-        _allyContainer  = new GameObject("AllyUnits").transform;
-        _enemyContainer = new GameObject("EnemyUnits").transform;
-        _allyContainer .SetParent(transform, false);
+        Transform _allyContainer = new GameObject("AllyUnits").transform;
+        Transform _enemyContainer = new GameObject("EnemyUnits").transform;
+        _allyContainer.SetParent(transform, false);
         _enemyContainer.SetParent(transform, false);
+
+        _statRepository = new UnitStatRepository();
+        _spawner = new UnitSpawner(_unitPrefab, _allyContainer, _enemyContainer, UnitStatRepository.GetUnitStatData);
 
         AllyUnits = new HashSet<Unit>();
         EnemyUnits = new HashSet<Unit>();
@@ -48,7 +44,6 @@ public class AutoBattleUnitManager : Singleton<AutoBattleUnitManager>
 
         AutoBattleManager.Instance.OnBattleStarted += StartAllUnitsBattle;
     }
-
 
     public Unit SpawnAlly(int unitId, int starLevel, Vector2Int pos)
     {

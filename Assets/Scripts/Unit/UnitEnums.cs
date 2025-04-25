@@ -15,6 +15,8 @@ public enum StatType
 {
     Hp,
     Attack,
+    AttackDelay,
+    Range,
 }
 
 public enum ModifierMode

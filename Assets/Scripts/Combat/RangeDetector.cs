@@ -22,14 +22,10 @@ public class RangeDetector : MonoBehaviour
 
     public bool HasEnemies() => _enemyUnits != null && _enemyUnits.Count > 0;
 
-    private void Awake()
+    public void Setup(int range)
     {
-        Init();
-    }
-
-    private void Init()
-    {
-        col.radius = detectionRadius;
+        detectionRadius = range;
+        col.radius = range;
         _enemyUnits = new HashSet<Unit>();
     }
 

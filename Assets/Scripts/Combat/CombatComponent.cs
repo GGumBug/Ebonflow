@@ -40,7 +40,7 @@ public class CombatComponent
 
         OnAttackStarted?.Invoke();
         DOTween.Sequence()
-        .AppendInterval(0.5f)
+        .AppendInterval(_unit.Stat.AttackDelay)
         .AppendCallback(
             () => {
                 _autoBattleManager.Attack(_unit, _currentTarget);

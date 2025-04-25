@@ -195,6 +195,16 @@ public partial class DB_UnitStats : BGEntity
 		get => _f_Attack[Index];
 		set => _f_Attack[Index] = value;
 	}
+	public System.Single f_AttackDelay
+	{
+		get => _f_AttackDelay[Index];
+		set => _f_AttackDelay[Index] = value;
+	}
+	public System.Int32 f_Range
+	{
+		get => _f_Range[Index];
+		set => _f_Range[Index] = value;
+	}
 	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
 	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(5507304839897652857UL, 4685881140701435545UL), () => _ufle12jhs77_f_name = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_UnitId;
@@ -205,6 +215,10 @@ public partial class DB_UnitStats : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldInt _f_Health => _ufle12jhs77_f_Health ?? (_ufle12jhs77_f_Health = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4975478997348932006UL, 16465069808607322766UL), () => _ufle12jhs77_f_Health = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_Attack;
 	public static BansheeGz.BGDatabase.BGFieldInt _f_Attack => _ufle12jhs77_f_Attack ?? (_ufle12jhs77_f_Attack = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4870036421143210701UL, 9225858769497029536UL), () => _ufle12jhs77_f_Attack = null));
+	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_AttackDelay;
+	public static BansheeGz.BGDatabase.BGFieldFloat _f_AttackDelay => _ufle12jhs77_f_AttackDelay ?? (_ufle12jhs77_f_AttackDelay = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(5672935980609939227UL, 10652493035511744932UL), () => _ufle12jhs77_f_AttackDelay = null));
+	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_Range;
+	public static BansheeGz.BGDatabase.BGFieldInt _f_Range => _ufle12jhs77_f_Range ?? (_ufle12jhs77_f_Range = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(5759245139096195051UL, 3789395744533961906UL), () => _ufle12jhs77_f_Range = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();

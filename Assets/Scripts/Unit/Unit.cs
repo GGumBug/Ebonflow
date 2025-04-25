@@ -36,6 +36,9 @@ public class Unit : MonoBehaviour
     private void InitializeComponents(UnitStatData statData)
     {
         _stats = new UnitStats(statData);
+
+        _rangeDetector.Setup(Stat.Range);
+
         _stateMachine = new UnitStateMachine(this);
         _combatComponent = new CombatComponent(this, _rangeDetector);
         _movementComponent = new MovementComponent(_aStarAgent);

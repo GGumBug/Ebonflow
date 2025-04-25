@@ -7,6 +7,8 @@ public class UnitStatData
     public int StarLevel { get; }
     public int BaseHp { get; }
     public int BaseAtk { get; }
+    public int BaseRange { get; }
+    public float BaseAttackDelay { get; }
 
     public UnitStatData(DB_UnitStats e)
     {
@@ -15,5 +17,7 @@ public class UnitStatData
         StarLevel = e.f_StarLevel;
         BaseHp = e.f_Health;
         BaseAtk = e.f_Attack;
+        BaseRange = e.f_Range;
+        BaseAttackDelay = e.f_AttackDelay;
     }
 }
