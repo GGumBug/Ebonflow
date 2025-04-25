@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5769357658532335531}
   - component: {fileID: 5705532842422843855}
-  - component: {fileID: 4698945460856950554}
+  - component: {fileID: 3828367657282869137}
   m_Layer: 0
   m_Name: RangeDetector
   m_TagString: Untagged
@@ -69,7 +69,7 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &4698945460856950554
+--- !u!114 &3828367657282869137
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -81,7 +81,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79105b7d633b1d04c8a418f3d81b3479, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectionRadius: 1
+  detectionRadius: 0.6
   detectionLayer:
     serializedVersion: 2
     m_Bits: 128
