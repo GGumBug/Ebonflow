@@ -100,7 +100,6 @@ GameObject:
   - component: {fileID: 4437910121935158980}
   - component: {fileID: 7007604737241054472}
   - component: {fileID: 7017370457788964135}
-  - component: {fileID: 7126042266113756151}
   m_Layer: 0
   m_Name: AutoBattleUnit
   m_TagString: Untagged
@@ -200,10 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c30ce559d6e214dbe97c4ed75b5506fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
-  aStarAgent: {fileID: 7017370457788964135}
-  rangeDetector: {fileID: 2330942231702520000}
-  unitStateController: {fileID: 7126042266113756151}
+  _team: 0
 --- !u!114 &7017370457788964135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,19 +215,6 @@ MonoBehaviour:
   moveSpeed: 6
   stepDelay: 0.5
   isDrawLine: 1
---- !u!114 &7126042266113756151
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3762167806928269837}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d1bf735b8aa9480b8e65e4cb2816b62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _unitState: 0
 --- !u!1001 &7020876094182379482
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -293,17 +276,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 97d4a28b9edc1b94cb90284fee3ed68a, type: 3}
---- !u!114 &2330942231702520000 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4698945460856950554, guid: 97d4a28b9edc1b94cb90284fee3ed68a, type: 3}
-  m_PrefabInstance: {fileID: 7020876094182379482}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79105b7d633b1d04c8a418f3d81b3479, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &3566791140931403889 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5769357658532335531, guid: 97d4a28b9edc1b94cb90284fee3ed68a, type: 3}
