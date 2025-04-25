@@ -2,9 +2,10 @@ using UnityEngine;
 
 public class DamageCalculator
 {
-    public int CalculateDamage(UnitStatData attacker, UnitStatData defender)
+    public int CalculateDamage(UnitStats attacker, UnitStats defender)
     {
         // 복잡한 데미지 연산 있을 시 추가
-        return 0;
+
+        return attacker.Attack;
     }
 }

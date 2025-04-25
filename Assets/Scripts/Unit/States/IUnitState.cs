@@ -19,7 +19,7 @@ public class IdleState : IUnitState
 
     public void Execute(Unit unit)
     {
-        unit.TransitionToBattleState();
+        unit.TransitionToState();
     }
 
     public void Exit(Unit unit)
@@ -37,7 +37,7 @@ public class WalkState : IUnitState
     public void Enter(Unit unit)
     {
         // unit.Animator.Play("Walk");
-        unit.Walk();
+        unit.OnEnterWalk();
     }
 
     public void Execute(Unit unit)
@@ -60,7 +60,7 @@ public class AttackState : IUnitState
     public void Enter(Unit unit)
     {
         // unit.Animator.Play("Attack");
-        unit.Attack();
+        unit.OnEnterAttack();
     }
 
     public void Execute(Unit unit)

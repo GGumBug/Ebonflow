@@ -6,7 +6,7 @@ public class UnitStatData
     public int UnitId { get; }
     public int StarLevel { get; }
     public int BaseHp { get; }
-    public float BaseAtk { get; }
+    public int BaseAtk { get; }
 
     public UnitStatData(DB_UnitStats e)
     {

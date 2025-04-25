@@ -1,9 +1,9 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 유닛의 기본 스탯과 버프/디버프를 관리합니다.
+/// 유닛의 기본 스탯(최대치)과 버프/디버프, 그리고 현재 체력을 관리합니다.
 /// </summary>
 public class UnitStats
 {
@@ -14,6 +14,15 @@ public class UnitStats
     private readonly StatModifierBucket[] _buckets;
     private UnitStatData _baseStats;
 
+    /// <summary>버프/디버프가 적용된 최대 HP</summary>
+    public int MaxHP => _buckets[(int)StatType.Hp].Apply(_baseStats.BaseHp);
+
+    /// <summary>버프/디버프가 적용된 공격력</summary>
+    public int Attack => _buckets[(int)StatType.Attack].Apply(_baseStats.BaseAtk);
+
+    /// <summary>현재 남아 있는 HP. 데미지를 받거나 회복하면 이 값을 변경합니다.</summary>
+    public int CurrentHP { get; private set; }
+
     public UnitStats(UnitStatData unitStatData)
     {
         _baseStats = unitStatData;
@@ -21,14 +30,35 @@ public class UnitStats
         foreach (var statType in AllStatTypes)
             _buckets[(int)statType] = new StatModifierBucket();
 
-        Debug.Log($"Create to ★{_baseStats.StarLevel}. Current HP={CurrentHP}, ATK={CurrentAttack}");
+        // 생성 시 현재 HP를 최대 HP로 초기화
+        CurrentHP = MaxHP;
+
+        Debug.Log($"[UnitStats] ★{_baseStats.StarLevel} 생성 → MaxHP={MaxHP}, CurrentHP={CurrentHP}, MaxAtk={Attack}");
     }
 
-    /// <summary>현재 HP (버프/디버프 적용 후 값)</summary>
-    public int CurrentHP => _buckets[(int)StatType.Hp].Apply(_baseStats.BaseHp);
+    /// <summary>
+    /// 유닛이 데미지를 받습니다.
+    /// </summary>
+    /// <param name="damage">받을 데미지</param>
+    public void TakeDamage(int damage)
+    {
+        CurrentHP = Mathf.Max(0, CurrentHP - damage);
+        Debug.Log($"[UnitStats] 데미지 {damage} 적용 → CurrentHP={CurrentHP}/{MaxHP}");
+        if (CurrentHP == 0)
+        {
+            // 예: OnDied 이벤트 호출
+        }
+    }
 
-    /// <summary>현재 공격력 (버프/디버프 적용 후 값)</summary>
-    public float CurrentAttack => _buckets[(int)StatType.Attack].Apply(_baseStats.BaseAtk);
+    /// <summary>
+    /// 유닛이 회복합니다.
+    /// </summary>
+    /// <param name="heal">회복량</param>
+    public void Heal(int heal)
+    {
+        CurrentHP = Mathf.Min(MaxHP, CurrentHP + heal);
+        Debug.Log($"[UnitStats] 회복 {heal} 적용 → CurrentHP={CurrentHP}/{MaxHP}");
+    }
 
     public void AddModifier(StatModifier modifier)
         => _buckets[(int)modifier.StatType].Add(modifier);
@@ -37,22 +67,22 @@ public class UnitStats
         => _buckets[(int)modifier.StatType].Remove(modifier);
 
     /// <summary>
-    /// 유닛의 ★레벨을 변경하고, 그에 맞는 기본 스탯을 다시 로드합니다.
-    /// 기존에 추가된 모든 ModifierBucket(버프/디버프)들은 유지됩니다.
+    /// 별 레벨이 변경될 때, 새로운 baseStats를 받아와 MaxHP/MaxAtk를 갱신합니다.
+    /// CurrentHP는 그대로 유지하거나, 최대치 비율에 맞춰 조정할 수 있습니다.
     /// </summary>
-    /// <param name="newStarLevel">새로 적용할 별레벨</param>
-    public void ChangeLevel(UnitStatData unitStatData)
+    public void ChangeLevel(UnitStatData newBaseStats)
     {
-        // _baseStats 를 새 레벨에 맞춰 다시 불러옵니다.
-        _baseStats = unitStatData;
+        float hpRatio = (float)CurrentHP / MaxHP;
 
-        // _buckets 는 재생성하지 않으므로 기존 버프/디버프 유지
-        Debug.Log($"Changed to ★{_baseStats.StarLevel}. Current HP={CurrentHP}, ATK={CurrentAttack}");
+        _baseStats = newBaseStats;
+        Debug.Log($"[UnitStats] 레벨 변경 ★{_baseStats.StarLevel} → MaxHP={MaxHP}, MaxAtk={Attack}");
+
+        // 기존 남은 체력 비율 유지
+        CurrentHP = Mathf.Clamp(Mathf.RoundToInt(MaxHP * hpRatio), 0, MaxHP);
+        Debug.Log($"[UnitStats] 레벨업 후 CurrentHP 비율 유지 → CurrentHP={CurrentHP}/{MaxHP}");
     }
 
-    /// <summary>
-    /// 각 StatType 별로 더하기/곱하기 모디파이어를 관리합니다.
-    /// </summary>
+    // --- 내부용 modifier 버킷 ---
     private sealed class StatModifierBucket
     {
         private double _addSum;

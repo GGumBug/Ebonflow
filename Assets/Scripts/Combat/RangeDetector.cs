@@ -79,6 +79,11 @@ public class RangeDetector : MonoBehaviour
         return closestEnemy;
     }
 
+    public bool IsTargetInRange(Unit target)
+    {
+        return target != null && _enemyUnits.Contains(target);
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.white;
