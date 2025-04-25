@@ -5,6 +5,7 @@ public class Unit : MonoBehaviour
 {
     [SerializeField] private TeamType _team;
 
+    private bool _isBattleActive;
     private UnitStats _stats;
     private AStarAgent _aStarAgent;
     private RangeDetector _rangeDetector;
@@ -40,8 +41,10 @@ public class Unit : MonoBehaviour
     private void RegisterEventHandlers()
     {
         _aStarAgent.OnRequestTeamType       += GetTeam;
-        _aStarAgent.OnEndWalk               += () => _stateMachine.ChangeToIdle();
         _aStarAgent.OnAttackInitiated       += CanAttack;
+        _aStarAgent.OnEndWalk               += _stateMachine.ChangeToIdle;
+        _aStarAgent.OnChangeToAttack        += _stateMachine.ChangeToAttack;
+        
         _rangeDetector.OnRequestTeamType    += GetTeam;
     }
 
@@ -55,10 +58,26 @@ public class Unit : MonoBehaviour
 
     public void StartBattle()
     {
+        _isBattleActive = true;
+
+        TransitionToBattleState();
+    }
+
+    public void TransitionToBattleState()
+    {
         if (CanAttack())
             _stateMachine.ChangeToAttack();
         else
             _stateMachine.ChangeToWalk();
+    }
+
+
+    private void Update()
+    {
+        if (!_isBattleActive)
+            return;
+
+        _stateMachine.Update();
     }
 
     private bool CanAttack()
@@ -77,9 +96,7 @@ public class Unit : MonoBehaviour
     }
 
     public void Walk()
-    {
-        Debug.Log("이동을 시작합니다.");
-        
+    {   
         Agent.StartFollowPath();
     }
 }

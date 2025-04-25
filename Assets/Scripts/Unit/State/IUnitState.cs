@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public interface IUnitState
 {
     void Enter(Unit unit);    // 상태 진입 시 1회 호출
@@ -17,7 +19,7 @@ public class IdleState : IUnitState
 
     public void Execute(Unit unit)
     {
-        // 대기 중 특별한 로직이 필요 없다면 비워둡니다.
+        unit.TransitionToBattleState();
     }
 
     public void Exit(Unit unit)
@@ -69,6 +71,6 @@ public class AttackState : IUnitState
 
     public void Exit(Unit unit)
     {
-        // 공격 끝난 뒤 정리
+        Debug.Log("이동을 종료합니다.");
     }
 }

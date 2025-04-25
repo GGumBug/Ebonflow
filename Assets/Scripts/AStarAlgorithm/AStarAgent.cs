@@ -25,6 +25,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     public event Action OnEndWalk;
     public event Func<TeamType> OnRequestTeamType;
     public event Func<bool> OnAttackInitiated;
+    public event Action OnChangeToAttack;
 
     /// <summary>
     /// 현재 경로에서 다음 노드가 존재하는지 여부
@@ -101,7 +102,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         if (HasNextNode)
             MoveToNextNode(destPos);
         else if (IsAtEndOfPath)
-            StopMovement();
+            OnPathComplete();
     }
 
     /// <summary>
@@ -142,6 +143,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         if (OnAttackInitiated.Invoke())
         {
             StopMovement();
+            OnChangeToAttack.Invoke();
             return;
         }
 
@@ -172,7 +174,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         if (crushAgentTeam != GetTeam())
         {
             StopMovement();
-            OnAttackInitiated?.Invoke();
+            OnAttackInitiated.Invoke();
         }
         else
         {
@@ -187,6 +189,14 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         StartFollowPath();
     }
 
+    private void OnPathComplete()
+    {
+        StopMovement();
+
+        if (OnAttackInitiated.Invoke())
+            OnChangeToAttack.Invoke();
+    }
+
     public void StopMovement()
     {
         ClearFllowing();
@@ -194,8 +204,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         if (_moveTween != null)
             _moveTween.Kill();
 
-        OnEndWalk?.Invoke();
-        Debug.Log("이동을 종료합니다.");
+        OnEndWalk.Invoke();
     }
 
     private void ClearFllowing()
