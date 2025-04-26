@@ -7,8 +7,6 @@ public class MovementComponent
         _agent = agent;
     }
 
-    public void StartWalking()
-    {
-        _agent.StartFollowPath();
-    }
+    public void StartWalking() => _agent.StartFollowPath();
+    public void CancelMovement() => _agent.CancelMovement();
 }

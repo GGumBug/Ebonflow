@@ -22,7 +22,7 @@ public class AutoBattleManager : Singleton<AutoBattleManager>
         OnBattleStarted?.Invoke();
     }
 
-    public void Attack(Unit attacker, Unit defender)
+    public bool Attack(Unit attacker, Unit defender)
     {
         if (defender == null || defender.IsDead)
             throw new Exception("defender was null or dead.");
@@ -31,6 +31,6 @@ public class AutoBattleManager : Singleton<AutoBattleManager>
         var defStats = defender.Stat;
 
         int damage = _damageCalculator.CalculateDamage(atkStats, defStats);
-        defender.ApplyDamage(damage);
+        return defender.ApplyDamage(damage);
     }
 }

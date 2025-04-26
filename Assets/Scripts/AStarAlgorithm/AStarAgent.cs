@@ -203,12 +203,17 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
             OnChangeToAttack.Invoke();
     }
 
-    public void StopMovement()
+    public void CancelMovement()
     {
         ClearFllowing();
 
         if (_moveTween != null)
             _moveTween.Kill();
+    }
+
+    public void StopMovement()
+    {
+        CancelMovement();
 
         OnEndWalk.Invoke();
     }

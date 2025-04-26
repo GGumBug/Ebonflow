@@ -10,11 +10,16 @@ public class HealthComponent
         _stats = stats;
     }
 
-    public void ApplyDamage(int dmg)
+    public bool ApplyDamage(int dmg)
     {
         _stats.TakeDamage(dmg);
 
         if (_stats.CurrentHP <= 0)
+        {
             OnDied?.Invoke();
+            return true;
+        }
+
+        return false;
     }
 }

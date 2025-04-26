@@ -13,15 +13,17 @@ public class Unit : MonoBehaviour
     private HealthComponent         _healthComponent;
     private UnitStateMachine        _stateMachine;
     private UnitStats               _stats;
+    private CircleCollider2D        _circleCollider2D;
 
-    public bool IsDead => _isDead;
-    public TeamType GetTeam() => _team;
+    public bool IsDead =>           _isDead;
+    public TeamType GetTeam() =>    _team;
     public UnitStats Stat =>        _stats;
     public AStarAgent Agent =>      _aStarAgent;
 
     public void Setup(TeamType team, UnitStatData statData)
     {
         _team = team;
+        
 
         CacheComponents();
         InitializeComponents(statData);
@@ -33,14 +35,14 @@ public class Unit : MonoBehaviour
     {
         _aStarAgent          = GetComponent<AStarAgent>();
         _rangeDetector       = GetComponentInChildren<RangeDetector>();
+        _circleCollider2D    = GetComponent<CircleCollider2D>();
     }
 
     private void InitializeComponents(UnitStatData statData)
     {
         _stats = new UnitStats(statData);
-
+        _circleCollider2D.enabled = true;
         _rangeDetector.Setup(Stat.Range);
-
         _stateMachine = new UnitStateMachine(this);
         _combatComponent = new CombatComponent(this, _rangeDetector);
         _movementComponent = new MovementComponent(_aStarAgent);
@@ -92,13 +94,16 @@ public class Unit : MonoBehaviour
     public void HandleDeath()
     {
         _isDead = true;
+        _movementComponent.CancelMovement();
+        _combatComponent.CancelAttack();
         Agent.UnreserveCurrentGridCell();
-        
+        _circleCollider2D.enabled = false;
+
         // 나중에 풀링으로 수정
         Destroy(gameObject, 1f);
     }
 
     public void OnEnterWalk()   => _movementComponent.StartWalking();
     public void OnEnterAttack() => _combatComponent.TryAttack();
-    public void ApplyDamage(int damage) => _healthComponent.ApplyDamage(damage);
+    public bool ApplyDamage(int damage) => _healthComponent.ApplyDamage(damage);
 }

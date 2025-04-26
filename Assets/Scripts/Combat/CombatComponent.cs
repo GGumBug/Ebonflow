@@ -10,6 +10,7 @@ public class CombatComponent
     private AutoBattleManager _autoBattleManager;
     private Unit _unit;
     private Unit _currentTarget;
+    private Sequence _attackSequence;
 
     private bool HasValidTarget =>
     _currentTarget != null
@@ -37,26 +38,36 @@ public class CombatComponent
             ? _currentTarget
             : _detector.GetClosestEnemy();
 
-        if (_currentTarget == null) 
+        if (_currentTarget == null)
         {
             OnAttackEnded?.Invoke();
             return;
         }
 
         OnAttackStarted?.Invoke();
-        DOTween.Sequence()
-        .AppendInterval(_unit.Stat.AttackDelay)
-        .AppendCallback(
-            () => {
-                _autoBattleManager.Attack(_unit, _currentTarget);
-                if (HasValidTarget)
-                {
-                    TryAttack();
-                }
-                else
-                {
-                    OnAttackEnded?.Invoke();    
-                }
-                });
+
+        _attackSequence = DOTween.Sequence()
+            .AppendInterval(_unit.Stat.AttackDelay)
+        .AppendCallback(() =>
+        {
+            bool targetDied = _autoBattleManager.Attack(_unit, _currentTarget);
+
+            if (targetDied)
+            {
+                OnAttackEnded?.Invoke();
+                return;
+            }
+
+            if (_detector.IsTargetInRange(_currentTarget))
+                TryAttack();
+            else
+                OnAttackEnded?.Invoke();
+        });
+    }
+
+    public void CancelAttack()
+    {
+        _attackSequence?.Kill();
+        _attackSequence = null;
     }
 }
