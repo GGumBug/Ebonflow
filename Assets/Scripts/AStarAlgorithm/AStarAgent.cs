@@ -206,9 +206,9 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     public void CancelMovement()
     {
         ClearFllowing();
-
-        if (_moveTween != null)
-            _moveTween.Kill();
+        
+        _moveTween?.Kill();
+        _moveTween = null;
     }
 
     public void StopMovement()

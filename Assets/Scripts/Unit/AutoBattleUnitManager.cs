@@ -1,13 +1,15 @@
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using System;
 
 public class AutoBattleUnitManager : Singleton<AutoBattleUnitManager>
 {
-    private AStarAlgorithmManager _aStarAlgorithmManager;
     private GameObject _unitPrefab;
     private IUnitSpawner _spawner;
     private IUnitStatRepository _statRepository;
+
+    public event Action<TeamType> OnTeamEliminated;
 
     public IUnitStatRepository UnitStatRepository => _statRepository;
     public HashSet<Unit> AllyUnits { get; private set; }
@@ -33,14 +35,13 @@ public class AutoBattleUnitManager : Singleton<AutoBattleUnitManager>
         _enemyContainer.SetParent(transform, false);
 
         _statRepository = new UnitStatRepository();
-        _spawner = new UnitSpawner(_unitPrefab, _allyContainer, _enemyContainer, UnitStatRepository.GetUnitStatData);
+        _spawner = new UnitSpawner(_unitPrefab, _allyContainer, _enemyContainer, UnitStatRepository.GetUnitStatData, HandleUnitDeath);
 
         AllyUnits = new HashSet<Unit>();
         EnemyUnits = new HashSet<Unit>();
 
-        _aStarAlgorithmManager = AStarAlgorithmManager.Instance;
-        _aStarAlgorithmManager.OnRequestAllyUnits += () => { return AllyUnits; };
-        _aStarAlgorithmManager.OnRequestEnemyUnits += () => { return EnemyUnits; };
+        AStarAlgorithmManager.Instance.OnRequestAllyUnits += () => { return AllyUnits; };
+        AStarAlgorithmManager.Instance.OnRequestEnemyUnits += () => { return EnemyUnits; };
 
         AutoBattleManager.Instance.OnBattleStarted += StartAllUnitsBattle;
     }
@@ -66,5 +67,14 @@ public class AutoBattleUnitManager : Singleton<AutoBattleUnitManager>
 
         foreach (var enemy in EnemyUnits)
             enemy.StartBattle();
+    }
+
+    private void HandleUnitDeath(Unit unit)
+    {
+        var set = unit.GetTeam() == TeamType.Ally ? AllyUnits : EnemyUnits;
+        set.Remove(unit);
+
+        if (set.Count == 0)
+            OnTeamEliminated?.Invoke(unit.GetTeam());
     }
 }

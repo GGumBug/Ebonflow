@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -14,6 +15,8 @@ public class Unit : MonoBehaviour
     private UnitStateMachine        _stateMachine;
     private UnitStats               _stats;
     private CircleCollider2D        _circleCollider2D;
+
+    public event Action<Unit>       OnDied;
 
     public bool IsDead =>           _isDead;
     public TeamType GetTeam() =>    _team;
@@ -51,6 +54,9 @@ public class Unit : MonoBehaviour
 
     private void RegisterEventHandlers()
     {
+        AutoBattleManager.Instance.OnBattleStarted += () => _isBattleActive = true;
+        AutoBattleManager.Instance.OnBattleEnded += () => _isBattleActive = false;
+
         _aStarAgent.OnRequestTeamType       += GetTeam;
         _rangeDetector.OnRequestTeamType    += GetTeam;
         _aStarAgent.OnAttackInitiated       += _combatComponent.CanAttack;
@@ -77,6 +83,9 @@ public class Unit : MonoBehaviour
 
     public void TransitionToState()
     {
+        if (!_isBattleActive)
+            return;
+
         if (_combatComponent.CanAttack())
             _stateMachine.ChangeToAttack();
         else
@@ -94,12 +103,15 @@ public class Unit : MonoBehaviour
     public void HandleDeath()
     {
         _isDead = true;
-        _movementComponent.CancelMovement();
-        _combatComponent.CancelAttack();
         Agent.UnreserveCurrentGridCell();
         _circleCollider2D.enabled = false;
 
-        // 나중에 풀링으로 수정
+        _combatComponent.CancelAttack();
+        _movementComponent.CancelMovement();
+
+        OnDied?.Invoke(this);
+        
+        //나중에 풀링으로 수정
         Destroy(gameObject, 1f);
     }
 

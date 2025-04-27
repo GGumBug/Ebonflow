@@ -8,17 +8,19 @@ public interface IUnitSpawner
 
 public class UnitSpawner : IUnitSpawner
 {
-    private readonly GameObject _prefab;
-    private readonly Transform _allyContainer;
-    private readonly Transform _enemyContainer;
-    private event Func<int, int, UnitStatData> OnRequestUnitStatData;
+    private readonly GameObject                 _prefab;
+    private readonly Transform                  _allyContainer;
+    private readonly Transform                  _enemyContainer;
+    private event Action<Unit>                  OnUnitDied;
+    private event Func<int, int, UnitStatData>  OnRequestUnitStatData;
 
-    public UnitSpawner(GameObject prefab, Transform allyContainer, Transform enemyContainer, Func<int, int, UnitStatData> onRequestUnitStatData)
+    public UnitSpawner(GameObject prefab, Transform allyContainer, Transform enemyContainer, Func<int, int, UnitStatData> onRequestUnitStatData, Action<Unit> onUnitDied)
     {        
         _prefab = prefab;
         _allyContainer = allyContainer;
         _enemyContainer = enemyContainer;
         OnRequestUnitStatData = onRequestUnitStatData;
+        OnUnitDied = onUnitDied;
     }
 
     public Unit Spawn(int unitId, int starLevel, TeamType team, Vector2Int pos)
@@ -29,6 +31,7 @@ public class UnitSpawner : IUnitSpawner
         var unit = go.GetComponent<Unit>();
 
         unit.Setup(team, OnRequestUnitStatData.Invoke(unitId, starLevel));
+        unit.OnDied += OnUnitDied;
         return unit;
     }
 }
