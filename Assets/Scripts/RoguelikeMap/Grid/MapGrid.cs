@@ -4,11 +4,13 @@ namespace RoguelikeMap
 {
     public class MapGrid
     {
-        public List<List<MapNode>> _gridTemplate;
+        private List<List<MapNode>> _map;
 
-        public MapGrid(List<List<MapNode>> gridTemplate)
+        public List<List<MapNode>> GetMap => _map;
+
+        public MapGrid(List<List<MapNode>> map)
         {
-            _gridTemplate = gridTemplate;
+            _map = map;
         }
     }
 }
