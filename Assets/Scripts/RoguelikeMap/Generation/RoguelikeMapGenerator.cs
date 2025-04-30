@@ -12,14 +12,17 @@ namespace RoguelikeMap
         private const int NEAREST_CANDIDATE_COUNT = 3;
 
         private List<List<MapNode>> _gridTemplate;
+        private List<List<MapEdge>> _paths;
         private Func<int, MapNode, MapNode, bool> _crossCheck;
 
         private int MaxFloor => _gridTemplate.Count;
         private List<MapNode> GetFlowNodes(int floor) => _gridTemplate[floor];
+        public List<List<MapEdge>> GetPaths => _paths;
 
         public List<List<MapNode>> CreateMap(int rowCount, int colCount, bool crossCheck = true)
         {
             _gridTemplate = new();
+            _paths = new();
 
             _gridTemplate = GenerateEmptyMapTemplate(rowCount, colCount);
 
@@ -28,7 +31,7 @@ namespace RoguelikeMap
 
             for (int i = 0; i < PATH_GENERATION_COUNT; i++)
                 GenerateSinglePath(i);
-
+                
             foreach (var row in _gridTemplate)
             {
                 // MapNode.Edges는 GenerateSinglePath 내부에서 채워졌다고 가정
@@ -37,7 +40,6 @@ namespace RoguelikeMap
             // 혹시 비어버린 행(row)이 있다면 그것도 제거
             _gridTemplate.RemoveAll(row => row.Count == 0);
 
-            // 6) 최종 결과 반환
             return _gridTemplate;
         }
 
@@ -62,6 +64,7 @@ namespace RoguelikeMap
 
             // 2) 이후 각 층으로 이동
             MapNode current = start;
+            List<MapEdge> singlePath = new();
             for (int floorIndex = 1; floorIndex < MaxFloor; floorIndex++)
             {
                 // 2-1) 다음 층 노드들 중, 현 노드와의 거리로 정렬 후 상위 3개
@@ -84,8 +87,11 @@ namespace RoguelikeMap
                 // 2-3) 엣지 추가
                 MapEdge result = new MapEdge { From = current, To = chosen, Generation = generationId };
                 current.Edges.Add(result);
+                singlePath.Add(result);
                 current = chosen;
             }
+
+            _paths.Add(singlePath);
         }
 
         private bool IsCrossingExistingEdges(int floorIndex, MapNode from, MapNode to)

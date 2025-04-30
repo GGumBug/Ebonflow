@@ -16,12 +16,12 @@ namespace RoguelikeMap
 
         private void OnDrawGizmos()
         {
-            if (_grid == null || _grid.GetMap == null) return;
+            if (_mapGenerator == null || _mapGenerator.GetPaths == null) return;
 
             // MapGrid에서 2D 리스트를 꺼내는 API라고 가정
-            List<List<MapNode>> layout = _grid.GetMap;
+            var paths = _mapGenerator.GetPaths;
 
-            for (int r = 0; r < layout.Count; r++)
+            for (int r = 0; r < paths.Count; r++)
             {
                 Color LineColor = Color.white;
                 switch (r)
@@ -46,10 +46,10 @@ namespace RoguelikeMap
                     break;
                 }
 
-                for (int c = 0; c < layout[r].Count; c++)
+                for (int c = 0; c < paths[r].Count; c++)
                 {
-                    MapNode node = layout[r][c];
-                    Vector3 pos = new Vector3(node.position.x, node.position.y, 0);
+                    MapEdge edge = paths[r][c];
+                    Vector3 pos = new Vector3(edge.From.position.x, edge.From.position.y, 0);
 
                     // 노드 위치에 작은 원을 그린다
                     Gizmos.color = Color.gray;
@@ -57,11 +57,8 @@ namespace RoguelikeMap
 
                     // 그 노드에서 뻗어나간 엣지(경로)들을 연결선으로 그린다
                     Gizmos.color = LineColor;
-                    foreach (var edge in node.Edges)
-                    {
-                        Vector3 toPos = new Vector3(edge.To.position.x, edge.To.position.y, 0);
-                        Gizmos.DrawLine(pos, toPos);
-                    }
+                    Vector3 toPos = new Vector3(edge.To.position.x, edge.To.position.y, 0);
+                    Gizmos.DrawLine(pos, toPos);
                 }
             }
         }
