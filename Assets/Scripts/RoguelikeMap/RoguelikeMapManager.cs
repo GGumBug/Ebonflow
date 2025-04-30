@@ -23,6 +23,29 @@ namespace RoguelikeMap
 
             for (int r = 0; r < layout.Count; r++)
             {
+                Color LineColor = Color.white;
+                switch (r)
+                {
+                    case 0:
+                    LineColor = Color.red;
+                    break;
+                    case 1:
+                    LineColor = Color.magenta;
+                    break;
+                    case 2:
+                    LineColor = Color.yellow;
+                    break;
+                    case 3:
+                    LineColor = Color.blue;
+                    break;
+                    case 4:
+                    LineColor = Color.green;
+                    break;
+                    case 5:
+                    LineColor = Color.cyan;
+                    break;
+                }
+
                 for (int c = 0; c < layout[r].Count; c++)
                 {
                     MapNode node = layout[r][c];
@@ -33,7 +56,7 @@ namespace RoguelikeMap
                     Gizmos.DrawWireSphere(pos, 0.2f);
 
                     // 그 노드에서 뻗어나간 엣지(경로)들을 연결선으로 그린다
-                    Gizmos.color = Color.white;
+                    Gizmos.color = LineColor;
                     foreach (var edge in node.Edges)
                     {
                         Vector3 toPos = new Vector3(edge.To.position.x, edge.To.position.y, 0);
