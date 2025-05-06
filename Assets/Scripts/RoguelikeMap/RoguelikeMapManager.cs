@@ -10,8 +10,8 @@ namespace RoguelikeMap
 
         public void Setup(int row, int col)
         {
-            _mapGenerator = new RoguelikeMapGenerator();
-            _grid = new MapGrid(_mapGenerator.CreateMap(row, col));
+            _mapGenerator = new RoguelikeMapGenerator(seed: 123);
+            _grid = new MapGrid(_mapGenerator.CreateMap(rowCount: 15, colCount: 7, crossCheck: true));
         }
 
         private void OnDrawGizmos()
