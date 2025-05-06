@@ -16,10 +16,10 @@ namespace RoguelikeMap
 
         private void OnDrawGizmos()
         {
-            if (_mapGenerator == null || _mapGenerator.GetPaths == null) return;
+            if (_mapGenerator == null || _mapGenerator.Paths == null) return;
 
             // MapGrid에서 2D 리스트를 꺼내는 API라고 가정
-            var paths = _mapGenerator.GetPaths;
+            var paths = _mapGenerator.Paths;
 
             for (int r = 0; r < paths.Count; r++)
             {
