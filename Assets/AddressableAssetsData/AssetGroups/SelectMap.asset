@@ -10,14 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Default Local Group
+  m_Name: SelectMap
   m_EditorClassIdentifier: 
-  m_GroupName: Default Local Group
-  m_GUID: 24a1c5977c86042f6b4b7fa66e3ede4e
-  m_SerializeEntries: []
+  m_GroupName: SelectMap
+  m_GUID: 7450e2cd4a16c9e4dbf8801c898095a5
+  m_SerializeEntries:
+  - m_GUID: 02b38fe9d6031d447a8b65d9ea27a77d
+    m_Address: BasicMapSettings
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5f7e8eaa7196342998e793b56501583d, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 2fdf20533888f4f08a497e692892b557, type: 2}
-    - {fileID: 11400000, guid: f78246054ac01465db5b5fd1f3d9a72b, type: 2}
+    - {fileID: 11400000, guid: 241990a0f49a9a64da8f0c8770898f96, type: 2}
+    - {fileID: 11400000, guid: e9387c746d8d2624ebb49ff257446274, type: 2}
