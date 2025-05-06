@@ -11,7 +11,7 @@ namespace RoguelikeMap
         public void Setup(int row, int col)
         {
             _mapGenerator = new RoguelikeMapGenerator(seed: 123);
-            _grid = new MapGrid(_mapGenerator.CreateMap(rowCount: 15, colCount: 7, crossCheck: true));
+            _grid = new MapGrid(_mapGenerator.CreateMap(rows: 15, cols: 7, crossCheck: true));
         }
 
         private void OnDrawGizmos()
