@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RoguelikeMap
@@ -40,5 +42,19 @@ namespace RoguelikeMap
 
         [Tooltip("사용할 랜덤 시드 값")]
         public int seed = 12345;
+
+        [Header("Location Assignment")]
+        [Tooltip("맵 룸에 부여할 LocationType 별 가중치 리스트 (합이 1.0이 되도록 설정하세요)")]
+        public List<LocationWeight> locationWeights = new List<LocationWeight>();
+    }
+
+    [Serializable]
+    public struct LocationWeight
+    {
+        [Tooltip("맵 위치(로케이션) 타입")]
+        public LocationType type;
+
+        [Range(0f, 1f), Tooltip("이 타입이 뽑힐 확률 가중치")]
+        public float weight;
     }
 }

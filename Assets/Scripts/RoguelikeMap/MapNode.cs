@@ -3,21 +3,21 @@ using UnityEngine;
 
 namespace RoguelikeMap
 {
-    public enum RoomType
+    public enum LocationType
     {
         None,
-        Start,
-        Combat,
+        Monster,
+        Elite,
         Boss
     }
 
     public class MapNode
     {
         public Vector2 position;
-        public RoomType type;
+        public LocationType type;
         public List<MapEdge> Edges;
 
-        public MapNode(int row, int col, RoomType type)
+        public MapNode(int row, int col, LocationType type)
         {
             position = new Vector2(col, row);
             this.type = type;

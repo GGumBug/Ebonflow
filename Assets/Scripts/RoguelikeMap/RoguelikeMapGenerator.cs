@@ -171,7 +171,7 @@ namespace RoguelikeMap
             {
                 var row = new List<MapNode>(cols);
                 for (int c = 0; c < cols; c++)
-                    row.Add(new MapNode(r, c, RoomType.None));
+                    row.Add(new MapNode(r, c, LocationType.None));
                 template.Add(row);
             }
             return template;
