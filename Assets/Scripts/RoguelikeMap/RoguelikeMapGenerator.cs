@@ -11,6 +11,7 @@ namespace RoguelikeMap
     public class RoguelikeMapGenerator
     {
         private MapGenerationSettings _settings;
+        private LocationWeightUtil _locationWeightUtil;
         private readonly System.Random _rng;
         private List<List<MapNode>> _gridTemplate;
         private List<List<MapEdge>> _paths;
@@ -27,8 +28,8 @@ namespace RoguelikeMap
         public RoguelikeMapGenerator(MapGenerationSettings settings)
         {
             _settings = settings;
-
-            int? seed = _settings.useSeed ? (int?)_settings.seed : null;
+            _locationWeightUtil = new LocationWeightUtil(_settings.locationWeights, _settings.rowCount);
+            int? seed = _settings.useSeed ? _settings.seed : null;
             _rng = seed.HasValue ? new System.Random(seed.Value) : new System.Random();
         }
 
@@ -39,9 +40,41 @@ namespace RoguelikeMap
         /// </summary>
         public List<List<MapNode>> CreateMap()
         {
-            _gridTemplate = GenerateEmptyMapTemplate(_settings.rowCount, _settings.colCount);
-            _paths = new List<List<MapEdge>>();
+            InitializeGrid();
+            GenerateAllPaths();
+            PruneEmptyRows();
+            AssignFixedFloorLocations();
+            AssignRandomFloorLocations();
+            return _gridTemplate;
+        }
 
+        private void InitializeGrid()
+        {
+            _gridTemplate = GenerateEmptyMapTemplate(
+                _settings.rowCount,
+                _settings.colCount
+            );
+            _paths = new List<List<MapEdge>>();
+        }
+
+        /// <summary>
+        /// RoomType.None 로 채워진 빈 템플릿을 만듭니다.
+        /// </summary>
+        private List<List<MapNode>> GenerateEmptyMapTemplate(int rows, int cols)
+        {
+            var template = new List<List<MapNode>>(rows);
+            for (int r = 0; r < rows; r++)
+            {
+                var row = new List<MapNode>(cols);
+                for (int c = 0; c < cols; c++)
+                    row.Add(new MapNode(r, c, LocationType.None));
+                template.Add(row);
+            }
+            return template;
+        }
+
+        private void GenerateAllPaths()
+        {
             for (int gen = 0; gen < _settings.pathGenerationCount; gen++)
             {
                 bool success = false;
@@ -50,15 +83,13 @@ namespace RoguelikeMap
                 while (!success && tries++ < _settings.maxAttemptsPerPath)
                 {
                     success = TryGenerateSinglePath(gen);
-                    if (!success) RollbackGeneration(gen);
+                    if (!success)
+                        RollbackGeneration(gen);
                 }
 
                 if (!success)
                     Debug.LogError($"[MapGen] Generation {gen} failed after {tries} attempts.");
             }
-
-            PruneEmptyRows();
-            return _gridTemplate;
         }
 
         /// <summary>
@@ -159,20 +190,27 @@ namespace RoguelikeMap
             _gridTemplate.RemoveAll(r => r.Count == 0);
         }
 
-        /// <summary>
-        /// RoomType.None 로 채워진 빈 템플릿을 만듭니다.
-        /// </summary>
-        private List<List<MapNode>> GenerateEmptyMapTemplate(int rows, int cols)
+        private void AssignRandomFloorLocations()
         {
-            var template = new List<List<MapNode>>(rows);
-            for (int r = 0; r < rows; r++)
+            for (int floor = 0; floor < _gridTemplate.Count; floor++)
             {
-                var row = new List<MapNode>(cols);
-                for (int c = 0; c < cols; c++)
-                    row.Add(new MapNode(r, c, LocationType.None));
-                template.Add(row);
+                int actLevel = floor + 1;
+
+                foreach (var node in _gridTemplate[floor])
+                {
+                    if (node.type == LocationType.None)
+                        node.type = _locationWeightUtil.GetRandomLocation(actLevel);
+                }
             }
-            return template;
+        }
+
+        private void AssignFixedFloorLocations()
+        {
+            foreach (var node in _gridTemplate[0])
+                node.type = LocationType.Monster;
+
+            foreach (var node in _gridTemplate[_settings.rowCount - 2])
+                node.type = LocationType.Camp;
         }
 
         /// <summary>

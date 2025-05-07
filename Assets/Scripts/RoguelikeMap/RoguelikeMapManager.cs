@@ -19,49 +19,56 @@ namespace RoguelikeMap
         {
             if (_mapGenerator == null || _mapGenerator.Paths == null) return;
 
-            // MapGrid에서 2D 리스트를 꺼내는 API라고 가정
             var paths = _mapGenerator.Paths;
 
-            for (int r = 0; r < paths.Count; r++)
+            for (int gen = 0; gen < paths.Count; gen++)
             {
-                Color LineColor = Color.white;
-                switch (r)
+                Color lineColor;
+                switch (gen)
                 {
-                    case 0:
-                    LineColor = Color.red;
-                    break;
-                    case 1:
-                    LineColor = Color.magenta;
-                    break;
-                    case 2:
-                    LineColor = Color.yellow;
-                    break;
-                    case 3:
-                    LineColor = Color.blue;
-                    break;
-                    case 4:
-                    LineColor = Color.green;
-                    break;
-                    case 5:
-                    LineColor = Color.cyan;
-                    break;
+                    case 0: lineColor = Color.red; break;
+                    case 1: lineColor = Color.magenta; break;
+                    case 2: lineColor = Color.yellow; break;
+                    case 3: lineColor = Color.blue; break;
+                    case 4: lineColor = Color.green; break;
+                    case 5: lineColor = Color.cyan; break;
+                    default: lineColor = Color.white; break;
                 }
 
-                for (int c = 0; c < paths[r].Count; c++)
+                foreach (var edge in paths[gen])
                 {
-                    MapEdge edge = paths[r][c];
-                    Vector3 pos = new Vector3(edge.From.position.x, edge.From.position.y, 0);
+                    // From 노드
+                    DrawNodeGizmo(edge.From);
+                    // To 노드 (optional: 중복 그리기를 피하고 싶으면 빼셔도 됩니다)
+                    // DrawNodeGizmo(edge.To);
 
-                    // 노드 위치에 작은 원을 그린다
-                    Gizmos.color = Color.gray;
-                    Gizmos.DrawWireSphere(pos, 0.2f);
-
-                    // 그 노드에서 뻗어나간 엣지(경로)들을 연결선으로 그린다
-                    Gizmos.color = LineColor;
-                    Vector3 toPos = new Vector3(edge.To.position.x, edge.To.position.y, 0);
-                    Gizmos.DrawLine(pos, toPos);
+                    // 엣지 라인
+                    Vector3 a = (Vector2)edge.From.position;
+                    Vector3 b = (Vector2)edge.To.position;
+                    Gizmos.color = lineColor;
+                    Gizmos.DrawLine(a, b);
                 }
             }
+        }
+
+        private void DrawNodeGizmo(MapNode node)
+        {
+            // 위치
+            Vector3 pos = (Vector2)node.position;
+
+            // LocationType 에 따른 색 결정
+            Color nodeColor;
+            switch (node.type)
+            {
+                case LocationType.Monster: nodeColor = Color.gray; break;
+                case LocationType.Elite: nodeColor = Color.red; break;
+                case LocationType.Camp: nodeColor = Color.green; break;
+                case LocationType.Boss: nodeColor = Color.black; break;
+                default: nodeColor = Color.white; break;
+            }
+
+            Gizmos.color = nodeColor;
+            Gizmos.DrawWireSphere(pos, 0.2f);
         }
     }
 }

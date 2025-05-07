@@ -6,6 +6,7 @@ namespace RoguelikeMap
     public enum LocationType
     {
         None,
+        Camp,
         Monster,
         Elite,
         Boss

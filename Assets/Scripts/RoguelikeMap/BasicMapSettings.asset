@@ -21,9 +21,12 @@ MonoBehaviour:
   useSeed: 0
   seed: 0
   locationWeights:
-  - type: 1
+  - type: 2
     baseW: 0.53
     peakW: 0.45
-  - type: 2
+  - type: 3
+    baseW: 0.08
+    peakW: 0.16
+  - type: 1
     baseW: 0.08
     peakW: 0.16
