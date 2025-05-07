@@ -18,7 +18,7 @@ public class AutoBattleUnitManager : Singleton<AutoBattleUnitManager>
     public async UniTask LoadAsset()
     {
         _unitPrefab = await AddressableManager.Instance
-            .Load<GameObject>(AddressableKey.AutoBattleUnitPrefab.ToString());
+            .Load<GameObject>(AddressableKeyExtensions.ToKey(AddressableKey.AutoBattleUnitPrefab));
 
         if (_unitPrefab == null)
         {

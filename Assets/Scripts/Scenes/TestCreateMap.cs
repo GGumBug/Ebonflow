@@ -1,11 +1,12 @@
 using UnityEngine;
 using RoguelikeMap;
+using Cysharp.Threading.Tasks;
 
 public class TestCreateMap : MonoBehaviour
 {
-    private void Awake() 
+    private async UniTask Awake() 
     {
         RoguelikeMapManager roguelikeMapManager = gameObject.AddComponent<RoguelikeMapManager>();
-        roguelikeMapManager.Setup(15, 7);
+        await roguelikeMapManager.Setup();
     }
 }

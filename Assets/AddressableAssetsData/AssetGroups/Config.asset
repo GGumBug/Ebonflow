@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: SelectMap
+  m_Name: Config
   m_EditorClassIdentifier: 
-  m_GroupName: SelectMap
+  m_GroupName: Config
   m_GUID: 7450e2cd4a16c9e4dbf8801c898095a5
   m_SerializeEntries:
   - m_GUID: 02b38fe9d6031d447a8b65d9ea27a77d
-    m_Address: BasicMapSettings
+    m_Address: Config/MapGenSettings
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

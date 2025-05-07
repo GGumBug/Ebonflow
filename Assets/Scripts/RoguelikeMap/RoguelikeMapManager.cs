@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace RoguelikeMap
@@ -8,10 +8,11 @@ namespace RoguelikeMap
         private MapGrid _grid;
         private RoguelikeMapGenerator _mapGenerator;
 
-        public void Setup(int row, int col)
+        public async UniTask Setup()
         {
-            _mapGenerator = new RoguelikeMapGenerator(seed: 123);
-            _grid = new MapGrid(_mapGenerator.CreateMap(rows: 15, cols: 7, crossCheck: true));
+            MapGenerationSettings mapGenerationSettings = await AddressableManager.Instance.Load<MapGenerationSettings>(AddressableKeyExtensions.ToKey(AddressableKey.MapGenerationSettings));
+            _mapGenerator = new RoguelikeMapGenerator(mapGenerationSettings);
+            _grid = new MapGrid(_mapGenerator.CreateMap());
         }
 
         private void OnDrawGizmos()

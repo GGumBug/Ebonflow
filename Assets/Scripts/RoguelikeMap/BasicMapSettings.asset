@@ -19,4 +19,11 @@ MonoBehaviour:
   maxAttemptsPerPath: 5
   crossCheck: 1
   useSeed: 0
-  seed: 1
+  seed: 0
+  locationWeights:
+  - type: 1
+    baseW: 0.53
+    peakW: 0.45
+  - type: 2
+    baseW: 0.08
+    peakW: 0.16

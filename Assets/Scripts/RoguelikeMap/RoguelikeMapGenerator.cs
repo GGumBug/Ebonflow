@@ -10,12 +10,8 @@ namespace RoguelikeMap
     /// </summary>
     public class RoguelikeMapGenerator
     {
-        private const int PATH_GENERATION_COUNT = 6;
-        private const int NEAREST_CANDIDATE_COUNT = 3;
-        private const int MAX_ATTEMPTS_PER_PATH = 5;
-
+        private MapGenerationSettings _settings;
         private readonly System.Random _rng;
-        private bool _crossCheck;
         private List<List<MapNode>> _gridTemplate;
         private List<List<MapEdge>> _paths;
 
@@ -28,8 +24,11 @@ namespace RoguelikeMap
         /// 외부에서 랜덤 시드를 주입할 수 있습니다.
         /// seed 가 null 이면 시간 기반 Random 사용.
         /// </summary>
-        public RoguelikeMapGenerator(int? seed = null)
+        public RoguelikeMapGenerator(MapGenerationSettings settings)
         {
+            _settings = settings;
+
+            int? seed = _settings.useSeed ? (int?)_settings.seed : null;
             _rng = seed.HasValue ? new System.Random(seed.Value) : new System.Random();
         }
 
@@ -38,18 +37,17 @@ namespace RoguelikeMap
         /// PATH_GENERATION_COUNT 만큼 경로를 뽑아냅니다.
         /// crossCheck=true 면 간선 교차를 완전히 방지합니다.
         /// </summary>
-        public List<List<MapNode>> CreateMap(int rows, int cols, bool crossCheck = true)
+        public List<List<MapNode>> CreateMap()
         {
-            _crossCheck = crossCheck;
-            _gridTemplate = GenerateEmptyMapTemplate(rows, cols);
+            _gridTemplate = GenerateEmptyMapTemplate(_settings.rowCount, _settings.colCount);
             _paths = new List<List<MapEdge>>();
 
-            for (int gen = 0; gen < PATH_GENERATION_COUNT; gen++)
+            for (int gen = 0; gen < _settings.pathGenerationCount; gen++)
             {
                 bool success = false;
                 int tries = 0;
 
-                while (!success && tries++ < MAX_ATTEMPTS_PER_PATH)
+                while (!success && tries++ < _settings.maxAttemptsPerPath)
                 {
                     success = TryGenerateSinglePath(gen);
                     if (!success) RollbackGeneration(gen);
@@ -79,11 +77,11 @@ namespace RoguelikeMap
                 // 거리순 상위 후보 추출
                 var candidates = _gridTemplate[floor]
                     .OrderBy(n => Vector2.Distance(n.position, current.position))
-                    .Take(NEAREST_CANDIDATE_COUNT)
+                    .Take(_settings.nearestCandidateCount)
                     .ToList();
 
                 // 교차 검사: 꺼져 있으면 모두 유효, 켜져 있으면 교차 없는 것만
-                var valid = !_crossCheck
+                var valid = !_settings.crossCheck
                     ? candidates
                     : candidates.Where(c => !IsCrossingAnyExistingEdge(current, c)).ToList();
 
