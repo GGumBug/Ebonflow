@@ -198,10 +198,58 @@ namespace RoguelikeMap
 
                 foreach (var node in _gridTemplate[floor])
                 {
-                    if (node.type == LocationType.None)
-                        node.type = _locationWeightUtil.GetRandomLocation(actLevel);
+                    if (node.type != LocationType.None)
+                        continue;
+
+                    LocationType pick;
+                    int tries = 0;
+                    do
+                    {
+                        pick = _locationWeightUtil.GetRandomLocation(actLevel);
+                        tries++;
+                        if (tries > 10) break; // 무한 루프 방지
+                    }
+                    while (HasAdjacentSameNonMonster(node, pick, floor));
+
+                    node.type = pick;
                 }
             }
+        }
+
+        /// <summary>
+        /// node의 인접 노드(이전 & 다음 층) 중에
+        /// pick 타입(단 Monster 제외)이 있으면 true.
+        /// 이전 층은 floor-1 행만 검사합니다.
+        /// </summary>
+        private bool HasAdjacentSameNonMonster(MapNode node, LocationType pick, int floor)
+        {
+            // Monster 타입은 언제나 허용
+            if (pick == LocationType.Monster)
+                return false;
+
+            // 1) 다음 층(자식) 검사: node.Edges 에서 바로 확인
+            foreach (var edge in node.Edges)
+            {
+                if (edge.To.type == pick)
+                    return true;
+            }
+
+            // 2) 이전 층(부모) 검사: 바로 위 row[floor-1] 만 뒤집니다.
+            if (floor > 0)
+            {
+                var prevRow = _gridTemplate[floor - 1];
+                foreach (var parent in prevRow)
+                {
+                    // parent.Edges 에서 나가는 엣지 중 this node 로 향하는 것이 있는지
+                    foreach (var edge in parent.Edges)
+                    {
+                        if (edge.To == node && parent.type == pick)
+                            return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private void AssignFixedFloorLocations()
