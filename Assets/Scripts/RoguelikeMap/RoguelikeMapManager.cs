@@ -1,25 +1,35 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace RoguelikeMap
 {
     public class RoguelikeMapManager : MonoBehaviour
     {
-        private MapGrid _grid;
+        private MapLayout _mapLayout;
+        private MapSaveLoad _mapSaveLoad;
         private RoguelikeMapGenerator _mapGenerator;
 
         public async UniTask Setup()
         {
+            _mapSaveLoad = new MapSaveLoad();
+            if (_mapSaveLoad.TryLoadLayout(_mapSaveLoad.FilePath("Test"), out _mapLayout))
+                Debug.Log("저장 된 맵 재구축");
+            else
+                Debug.Log("저장 된 맵 없음");
+
             MapGenerationSettings mapGenerationSettings = await AddressableManager.Instance.Load<MapGenerationSettings>(AddressableKeyExtensions.ToKey(AddressableKey.MapGenerationSettings));
             _mapGenerator = new RoguelikeMapGenerator(mapGenerationSettings);
-            _grid = new MapGrid(_mapGenerator.CreateMap());
+            _mapLayout = _mapGenerator.CreateMap();
+
+            _mapSaveLoad.Save(_mapSaveLoad.FilePath("Test"), _mapLayout);
         }
 
         private void OnDrawGizmos()
         {
-            if (_mapGenerator == null || _mapGenerator.Paths == null) return;
+            if (_mapGenerator == null || _mapLayout.Paths == null) return;
 
-            var paths = _mapGenerator.Paths;
+            var paths = _mapLayout.Paths;
 
             for (int gen = 0; gen < paths.Count; gen++)
             {
