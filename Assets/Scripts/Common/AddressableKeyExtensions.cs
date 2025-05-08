@@ -4,7 +4,9 @@ public enum AddressableKey
 {
     AutoBattleUnitPrefab,
     MapGenerationSettings,
-    // …추가
+    UIMapView,
+    NodeTile,
+    EdgeView
 }
 
 public static class AddressableKeyExtensions
@@ -14,7 +16,7 @@ public static class AddressableKeyExtensions
     {
         { AddressableKey.AutoBattleUnitPrefab, "AutoBattle/UnitPrefab" },
         { AddressableKey.MapGenerationSettings, "Config/MapGenSettings" },
-        // …실제 Addressables의 키
+        { AddressableKey.UIMapView, "RoguelikeMap/UIMapView" },
     };
 
     public static string ToKey(this AddressableKey key)

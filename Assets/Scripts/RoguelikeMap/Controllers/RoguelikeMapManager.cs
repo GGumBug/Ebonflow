@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace RoguelikeMap
@@ -8,20 +7,29 @@ namespace RoguelikeMap
         private MapLayout _mapLayout;
         private MapSaveLoad _mapSaveLoad;
         private RoguelikeMapGenerator _mapGenerator;
+        private UIMapView _uiMapView;
 
-        public async UniTask Setup()
+        public void Setup(MapGenerationSettings settings, UIMapView uiMapView)
         {
             _mapSaveLoad = new MapSaveLoad();
-            if (_mapSaveLoad.TryLoadLayout("Test", out _mapLayout))
-                Debug.Log("저장 된 맵 재구축");
-            else
+            _mapLayout = LoadOrGenerateMap("Test", settings);
+            
+            _uiMapView = uiMapView;
+        }
+
+        private MapLayout LoadOrGenerateMap(string saveKey, MapGenerationSettings settings)
+        {
+            if (_mapSaveLoad.TryLoadLayout(saveKey, out var layout))
             {
-                Debug.Log("저장 된 맵 없음");
-                MapGenerationSettings mapGenerationSettings = await AddressableManager.Instance.Load<MapGenerationSettings>(AddressableKeyExtensions.ToKey(AddressableKey.MapGenerationSettings));
-                _mapGenerator = new RoguelikeMapGenerator(mapGenerationSettings);
-                _mapLayout = _mapGenerator.CreateMap();
-                _mapSaveLoad.Save("Test", _mapLayout);
+                Debug.Log("저장된 맵 재구축");
+                return layout;
             }
+
+            Debug.Log("저장된 맵 없음 → 새로 생성");
+            _mapGenerator = new RoguelikeMapGenerator(settings);
+            var newLayout = _mapGenerator.CreateMap();
+            _mapSaveLoad.Save(saveKey, newLayout);
+            return newLayout;
         }
 
         private void OnDrawGizmos()

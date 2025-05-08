@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using System;
 
 public class AddressableManager : Singleton<AddressableManager>
 {
@@ -43,8 +44,21 @@ public class AddressableManager : Singleton<AddressableManager>
 
     public async UniTask<GameObject> InstantiateAsync(string addressKey, Vector3 position = default, Quaternion rotation = default, Transform parent = null)
     {
-        var asset = await Load<GameObject>(addressKey);
-        return Instantiate(asset, position, rotation, parent);
+        var prefab = await Load<GameObject>(addressKey);
+        var go = Instantiate(prefab, position, rotation, parent);
+        return go;
+    }
+
+    public async UniTask<T> InstantiateAsync<T>(string addressKey, Vector3 position = default, Quaternion rotation = default, Transform parent = null) where T : Component
+    {
+        var prefab = await Load<GameObject>(addressKey);
+        var go = Instantiate(prefab, position, rotation, parent);
+        var comp = go.GetComponent<T>();
+        if (comp == null)
+            throw new InvalidOperationException(
+                $"[{addressKey}] 프리팹에 {typeof(T).Name} 컴포넌트가 없습니다."
+            );
+        return comp;
     }
 
     public void Unload(string addressKey)

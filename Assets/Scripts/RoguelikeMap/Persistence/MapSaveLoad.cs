@@ -87,7 +87,7 @@ namespace RoguelikeMap
             var path = FilePath(fileName);
             if (!File.Exists(path))
             {
-                Debug.LogError($"Map file not found: {path}");
+                Debug.LogWarning($"Map file not found: {path}");
                 data = null;
                 return false;
             }
