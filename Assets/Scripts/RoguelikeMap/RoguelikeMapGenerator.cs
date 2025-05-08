@@ -73,26 +73,7 @@ namespace RoguelikeMap
             }
             return template;
         }
-
-        private void GenerateAllPaths(List<List<MapNode>> grid, List<List<MapEdge>> paths)
-        {
-            for (int gen = 0; gen < _settings.pathGenerationCount; gen++)
-            {
-                bool success = false;
-                int tries = 0;
-
-                while (!success && tries++ < _settings.maxAttemptsPerPath)
-                {
-                    success = TryGenerateSinglePath(grid, paths ,gen);
-                    if (!success)
-                        RollbackGeneration(grid, paths ,gen);
-                }
-
-                if (!success)
-                    Debug.LogError($"[MapGen] Generation {gen} failed after {tries} attempts.");
-            }
-        }
-
+        
         /// <summary>
         /// 한 세대에 대한 경로를 시도 생성합니다.
         /// 교차 금지 옵션이 켜져 있으면,

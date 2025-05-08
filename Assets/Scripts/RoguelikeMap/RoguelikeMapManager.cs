@@ -1,6 +1,5 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using System.Collections.Generic;
 
 namespace RoguelikeMap
 {
@@ -13,21 +12,21 @@ namespace RoguelikeMap
         public async UniTask Setup()
         {
             _mapSaveLoad = new MapSaveLoad();
-            if (_mapSaveLoad.TryLoadLayout(_mapSaveLoad.FilePath("Test"), out _mapLayout))
+            if (_mapSaveLoad.TryLoadLayout("Test", out _mapLayout))
                 Debug.Log("저장 된 맵 재구축");
             else
+            {
                 Debug.Log("저장 된 맵 없음");
-
-            MapGenerationSettings mapGenerationSettings = await AddressableManager.Instance.Load<MapGenerationSettings>(AddressableKeyExtensions.ToKey(AddressableKey.MapGenerationSettings));
-            _mapGenerator = new RoguelikeMapGenerator(mapGenerationSettings);
-            _mapLayout = _mapGenerator.CreateMap();
-
-            _mapSaveLoad.Save(_mapSaveLoad.FilePath("Test"), _mapLayout);
+                MapGenerationSettings mapGenerationSettings = await AddressableManager.Instance.Load<MapGenerationSettings>(AddressableKeyExtensions.ToKey(AddressableKey.MapGenerationSettings));
+                _mapGenerator = new RoguelikeMapGenerator(mapGenerationSettings);
+                _mapLayout = _mapGenerator.CreateMap();
+                _mapSaveLoad.Save("Test", _mapLayout);
+            }
         }
 
         private void OnDrawGizmos()
         {
-            if (_mapGenerator == null || _mapLayout.Paths == null) return;
+            if (_mapLayout == null) return;
 
             var paths = _mapLayout.Paths;
 
