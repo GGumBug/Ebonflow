@@ -1,6 +1,7 @@
 using UnityEngine;
 using RoguelikeMap;
 using Cysharp.Threading.Tasks;
+using RoguelikeMap.UI;
 
 public class TestCreateMap : MonoBehaviour
 {

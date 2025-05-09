@@ -11,11 +11,13 @@ namespace RoguelikeMap
         private string FilePath(string fileName) =>
             Path.Combine(Application.persistentDataPath, fileName + ".json");
 
-        public void Save(string fileName, MapLayout mapLayout)
+        public void Save(string fileName, MapLayout mapLayout, MapGenerationSettings settings)
         {
             var data = new MapData
             {
                 // 행 단위 노드, 세대 단위 엣지를 저장할 배열 초기화
+                maxRow = settings.rowCount,
+                maxCol = settings.colCount,
                 nodes = new NodeDataRow[mapLayout.Grid.Count],
                 edges = new EdgeDataRow[mapLayout.Paths.Count]
             };
@@ -106,7 +108,7 @@ namespace RoguelikeMap
             }
         }
 
-        public MapLayout ReconstructLayout(MapData data)
+        public MapLayout ReconstructLayout(MapData data, MapGenerationSettings settings)
         {
             // 1) 그리드 + flat allNodes 리스트 동시 생성
             var grid = new List<List<MapNode>>(data.nodes.Length);
@@ -145,19 +147,19 @@ namespace RoguelikeMap
                 paths.Add(edgeList);
             }
 
-            return new MapLayout(grid, paths);
+            return new MapLayout(settings.rowCount, settings.colCount, grid, paths);
         }
 
         /// <summary>
         /// 데이터 로드 후 곧바로 MapLayout을 반환합니다.
         /// </summary>
-        public bool TryLoadLayout(string fileName, out MapLayout layout)
+        public bool TryLoadLayout(string fileName, out MapLayout layout, MapGenerationSettings settings)
         {
             layout = null;
             if (!TryLoadData(fileName, out var data))
                 return false;
 
-            layout = ReconstructLayout(data);
+            layout = ReconstructLayout(data, settings);
             Debug.Log($"Map layout reconstructed from {FilePath(fileName)}");
             return true;
         }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using RoguelikeMap.UI;
 
 namespace RoguelikeMap
 {
@@ -15,11 +16,12 @@ namespace RoguelikeMap
             _mapLayout = LoadOrGenerateMap("Test", settings);
             
             _uiMapView = uiMapView;
+            _uiMapView.RenderMap(_mapLayout);
         }
 
         private MapLayout LoadOrGenerateMap(string saveKey, MapGenerationSettings settings)
         {
-            if (_mapSaveLoad.TryLoadLayout(saveKey, out var layout))
+            if (_mapSaveLoad.TryLoadLayout(saveKey, out var layout, settings))
             {
                 Debug.Log("저장된 맵 재구축");
                 return layout;
@@ -28,7 +30,7 @@ namespace RoguelikeMap
             Debug.Log("저장된 맵 없음 → 새로 생성");
             _mapGenerator = new RoguelikeMapGenerator(settings);
             var newLayout = _mapGenerator.CreateMap();
-            _mapSaveLoad.Save(saveKey, newLayout);
+            _mapSaveLoad.Save(saveKey, newLayout, settings);
             return newLayout;
         }
 

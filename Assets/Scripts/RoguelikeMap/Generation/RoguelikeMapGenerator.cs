@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace RoguelikeMap
@@ -55,7 +56,7 @@ namespace RoguelikeMap
             AssignFixedFloorLocations(grid);
             AssignRandomFloorLocations(grid);
 
-            return new MapLayout(grid, paths);
+            return new MapLayout(_settings.rowCount, _settings.colCount, grid, paths);
         }
 
         /// <summary>

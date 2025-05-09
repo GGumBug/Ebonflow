@@ -7,6 +7,8 @@ namespace RoguelikeMap
     public class MapData
     {
         // JsonUtility 다차원 배열 지원 x 랩핑 방법 채택
+        public int maxRow;
+        public int maxCol;
         public NodeDataRow[] nodes;
         public EdgeDataRow[] edges;
     }
