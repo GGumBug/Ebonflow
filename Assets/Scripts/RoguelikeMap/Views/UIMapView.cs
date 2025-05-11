@@ -47,18 +47,25 @@ namespace RoguelikeMap.UI
             }
 
             // --- 3) Edge 배치 (필요시) ---
-            // foreach (var path in layout.Paths)
-            // {
-            //     foreach (var edge in path)
-            //     {
-            //         var go   = Instantiate(_edgeViewPrefab, _mapContentRect);
-            //         var view = go.GetComponent<EdgeView>();
-            //         view.Setup(edge.From.position, edge.To.position);
-            //     }
-            // }
+            foreach (var path in layout.Paths)
+            {
+                foreach (var edge in path)
+                {
+                    var go = Instantiate(_edgeViewPrefab, _mapContentRect);
+                    var view = go.GetComponent<EdgeView>();
+                    view.Setup(Convert(edge.From.position), Convert(edge.To.position));
+                }
+            }
 
             // 강제 레이아웃 리빌드
             LayoutRebuilder.ForceRebuildLayoutImmediate(_mapContentRect);
+        }
+
+        Vector2 Convert(Vector2 oldPos)
+        {
+            float newX = (oldPos.x * (4f / 3f)) * 100;
+            float newY = (oldPos.y * (14f)) * 20;
+            return new Vector2(newX, newY);
         }
     }
 }
