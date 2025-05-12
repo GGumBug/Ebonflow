@@ -38,7 +38,7 @@ namespace RoguelikeMap.UI
                 foreach (var node in row)
                 {
                     float xPos = node.position.x * _cellSpacingHorizontal + _paddingHorizontal;
-                    float yPos = node.position.y * _cellSpacingVertical + _paddingVertical;
+                    float yPos = - (node.position.y * _cellSpacingVertical) - _paddingVertical;
 
                     var go = Instantiate(_nodeViewPrefab, _mapContentRect);
                     var view = go.GetComponent<NodeView>();
@@ -63,8 +63,10 @@ namespace RoguelikeMap.UI
 
         Vector2 Convert(Vector2 oldPos)
         {
-            float newX = (oldPos.x * (4f / 3f)) * 100;
-            float newY = (oldPos.y * (14f)) * 20;
+            // float newX = (oldPos.x * (4f / 3f)) * 100;
+            // float newY = (oldPos.y * (14f)) * 20;
+            float newX = oldPos.x * 193 + 400;
+            float newY = oldPos.y * 300 + 300;
             return new Vector2(newX, newY);
         }
     }
