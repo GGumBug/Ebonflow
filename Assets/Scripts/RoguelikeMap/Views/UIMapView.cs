@@ -11,20 +11,15 @@ namespace RoguelikeMap.UI
         [SerializeField] private GameObject    _nodeViewPrefab;
         [SerializeField] private GameObject    _edgeViewPrefab;
 
-        [Header("Layout Settings")]
-        [Tooltip("X 좌표 변환 시 곱해질 스케일")]
-        [SerializeField] private float _xScale = 193f;
-        [Tooltip("X 좌표 변환 시 더해질 오프셋")]
-        [SerializeField] private float _xOffset = 400f;
-        [Tooltip("Y 좌표 변환 시 곱해질 스케일")]
-        [SerializeField] private float _yScale = 300f;
-        [Tooltip("Y 좌표 변환 시 더해질 오프셋")]
-        [SerializeField] private float _yOffset = 300f;
+        [Header("EdgePadding")]
+        private float _xScale = 193f;
+        private float _xOffset = 400f;
+        private float _yScale = 300f;
+        private float _yOffset = 500f;
 
-
-        [Header("Padding")]
+        [Header("NodePadding")]
         private float _paddingHorizontal = 3f;
-        private float _paddingVertical   = 3f;
+        private float _paddingVertical   = 5f;
         private float _cellSpacingHorizontal = 2f;
         private float _cellSpacingVertical = 3f;
 
