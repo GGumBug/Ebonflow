@@ -5,6 +5,7 @@ namespace RoguelikeMap
 {
     public class RoguelikeMapManager : MonoBehaviour
     {
+        private bool _drawGizmo;
         private MapLayout _mapLayout;
         private MapSaveLoad _mapSaveLoad;
         private RoguelikeMapGenerator _mapGenerator;
@@ -12,6 +13,7 @@ namespace RoguelikeMap
 
         public void Setup(MapGenerationSettings settings, UIMapView uiMapView)
         {
+            _drawGizmo = settings.drawGizmo;
             _mapSaveLoad = new MapSaveLoad();
             _mapLayout = LoadOrGenerateMap("Test", settings);
             
@@ -36,7 +38,7 @@ namespace RoguelikeMap
 
         private void OnDrawGizmos()
         {
-            if (_mapLayout == null) return;
+            if (!_drawGizmo || _mapLayout == null) return;
 
             var paths = _mapLayout.Paths;
 

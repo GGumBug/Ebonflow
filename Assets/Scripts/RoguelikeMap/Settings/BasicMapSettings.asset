@@ -30,3 +30,4 @@ MonoBehaviour:
   - type: 1
     baseW: 0.08
     peakW: 0.16
+  drawGizmo: 1

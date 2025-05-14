@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace RoguelikeMap
@@ -72,15 +71,35 @@ namespace RoguelikeMap
                     row.Add(new MapNode(r, c, LocationType.None));
                 template.Add(row);
             }
+
+            AssignBossRoom(template);
+
             return template;
         }
-        
+
+        /// <summary>
+        /// 맵의 최상단 행 중앙에 보스 룸을 지정합니다.
+        /// </summary>
+        private void AssignBossRoom(List<List<MapNode>> grid)
+        {
+            int bossRow = _settings.rowCount - 1;
+            int bossCol = _settings.colCount / 2;
+
+            if (bossRow < 0 || bossRow >= grid.Count)
+                Debug.LogError("보스층 오버 플로우");
+
+            if (bossCol < 0 || bossCol >= grid[bossRow].Count)
+                Debug.LogError("보스 로케이션 null");
+
+            grid[bossRow][bossCol].type = LocationType.Boss;
+        }
+
         /// <summary>
         /// 한 세대에 대한 경로를 시도 생성합니다.
         /// 교차 금지 옵션이 켜져 있으면,
         /// 기존에 _paths 에 쌓인 모든 간선들과 비교합니다.
         /// </summary>
-        private bool TryGenerateSinglePath( List<List<MapNode>> grid, List<List<MapEdge>> paths, int generationId)
+        private bool TryGenerateSinglePath(List<List<MapNode>> grid, List<List<MapEdge>> paths, int generationId)
         {
             var singlePath = new List<MapEdge>();
             var startRow = grid[0];
@@ -88,6 +107,27 @@ namespace RoguelikeMap
 
             for (int floor = 1; floor < grid.Count; floor++)
             {
+                MapNode chosen;
+                MapEdge edge;
+
+                if (floor == grid.Count - 1)
+                {
+                    int bossRow = _settings.rowCount - 1;
+                    int bossCol = _settings.colCount / 2;
+
+                    chosen = grid[bossRow][bossCol];
+                    edge = new MapEdge
+                    {
+                        From = current,
+                        To = chosen,
+                        Generation = generationId
+                    };
+
+                    current.Edges.Add(edge);
+                    singlePath.Add(edge);
+                    break;
+                }
+
                 // 거리순 상위 후보 추출
                 var candidates = grid[floor]
                     .OrderBy(n => Vector2.Distance(n.position, current.position))
@@ -103,8 +143,8 @@ namespace RoguelikeMap
                     return false;  // 이 층에서 연결 불가 → 실패
 
                 // 랜덤 선택
-                var chosen = valid[_rng.Next(valid.Count)];
-                var edge = new MapEdge
+                chosen = valid[_rng.Next(valid.Count)];
+                edge = new MapEdge
                 {
                     From = current,
                     To = chosen,
@@ -168,7 +208,7 @@ namespace RoguelikeMap
         private void PruneEmptyRows(List<List<MapNode>> grid)
         {
             foreach (var row in grid)
-                row.RemoveAll(n => n.Edges == null || n.Edges.Count == 0);
+                row.RemoveAll(n => n.type == LocationType.None && (n.Edges == null || n.Edges.Count == 0));
 
             grid.RemoveAll(r => r.Count == 0);
         }

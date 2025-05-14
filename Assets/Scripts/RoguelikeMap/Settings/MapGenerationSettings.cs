@@ -46,6 +46,10 @@ namespace RoguelikeMap
         [Header("Location Assignment")]
         [Tooltip("맵 룸에 부여할 LocationType 별 가중치 리스트 (base→peak)")]
         public List<LocationWeight> locationWeights = new();
+
+        [Header("Debug")]
+        [Tooltip("에디터에서 기즈모를 사용할 지 여부")]
+        public bool drawGizmo = false;
     }
 
     /// <summary>
