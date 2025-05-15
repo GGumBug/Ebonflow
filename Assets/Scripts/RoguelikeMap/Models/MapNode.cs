@@ -18,6 +18,8 @@ namespace RoguelikeMap
         public LocationType type;
         public List<MapEdge> Edges;
 
+        public bool IsActive { get; set; } = false;
+
         public MapNode(int row, int col, LocationType type)
         {
             position = new Vector2(col, row);

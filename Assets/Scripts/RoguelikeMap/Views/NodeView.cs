@@ -53,6 +53,7 @@ namespace RoguelikeMap.UI
         {
             _floor = (int)mapNode.position.y;
             _locationType = mapNode.type;
+            SetActiveState(mapNode.IsActive);
         }
 
         private void UpdatePosition(Vector2 position)
@@ -74,6 +75,11 @@ namespace RoguelikeMap.UI
                 _locationIcon.color = color;
             else
                 _locationIcon.color = Color.white;
+        }
+
+        public void SetActiveState(bool isActive)
+        {
+            _btnLocation.interactable = isActive;
         }
 
         // 버튼 또는 터치 이벤트에 연결

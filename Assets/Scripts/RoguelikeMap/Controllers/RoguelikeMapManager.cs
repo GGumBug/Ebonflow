@@ -64,8 +64,8 @@ namespace RoguelikeMap
                     // DrawNodeGizmo(edge.To);
 
                     // 엣지 라인
-                    Vector3 a = (Vector2)edge.From.position;
-                    Vector3 b = (Vector2)edge.To.position;
+                    Vector3 a = edge.From.position;
+                    Vector3 b = edge.To.position;
                     Gizmos.color = lineColor;
                     Gizmos.DrawLine(a, b);
                 }
@@ -75,7 +75,7 @@ namespace RoguelikeMap
         private void DrawNodeGizmo(MapNode node)
         {
             // 위치
-            Vector3 pos = (Vector2)node.position;
+            Vector3 pos = node.position;
 
             // LocationType 에 따른 색 결정
             Color nodeColor;

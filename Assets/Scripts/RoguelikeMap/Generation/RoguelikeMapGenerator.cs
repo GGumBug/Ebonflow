@@ -68,7 +68,12 @@ namespace RoguelikeMap
             {
                 var row = new List<MapNode>(cols);
                 for (int c = 0; c < cols; c++)
-                    row.Add(new MapNode(r, c, LocationType.None));
+                {
+                    var newNode = new MapNode(r, c, LocationType.None);
+                    row.Add(newNode);
+                    if (r == 0)
+                        newNode.IsActive = true;
+                }
                 template.Add(row);
             }
 
