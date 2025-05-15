@@ -137,6 +137,7 @@ MonoBehaviour:
   _rectTransform: {fileID: 3942493504377723028}
   _locationIcon: {fileID: 2649159026856060077}
   _textLabel: {fileID: 6060966106893743481}
+  _btnLocation: {fileID: 9110579995242363447}
 --- !u!1 &5579596515317315267
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,8 @@
-using TMPro;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
+using TMPro;
 
 namespace RoguelikeMap.UI
 {
@@ -10,34 +11,75 @@ namespace RoguelikeMap.UI
         [SerializeField] private RectTransform _rectTransform;
         [SerializeField] private Image _locationIcon;
         [SerializeField] private TextMeshProUGUI _textLabel;
+        [SerializeField] private Button _btnLocation;
 
-        private static readonly Dictionary<LocationType, Color> _typeColors = new()
+        private int _floor = -1;
+        private LocationType _locationType = LocationType.None;
+
+        public event Action<int, LocationType> Clicked;
+
+        private const int LabelCharCount = 1;
+
+        private static readonly Dictionary<LocationType, Color> TypeColors = new()
         {
             { LocationType.Monster, Color.red },
             { LocationType.Elite,   Color.magenta },
             { LocationType.Camp,    Color.green },
         };
 
-        public void Setup(Vector2 position, LocationType type)
+        private void Awake()
         {
-            float cellW = _rectTransform.sizeDelta.x;
-            
-            // 화면 X = (열 인덱스 – 가운데열) × 셀 너비
-            float x = position.x * cellW;
+            Debug.Assert(_rectTransform != null, "RectTransform is not assigned.");
+            Debug.Assert(_locationIcon != null, "LocationIcon is not assigned.");
+            Debug.Assert(_textLabel != null, "TextLabel is not assigned.");
 
-            // Y는 기존처럼
-            float y = -position.y * _rectTransform.sizeDelta.y;
+            Clicked += (floor, locationType) =>
+            {
+                Debug.Log($"Floor : {floor} LocationType : {locationType}");
+            };
 
-            _rectTransform.anchoredPosition = new Vector2(x, y);
+            _btnLocation.onClick.AddListener(OnClick);
+        }
 
-            // 3) 텍스트(첫 글자) 세팅
-            _textLabel.text = type.ToString().Substring(0, 1);
+        public void Setup(MapNode mapNode, Vector2 position)
+        {
+            CacheNodeData(mapNode);
+            UpdatePosition(position);
+            UpdateLabel();
+            UpdateIconColor();
+        }
 
-            // 4) 아이콘 색상 세팅
-            if (_typeColors.TryGetValue(type, out var c))
-                _locationIcon.color = c;
+        private void CacheNodeData(MapNode mapNode)
+        {
+            _floor = (int)mapNode.position.y;
+            _locationType = mapNode.type;
+        }
+
+        private void UpdatePosition(Vector2 position)
+        {
+            float cellWidth = _rectTransform.sizeDelta.x;
+            float posX = position.x * cellWidth;
+            float posY = -position.y * _rectTransform.sizeDelta.y;
+            _rectTransform.anchoredPosition = new Vector2(posX, posY);
+        }
+
+        private void UpdateLabel()
+        {
+            _textLabel.text = _locationType.ToString().Substring(0, LabelCharCount);
+        }
+
+        private void UpdateIconColor()
+        {
+            if (TypeColors.TryGetValue(_locationType, out var color))
+                _locationIcon.color = color;
             else
                 _locationIcon.color = Color.white;
+        }
+
+        // 버튼 또는 터치 이벤트에 연결
+        public void OnClick()
+        {
+            Clicked?.Invoke(_floor, _locationType);
         }
     }
 }

@@ -58,7 +58,7 @@ namespace RoguelikeMap.UI
 
                     var go = Instantiate(_nodeViewPrefab, _mapContentRect);
                     var view = go.GetComponent<NodeView>();
-                    view.Setup(new Vector2(xPos, yPos), node.type);
+                    view.Setup(node, new Vector2(xPos, yPos));
                 }
             }
 
