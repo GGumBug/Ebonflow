@@ -13,7 +13,7 @@ namespace RoguelikeMap
 
         public void Setup(MapGenerationSettings settings, UIMapView uiMapView)
         {
-            _drawGizmo = settings.drawGizmo;
+            _drawGizmo = settings.isDrawGizmo;
             _mapSaveLoad = new MapSaveLoad();
             _mapLayout = LoadOrGenerateMap("Test", settings);
             

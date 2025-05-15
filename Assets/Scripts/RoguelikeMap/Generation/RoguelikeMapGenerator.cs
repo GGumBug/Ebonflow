@@ -219,6 +219,19 @@ namespace RoguelikeMap
             {
                 int actLevel = floor + 1;
 
+                // 1) 이 ActLevel에서 유효한 LocationWeight만 추려둡니다.
+                var validWeights = _settings.locationWeights
+                    .Where(lw => actLevel >= lw.minFloor
+                              && (lw.maxFloor == 0 || actLevel <= lw.maxFloor))
+                    .ToList();
+
+                // (선택지 없으면 None 처리)
+                if (validWeights.Count == 0)
+                {
+                    Debug.LogWarning($"Act {actLevel}에 할당 가능한 LocationType이 없습니다.");
+                    continue;
+                }
+
                 foreach (var node in grid[floor])
                 {
                     if (node.type != LocationType.None)
@@ -228,7 +241,8 @@ namespace RoguelikeMap
                     int tries = 0;
                     do
                     {
-                        pick = _locationWeightUtil.GetRandomLocation(actLevel);
+                        // 2) 필터된 가중치 리스트에서 랜덤 선택
+                        pick = GetRandomLocationByWeight(actLevel, validWeights);
                         tries++;
                         if (tries > 10) break; // 무한 루프 방지
                     }
@@ -237,6 +251,39 @@ namespace RoguelikeMap
                     node.type = pick;
                 }
             }
+        }
+
+        /// <summary>
+        /// actLevel에 따라 baseW→peakW를 보간한 가중치로부터 LocationType을 랜덤 선택.
+        /// </summary>
+        private LocationType GetRandomLocationByWeight(int actLevel, List<LocationWeight> weights)
+        {
+            // 예: 최대 Act 레벨이 20이라고 가정
+            const int maxActLevel = 20;
+            // 1) 각 weight에 대해 보간값 계산
+            var weightedList = weights
+                .Select(lw =>
+                {
+                    float t = (actLevel - 1) / (float)(maxActLevel - 1);
+                    float w = Mathf.Lerp(lw.baseW, lw.peakW, t);
+                    return (lw.type, weight: Mathf.Max(0, w));
+                })
+                .Where(x => x.weight > 0)
+                .ToList();
+
+            // 2) 누적 가중치 계산
+            float total = weightedList.Sum(x => x.weight);
+            float rnd = Random.value * total;
+
+            // 3) 랜덤 추출
+            foreach (var entry in weightedList)
+            {
+                if (rnd < entry.weight)
+                    return entry.type;
+                rnd -= entry.weight;
+            }
+            // 혹시 빠지면 마지막 요소 반환
+            return weightedList.Last().type;
         }
 
         /// <summary>

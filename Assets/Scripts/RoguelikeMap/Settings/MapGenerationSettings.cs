@@ -49,7 +49,7 @@ namespace RoguelikeMap
 
         [Header("Debug")]
         [Tooltip("에디터에서 기즈모를 사용할 지 여부")]
-        public bool drawGizmo = false;
+        public bool isDrawGizmo = false;
     }
 
     /// <summary>
@@ -66,5 +66,11 @@ namespace RoguelikeMap
 
         [Tooltip("A20 (최대 Ascension)에서 선택될 가중치")]
         public float peakW;
+
+        [Min(1), Tooltip("출현 가능한 최소 층 (1부터 적용)")]
+        public int minFloor;
+
+        [Min(0), Tooltip("출현 가능한 최대 층 (0이면 제한 없음)")]
+        public int maxFloor;
     }
 }

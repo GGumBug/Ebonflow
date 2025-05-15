@@ -24,10 +24,16 @@ MonoBehaviour:
   - type: 2
     baseW: 0.53
     peakW: 0.45
+    minFloor: 0
+    maxFloor: 0
   - type: 3
     baseW: 0.08
     peakW: 0.16
+    minFloor: 3
+    maxFloor: 0
   - type: 1
     baseW: 0.08
     peakW: 0.16
-  drawGizmo: 1
+    minFloor: 3
+    maxFloor: 0
+  isDrawGizmo: 0
