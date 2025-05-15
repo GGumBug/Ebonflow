@@ -13,10 +13,10 @@ namespace RoguelikeMap.UI
         [SerializeField] private TextMeshProUGUI _textLabel;
         [SerializeField] private Button _btnLocation;
 
-        private int _floor = -1;
+        private Vector2Int _cellPosition;
         private LocationType _locationType = LocationType.None;
 
-        public event Action<int, LocationType> Clicked;
+        public event Action<Vector2Int, LocationType> OnClickCallback;
 
         private const int LabelCharCount = 1;
 
@@ -33,7 +33,7 @@ namespace RoguelikeMap.UI
             Debug.Assert(_locationIcon != null, "LocationIcon is not assigned.");
             Debug.Assert(_textLabel != null, "TextLabel is not assigned.");
 
-            Clicked += (floor, locationType) =>
+            OnClickCallback += (floor, locationType) =>
             {
                 Debug.Log($"Floor : {floor} LocationType : {locationType}");
             };
@@ -41,19 +41,23 @@ namespace RoguelikeMap.UI
             _btnLocation.onClick.AddListener(OnClick);
         }
 
-        public void Setup(MapNode mapNode, Vector2 position)
+        public void Setup(MapNode mapNode, int xIndex, Vector2 position, Action<Vector2Int, LocationType> handleNodeClick)
         {
-            CacheNodeData(mapNode);
+            CacheNodeData(mapNode, xIndex);
             UpdatePosition(position);
             UpdateLabel();
             UpdateIconColor();
+
+            OnClickCallback += handleNodeClick;
         }
 
-        private void CacheNodeData(MapNode mapNode)
+        private void CacheNodeData(MapNode mapNode, int xIndex)
         {
-            _floor = (int)mapNode.position.y;
+            _cellPosition = new Vector2Int(xIndex, (int)mapNode.position.y);
             _locationType = mapNode.type;
             SetActiveState(mapNode.IsActive);
+            
+            mapNode.OnActiveStateChanged += SetActiveState;
         }
 
         private void UpdatePosition(Vector2 position)
@@ -85,7 +89,7 @@ namespace RoguelikeMap.UI
         // 버튼 또는 터치 이벤트에 연결
         public void OnClick()
         {
-            Clicked?.Invoke(_floor, _locationType);
+            OnClickCallback?.Invoke(_cellPosition, _locationType);
         }
     }
 }

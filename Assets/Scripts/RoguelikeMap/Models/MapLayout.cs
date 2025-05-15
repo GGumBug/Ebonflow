@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace RoguelikeMap
 {
@@ -6,8 +8,8 @@ namespace RoguelikeMap
     {
         public int MaxRow { get; }
         public int MaxColumn { get; }
-        public List<List<MapNode>> Grid    { get; }
-        public List<List<MapEdge>> Paths   { get; }
+        public List<List<MapNode>> Grid { get; }
+        public List<List<MapEdge>> Paths { get; }
 
         public MapLayout(
             int maxRow,
@@ -17,8 +19,8 @@ namespace RoguelikeMap
         {
             MaxRow = maxRow;
             MaxColumn = maxColumn;
-            Grid  = grid;
-            Paths = paths;
+            Grid = grid ?? throw new ArgumentNullException(nameof(grid));
+            Paths = paths ?? throw new ArgumentNullException(nameof(paths));
         }
     }
 }

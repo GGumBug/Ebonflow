@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,7 +24,7 @@ namespace RoguelikeMap.UI
         private float _cellSpacingHorizontal = 2f;
         private float _cellSpacingVertical = 3f;
 
-        public void RenderMap(MapLayout layout)
+        public void RenderMap(MapLayout layout, Action<Vector2Int, LocationType> handleNodeClick)
         {
             foreach (var path in layout.Paths)
             {
@@ -49,16 +50,18 @@ namespace RoguelikeMap.UI
 
             _cellSpacingHorizontal = screenWidth * 0.01f / (layout.MaxColumn - 2) * 0.5f;
 
-            foreach (var row in layout.Grid)
+            for (int i = 0; i < layout.Grid.Count; i++)
             {
-                foreach (var node in row)
+                var row = layout.Grid[i];
+                for (int j = 0; j < row.Count; j++)
                 {
+                    var node = row[j];
                     float xPos = node.position.x * _cellSpacingHorizontal + _paddingHorizontal;
                     float yPos = - (node.position.y * _cellSpacingVertical) - _paddingVertical;
 
                     var go = Instantiate(_nodeViewPrefab, _mapContentRect);
                     var view = go.GetComponent<NodeView>();
-                    view.Setup(node, new Vector2(xPos, yPos));
+                    view.Setup(mapNode: node, xIndex: j, position: new Vector2(xPos, yPos), handleNodeClick);
                 }
             }
 

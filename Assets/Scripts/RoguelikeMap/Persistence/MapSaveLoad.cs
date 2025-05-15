@@ -6,162 +6,230 @@ using UnityEngine;
 
 namespace RoguelikeMap
 {
+    /// <summary>
+    /// 맵 데이터를 JSON으로 저장하고 불러오는 기능을 제공합니다.
+    /// </summary>
     public class MapSaveLoad
     {
-        private string FilePath(string fileName) =>
-            Path.Combine(Application.persistentDataPath, fileName + ".json");
+        private MapData _mapData;
 
+        /// <summary>
+        /// 저장된 맵 데이터에 선택 정보가 있는지 여부
+        /// </summary>
+        public bool HasSelection => _mapData != null
+                                     && _mapData.selectedRow >= 0
+                                     && _mapData.selectedIndex >= 0;
+
+        /// <summary>
+        /// 파일명에 대응하는 전체 경로를 반환합니다.
+        /// </summary>
+        private string GetFilePath(string fileName)
+            => Path.Combine(Application.persistentDataPath, fileName + ".json");
+
+        /// <summary>
+        /// MapLayout 정보를 JSON으로 직렬화하여 파일로 저장합니다.
+        /// </summary>
         public void Save(string fileName, MapLayout mapLayout, MapGenerationSettings settings)
         {
-            var data = new MapData
-            {
-                // 행 단위 노드, 세대 단위 엣지를 저장할 배열 초기화
-                maxRow = settings.rowCount,
-                maxCol = settings.colCount,
-                nodes = new NodeDataRow[mapLayout.Grid.Count],
-                edges = new EdgeDataRow[mapLayout.Paths.Count]
-            };
+            if (mapLayout == null) throw new ArgumentNullException(nameof(mapLayout));
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
 
-            // --- 1) nodes: 행(row) 단위로 NodeDataRow 생성 ---
-            for (int r = 0; r < mapLayout.Grid.Count; r++)
-            {
-                var rowList = mapLayout.Grid[r]
-                    .Select(n => new NodeData
-                    {
-                        row = (int)n.position.y,
-                        col = (int)n.position.x,
-                        type = n.type
-                    })
-                    .ToList();
+            InitializeMapDataIfNeeded(mapLayout, settings);
+            PopulateNodeDataRows(mapLayout);
+            PopulateEdgeDataRows(mapLayout);
 
-                data.nodes[r] = new NodeDataRow { row = rowList };
-            }
-
-            // --- 2) 좌표(row,col) → flat index 매핑 생성 ---
-            var indexMap = new Dictionary<(int row, int col), int>();
-            int idx = 0;
-            for (int r = 0; r < mapLayout.Grid.Count; r++)
-            {
-                for (int c = 0; c < mapLayout.Grid[r].Count; c++)
-                {
-                    var node = mapLayout.Grid[r][c];
-                    indexMap[((int)node.position.y, (int)node.position.x)] = idx++;
-                }
-            }
-
-            // --- 3) edges: 세대(generation) 단위로 EdgeDataRow 생성 ---
-            for (int g = 0; g < mapLayout.Paths.Count; g++)
-            {
-                var edgeList = new List<EdgeData>();
-                foreach (var e in mapLayout.Paths[g])
-                {
-                    var fromKey = ((int)e.From.position.y, (int)e.From.position.x);
-                    var toKey = ((int)e.To.position.y, (int)e.To.position.x);
-
-                    if (!indexMap.TryGetValue(fromKey, out int fromIdx) ||
-                        !indexMap.TryGetValue(toKey, out int toIdx))
-                    {
-                        Debug.LogWarning($"Save: 좌표 매핑 누락 from={fromKey}, to={toKey}");
-                        continue;
-                    }
-
-                    edgeList.Add(new EdgeData
-                    {
-                        fromIndex = fromIdx,
-                        toIndex = toIdx,
-                        generation = e.Generation
-                    });
-                }
-                data.edges[g] = new EdgeDataRow { path = edgeList };
-            }
-
-            // --- 4) JSON 직렬화 & 파일 쓰기 ---
-            string json = JsonUtility.ToJson(data, prettyPrint: true);
-            File.WriteAllText(FilePath(fileName), json);
-            Debug.Log($"Map saved to {FilePath(fileName)}");
+            string json = JsonUtility.ToJson(_mapData, prettyPrint: true);
+            File.WriteAllText(GetFilePath(fileName), json);
+            Debug.Log($"맵이 저장되었습니다: {GetFilePath(fileName)}");
         }
 
         /// <summary>
-        /// JSON에서 MapData를 읽어옵니다.
+        /// 파일에서 JSON을 읽어 MapData로 역직렬화 시도합니다.
         /// </summary>
         public bool TryLoadData(string fileName, out MapData data)
         {
-            var path = FilePath(fileName);
+            string path = GetFilePath(fileName);
             if (!File.Exists(path))
             {
-                Debug.LogWarning($"Map file not found: {path}");
+                Debug.LogWarning($"맵 파일을 찾을 수 없습니다: {path}");
                 data = null;
                 return false;
             }
 
             try
             {
-                var json = File.ReadAllText(path);
+                string json = File.ReadAllText(path);
                 data = JsonUtility.FromJson<MapData>(json);
+                _mapData = data;
                 return data != null;
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to load map data from {path}: {ex.Message}");
+                Debug.LogError($"맵 데이터 로드에 실패했습니다: {path}\n{ex.Message}");
                 data = null;
                 return false;
             }
         }
 
+        /// <summary>
+        /// MapData와 설정 정보를 기반으로 MapLayout을 재구성합니다.
+        /// </summary>
         public MapLayout ReconstructLayout(MapData data, MapGenerationSettings settings)
         {
-            // 1) 그리드 + flat allNodes 리스트 동시 생성
-            var grid = new List<List<MapNode>>(data.nodes.Length);
-            var allNodes = new List<MapNode>();
-            for (int r = 0; r < data.nodes.Length; r++)
-            {
-                var rowList = new List<MapNode>(data.nodes[r].row.Count);
-                foreach (var nd in data.nodes[r].row)
-                {
-                    var node = new MapNode(nd.row, nd.col, nd.type);
-                    rowList.Add(node);
-                    allNodes.Add(node);       // 저장 시 SelectMany(r => r) 순서와 1:1 매칭
-                }
-                grid.Add(rowList);
-            }
+            if (data == null) throw new ArgumentNullException(nameof(data));
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
 
-            // 2) flat index → allNodes[index] 로 간선 복원
-            var paths = new List<List<MapEdge>>(data.edges.Length);
-            for (int gen = 0; gen < data.edges.Length; gen++)
-            {
-                var edgeList = new List<MapEdge>();
-                foreach (var ed in data.edges[gen].path)
-                {
-                    var from = allNodes[ed.fromIndex];
-                    var to = allNodes[ed.toIndex];
+            var grid = BuildGrid(data);
+            var paths = BuildPaths(data, grid);
 
-                    var e = new MapEdge
-                    {
-                        From = from,
-                        To = to,
-                        Generation = ed.generation
-                    };
-                    from.Edges.Add(e);
-                    edgeList.Add(e);
-                }
-                paths.Add(edgeList);
-            }
-
-            return new MapLayout(settings.rowCount, settings.colCount, grid, paths);
+            return new MapLayout(
+                data.maxRow,
+                data.maxCol,
+                grid,
+                paths);
         }
 
         /// <summary>
-        /// 데이터 로드 후 곧바로 MapLayout을 반환합니다.
+        /// 파일에서 MapLayout을 불러옵니다. 저장된 정보가 없으면 false를 반환합니다.
         /// </summary>
         public bool TryLoadLayout(string fileName, out MapLayout layout, MapGenerationSettings settings)
         {
             layout = null;
-            if (!TryLoadData(fileName, out var data))
-                return false;
+            if (!TryLoadData(fileName, out var data)) return false;
 
             layout = ReconstructLayout(data, settings);
-            Debug.Log($"Map layout reconstructed from {FilePath(fileName)}");
+            Debug.Log($"맵 레이아웃이 복원되었습니다: {GetFilePath(fileName)}");
             return true;
         }
+
+        /// <summary>
+        /// 선택된 노드 좌표를 내부 MapData에 업데이트합니다.
+        /// </summary>
+        public void UpdateSelection(Vector2Int newPosition)
+        {
+            if (_mapData == null)
+                _mapData = new MapData();
+
+            _mapData.selectedRow   = newPosition.y;
+            _mapData.selectedIndex = newPosition.x;
+        }
+
+        #region 내부 헬퍼 메서드
+
+        private void InitializeMapDataIfNeeded(MapLayout layout, MapGenerationSettings settings)
+        {
+            if (_mapData == null)
+            {
+                _mapData = new MapData
+                {
+                    selectedRow   = -1,
+                    selectedIndex = -1,
+                    maxRow        = settings.rowCount,
+                    maxCol        = settings.colCount,
+                    nodes         = new NodeDataRow[layout.Grid.Count],
+                    edges         = new EdgeDataRow[layout.Paths.Count]
+                };
+            }
+        }
+
+        private void PopulateNodeDataRows(MapLayout layout)
+        {
+            for (int r = 0; r < layout.Grid.Count; r++)
+            {
+                var list = layout.Grid[r]
+                    .Select(n => new NodeData
+                    {
+                        row      = (int)n.position.y,
+                        col      = (int)n.position.x,
+                        type     = n.type,
+                        isActive = n.IsActive
+                    })
+                    .ToList();
+
+                _mapData.nodes[r] = new NodeDataRow { row = list };
+            }
+        }
+
+        private void PopulateEdgeDataRows(MapLayout layout)
+        {
+            var flat = layout.Grid.SelectMany(r => r).ToList();
+            var indexMap = flat
+                .Select((node, idx) => new { node, idx })
+                .ToDictionary(x => ((int)x.node.position.y, (int)x.node.position.x), x => x.idx);
+
+            for (int g = 0; g < layout.Paths.Count; g++)
+            {
+                var list = new List<EdgeData>();
+                foreach (var e in layout.Paths[g])
+                {
+                    var fromKey = ((int)e.From.position.y, (int)e.From.position.x);
+                    var toKey   = ((int)e.To.position.y,   (int)e.To.position.x);
+
+                    if (!indexMap.TryGetValue(fromKey, out int fIdx)
+                     || !indexMap.TryGetValue(toKey,   out int tIdx))
+                    {
+                        Debug.LogWarning($"저장 중: 매핑 누락 from={fromKey}, to={toKey}");
+                        continue;
+                    }
+
+                    list.Add(new EdgeData
+                    {
+                        fromIndex  = fIdx,
+                        toIndex    = tIdx,
+                        generation = e.Generation
+                    });
+                }
+
+                _mapData.edges[g] = new EdgeDataRow { path = list };
+            }
+        }
+
+        private List<List<MapNode>> BuildGrid(MapData data)
+        {
+            var grid = new List<List<MapNode>>(data.nodes.Length);
+            var all  = new List<MapNode>();
+
+            foreach (var rowData in data.nodes)
+            {
+                var rowList = new List<MapNode>(rowData.row.Count);
+                foreach (var nd in rowData.row)
+                {
+                    var node = new MapNode(nd.row, nd.col, nd.type, nd.isActive);
+                    rowList.Add(node);
+                    all.Add(node);
+                }
+                grid.Add(rowList);
+            }
+            return grid;
+        }
+
+        private List<List<MapEdge>> BuildPaths(MapData data, List<List<MapNode>> grid)
+        {
+            var allNodes = grid.SelectMany(r => r).ToList();
+            var paths    = new List<List<MapEdge>>(data.edges.Length);
+
+            foreach (var rowData in data.edges)
+            {
+                var edgeList = new List<MapEdge>(rowData.path.Count);
+                foreach (var ed in rowData.path)
+                {
+                    var fromNode = allNodes[ed.fromIndex];
+                    var toNode   = allNodes[ed.toIndex];
+                    var edge     = new MapEdge
+                    {
+                        From       = fromNode,
+                        To         = toNode,
+                        Generation = ed.generation
+                    };
+                    fromNode.Edges.Add(edge);
+                    edgeList.Add(edge);
+                }
+                paths.Add(edgeList);
+            }
+
+            return paths;
+        }
+
+        #endregion
     }
 }
