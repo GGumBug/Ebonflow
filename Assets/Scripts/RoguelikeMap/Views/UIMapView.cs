@@ -32,7 +32,7 @@ namespace RoguelikeMap.UI
                 {
                     var go = Instantiate(_edgeViewPrefab, _mapContentRect);
                     var view = go.GetComponent<EdgeView>();
-                    view.Setup(Convert(edge.From.position), Convert(edge.To.position));
+                    view.Setup(Convert(edge.From.position), Convert(edge.To.position), edge);
                 }
             }
 

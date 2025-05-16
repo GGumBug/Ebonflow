@@ -16,15 +16,17 @@ namespace RoguelikeMap
         /// <summary>
         /// 저장된 맵 데이터에 선택 정보가 있는지 여부
         /// </summary>
-        public bool HasSelection => _mapData != null
-                                     && _mapData.selectedRow >= 0
-                                     && _mapData.selectedIndex >= 0;
+        public bool HasSelection() => _mapData != null
+                                     && _mapData.currentRow >= 0
+                                     && _mapData.currentIndex >= 0;
 
         /// <summary>
         /// 파일명에 대응하는 전체 경로를 반환합니다.
         /// </summary>
         private string GetFilePath(string fileName)
             => Path.Combine(Application.persistentDataPath, fileName + ".json");
+
+        public Vector2Int GetCurrentNodePosition() => new Vector2Int(_mapData.currentIndex, _mapData.currentRow);
 
         /// <summary>
         /// MapLayout 정보를 JSON으로 직렬화하여 파일로 저장합니다.
@@ -41,6 +43,24 @@ namespace RoguelikeMap
             string json = JsonUtility.ToJson(_mapData, prettyPrint: true);
             File.WriteAllText(GetFilePath(fileName), json);
             Debug.Log($"맵이 저장되었습니다: {GetFilePath(fileName)}");
+        }
+
+        /// <summary>
+        /// 저장된 JSON 파일을 삭제합니다.
+        /// </summary>
+        public void DeleteSave(string fileName)
+        {
+            string path = GetFilePath(fileName);
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+                _mapData = null;
+                Debug.Log($"맵 저장 파일이 삭제되었습니다: {path}");
+            }
+            else
+            {
+                Debug.LogWarning($"삭제할 맵 파일이 없습니다: {path}");
+            }
         }
 
         /// <summary>
@@ -110,8 +130,8 @@ namespace RoguelikeMap
             if (_mapData == null)
                 _mapData = new MapData();
 
-            _mapData.selectedRow   = newPosition.y;
-            _mapData.selectedIndex = newPosition.x;
+            _mapData.currentRow   = newPosition.y;
+            _mapData.currentIndex = newPosition.x;
         }
 
         #region 내부 헬퍼 메서드
@@ -122,8 +142,8 @@ namespace RoguelikeMap
             {
                 _mapData = new MapData
                 {
-                    selectedRow   = -1,
-                    selectedIndex = -1,
+                    currentRow   = -1,
+                    currentIndex = -1,
                     maxRow        = settings.rowCount,
                     maxCol        = settings.colCount,
                     nodes         = new NodeDataRow[layout.Grid.Count],
@@ -176,7 +196,9 @@ namespace RoguelikeMap
                     {
                         fromIndex  = fIdx,
                         toIndex    = tIdx,
-                        generation = e.Generation
+                        generation = e.Generation,
+                        isActive = e.IsActive,
+                        hasPassed = e.HasPassed
                     });
                 }
 
@@ -219,7 +241,9 @@ namespace RoguelikeMap
                     {
                         From       = fromNode,
                         To         = toNode,
-                        Generation = ed.generation
+                        Generation = ed.generation,
+                        IsActive = ed.isActive,
+                        HasPassed = ed.hasPassed,
                     };
                     fromNode.Edges.Add(edge);
                     edgeList.Add(edge);

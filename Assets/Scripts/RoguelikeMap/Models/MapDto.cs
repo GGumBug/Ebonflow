@@ -7,8 +7,8 @@ namespace RoguelikeMap
     public class MapData
     {
         // JsonUtility 다차원 배열 지원 x 랩핑 방법 채택
-        public int selectedRow = -1; // -1 이면 “아직 선택 없음” 상태
-        public int selectedIndex = -1; // ListCount 기준
+        public int currentRow = -1; // -1 이면 “아직 선택 없음” 상태
+        public int currentIndex = -1; // ListCount 기준
         public int maxRow;
         public int maxCol;
         public NodeDataRow[] nodes;
@@ -44,6 +44,8 @@ namespace RoguelikeMap
         public int fromIndex;
         public int toIndex;
         public int generation;
+        public bool isActive;
+        public bool hasPassed;
     }
 }
 
