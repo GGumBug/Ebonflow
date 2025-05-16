@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MenuScene.unity
     guid: dc3e268fd28515948afa3ec7dd889a06
   - enabled: 1
+    path: Assets/Scenes/MapScene.unity
+    guid: 6397fe04c20ec4be8901216aa5a4c792
+  - enabled: 1
     path: Assets/Scenes/AutoBattleScene.unity
     guid: 3dc4165b6ef414c27883f9cf6a04593e
   m_configObjects:
