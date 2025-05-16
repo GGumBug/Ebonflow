@@ -537,6 +537,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mapScrollRect: {fileID: 7680992756722846571}
+  _scrollbarVertical: {fileID: 4034301243975397817}
   _mapContentRect: {fileID: 2951455037147609684}
   _nodeViewPrefab: {fileID: 4143996455151518058, guid: 170eb3c076fa648538a2fc9a28c2c74b, type: 3}
   _edgeViewPrefab: {fileID: 670626092564720444, guid: 042d38d220a4f4b9ebed767cb3bf21de, type: 3}
@@ -696,7 +697,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 7471390589226297972}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.49200377
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

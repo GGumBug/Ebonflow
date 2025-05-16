@@ -7,10 +7,11 @@ namespace RoguelikeMap.UI
     public class UIMapView : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private ScrollRect    _mapScrollRect;
-        [SerializeField] private RectTransform _mapContentRect;
-        [SerializeField] private GameObject    _nodeViewPrefab;
-        [SerializeField] private GameObject    _edgeViewPrefab;
+        [SerializeField] private ScrollRect     _mapScrollRect;
+        [SerializeField] private Scrollbar      _scrollbarVertical;
+        [SerializeField] private RectTransform  _mapContentRect;
+        [SerializeField] private GameObject     _nodeViewPrefab;
+        [SerializeField] private GameObject     _edgeViewPrefab;
 
         [Header("EdgePadding")]
         private float _xScale = 193f;
@@ -67,6 +68,7 @@ namespace RoguelikeMap.UI
 
             // 강제 레이아웃 리빌드
             LayoutRebuilder.ForceRebuildLayoutImmediate(_mapContentRect);
+            _scrollbarVertical.value = 0;
         }
 
         Vector2 Convert(Vector2 oldPos)

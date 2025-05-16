@@ -18,7 +18,7 @@ namespace RoguelikeMap
         /// <summary>
         /// 맵 생성 설정과 UIMapView를 초기화합니다.
         /// </summary>
-        public void Setup(MapGenerationSettings settings, UIMapView uiMapView)
+        public void Setup(MapGenerationSettings settings, UIMapView uiMapView, INodeClickHandler nodeClickHandler)
         {
             Debug.Assert(settings != null, "settings must not be null.");
             Debug.Assert(uiMapView != null, "uiMapView must not be null.");

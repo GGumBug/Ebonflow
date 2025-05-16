@@ -16,7 +16,8 @@ namespace RoguelikeMap.UI
         private Vector2Int _cellPosition;
         private LocationType _locationType = LocationType.None;
 
-        public event Action<Vector2Int, LocationType> OnClickCallback;
+        public event Action<Vector2Int, LocationType> OnNodeSelected;
+        public event Action<int, int, int> OnRequestNextAction;
 
         private const int LabelCharCount = 1;
 
@@ -33,11 +34,6 @@ namespace RoguelikeMap.UI
             Debug.Assert(_locationIcon != null, "LocationIcon is not assigned.");
             Debug.Assert(_textLabel != null, "TextLabel is not assigned.");
 
-            OnClickCallback += (floor, locationType) =>
-            {
-                Debug.Log($"Floor : {floor} LocationType : {locationType}");
-            };
-
             _btnLocation.onClick.AddListener(OnClick);
         }
 
@@ -48,7 +44,7 @@ namespace RoguelikeMap.UI
             UpdateLabel();
             UpdateIconColor();
 
-            OnClickCallback += handleNodeClick;
+            OnNodeSelected += handleNodeClick;
         }
 
         private void CacheNodeData(MapNode mapNode, int xIndex)
@@ -89,7 +85,7 @@ namespace RoguelikeMap.UI
         // 버튼 또는 터치 이벤트에 연결
         public void OnClick()
         {
-            OnClickCallback?.Invoke(_cellPosition, _locationType);
+            OnNodeSelected?.Invoke(_cellPosition, _locationType);
         }
     }
 }
