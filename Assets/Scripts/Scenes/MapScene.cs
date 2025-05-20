@@ -46,12 +46,10 @@ public class MapScene : SceneBase, INodeClickHandler
 
     public void OnNodeClicked(int stage, int floor, int locationTypeId)
     {
-        var context = new AutoBattleSceneContext(
+        AutoBattleDataManager.Instance.SetContext(new AutoBattleSceneContext(
             stage,
             floor,
             locationTypeId
-        );
-
-        Debug.Log($"Floor : {floor} LocationType : {(LocationType)context.LocationTypeId}");
+        ));
     }
 }
