@@ -43,7 +43,7 @@ namespace RoguelikeMap
         /// 노드 클릭 처리
         /// </summary>
         /// <param name="selectedCellPosition">열(x)과 층(y) 인덱스</param>
-        public void HandleNodeClick(Vector2Int selectedCellPosition, LocationType locationType)
+        public void SelectNode(Vector2Int selectedCellPosition)
         {
             Vector2Int currentNodePos = GetCurrentNodePosition.Invoke();
             var currentNode = _getNode(currentNodePos.y, currentNodePos.x);

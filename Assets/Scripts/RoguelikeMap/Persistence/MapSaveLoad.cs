@@ -92,32 +92,13 @@ namespace RoguelikeMap
         }
 
         /// <summary>
-        /// MapData와 설정 정보를 기반으로 MapLayout을 재구성합니다.
-        /// </summary>
-        public MapLayout ReconstructLayout(MapData data, MapGenerationSettings settings)
-        {
-            if (data == null) throw new ArgumentNullException(nameof(data));
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
-
-            var grid = BuildGrid(data);
-            var paths = BuildPaths(data, grid);
-
-            return new MapLayout(
-                data.maxRow,
-                data.maxCol,
-                grid,
-                paths);
-        }
-
-        /// <summary>
         /// 파일에서 MapLayout을 불러옵니다. 저장된 정보가 없으면 false를 반환합니다.
         /// </summary>
-        public bool TryLoadLayout(string fileName, out MapLayout layout, MapGenerationSettings settings)
+        public bool TryLoadLayout(string fileName, out MapData data, MapGenerationSettings settings)
         {
-            layout = null;
-            if (!TryLoadData(fileName, out var data)) return false;
+            if (!TryLoadData(fileName, out data)) 
+                return false;
 
-            layout = ReconstructLayout(data, settings);
             Debug.Log($"맵 레이아웃이 복원되었습니다: {GetFilePath(fileName)}");
             return true;
         }
@@ -204,54 +185,6 @@ namespace RoguelikeMap
 
                 _mapData.edges[g] = new EdgeDataRow { path = list };
             }
-        }
-
-        private List<List<MapNode>> BuildGrid(MapData data)
-        {
-            var grid = new List<List<MapNode>>(data.nodes.Length);
-            var all  = new List<MapNode>();
-
-            foreach (var rowData in data.nodes)
-            {
-                var rowList = new List<MapNode>(rowData.row.Count);
-                foreach (var nd in rowData.row)
-                {
-                    var node = new MapNode(nd.row, nd.col, nd.type, nd.isActive);
-                    rowList.Add(node);
-                    all.Add(node);
-                }
-                grid.Add(rowList);
-            }
-            return grid;
-        }
-
-        private List<List<MapEdge>> BuildPaths(MapData data, List<List<MapNode>> grid)
-        {
-            var allNodes = grid.SelectMany(r => r).ToList();
-            var paths    = new List<List<MapEdge>>(data.edges.Length);
-
-            foreach (var rowData in data.edges)
-            {
-                var edgeList = new List<MapEdge>(rowData.path.Count);
-                foreach (var ed in rowData.path)
-                {
-                    var fromNode = allNodes[ed.fromIndex];
-                    var toNode   = allNodes[ed.toIndex];
-                    var edge     = new MapEdge
-                    {
-                        From       = fromNode,
-                        To         = toNode,
-                        Generation = ed.generation,
-                        IsActive = ed.isActive,
-                        HasPassed = ed.hasPassed,
-                    };
-                    fromNode.Edges.Add(edge);
-                    edgeList.Add(edge);
-                }
-                paths.Add(edgeList);
-            }
-
-            return paths;
         }
 
         #endregion

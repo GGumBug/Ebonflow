@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -5,36 +6,41 @@ using UnityEngine;
 namespace RoguelikeMap
 {
     /// <summary>
-    /// 불규칙 등각 격자 기반으로 6개의 연속된 경로를 생성합니다.
-    /// 교차 금지 옵션을 켜면, 모든 이전에 생성된 간선과 비교하여 절대 교차가 발생하지 않도록 보장합니다.
+    /// 불규칙 등각 격자 기반으로 맵과 경로를 생성합니다.
     /// </summary>
     public class RoguelikeMapGenerator
     {
+        #region Fields
         private readonly System.Random _rng;
-        private MapGenerationSettings _settings;
-        private LocationWeightUtil _locationWeightUtil;
+        private readonly MapGenerationSettings _settings;
+        private readonly LocationWeightUtil _locationWeightUtil;
+        #endregion
 
+        #region Constructor
         /// <summary>
         /// 외부에서 랜덤 시드를 주입할 수 있습니다.
         /// seed 가 null 이면 시간 기반 Random 사용.
         /// </summary>
         public RoguelikeMapGenerator(MapGenerationSettings settings)
         {
-            _settings = settings;
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _locationWeightUtil = new LocationWeightUtil(_settings.locationWeights, _settings.rowCount);
-            int? seed = _settings.useSeed ? _settings.seed : null;
+
+            int? seed = _settings.useSeed ? (int?)_settings.seed : null;
             _rng = seed.HasValue ? new System.Random(seed.Value) : new System.Random();
         }
+        #endregion
 
+        #region Public Methods
         /// <summary>
-        /// 그리드와 경로들을 생성해서 MapLayout 으로 반환합니다.
+        /// 그리드와 경로들을 생성하여 MapLayout으로 반환합니다.
         /// </summary>
         public MapLayout CreateMap()
         {
-            var grid  = GenerateEmptyMapTemplate(_settings.rowCount, _settings.colCount);
+            var grid = GenerateEmptyMapTemplate(_settings.rowCount, _settings.colCount);
             var paths = new List<List<MapEdge>>();
 
-            // 3) Path 생성
+            // 경로 생성
             for (int gen = 0; gen < _settings.pathGenerationCount; gen++)
             {
                 bool success = false;
@@ -59,7 +65,22 @@ namespace RoguelikeMap
         }
 
         /// <summary>
-        /// RoomType.None 로 채워진 빈 템플릿을 만듭니다.
+        /// 저장된 MapData를 기반으로 MapLayout을 재구성합니다.
+        /// </summary>
+        public MapLayout ReconstructLayout(MapData data, MapGenerationSettings settings)
+        {
+            if (data == null) throw new ArgumentNullException(nameof(data));
+            if (settings == null) throw new ArgumentNullException(nameof(settings));
+
+            var grid = BuildGrid(data);
+            var paths = BuildPaths(data, grid);
+            return new MapLayout(data.maxRow, data.maxCol, grid, paths);
+        }
+        #endregion
+
+        #region Generation Steps
+        /// <summary>
+        /// 빈 템플릿 그리드를 생성하고 보스 룸을 할당합니다.
         /// </summary>
         private List<List<MapNode>> GenerateEmptyMapTemplate(int rows, int cols)
         {
@@ -68,45 +89,32 @@ namespace RoguelikeMap
             {
                 var row = new List<MapNode>(cols);
                 for (int c = 0; c < cols; c++)
-                {
-                    var newNode = new MapNode(r, c, LocationType.None);
-                    row.Add(newNode);
-                }
+                    row.Add(new MapNode(r, c, LocationType.None));
+
                 template.Add(row);
             }
 
             AssignBossRoom(template);
-
             return template;
         }
 
         /// <summary>
-        /// 맵의 최상단 행 중앙에 보스 룸을 지정합니다.
+        /// 보스 룸을 최상단 중앙에 지정합니다.
         /// </summary>
         private void AssignBossRoom(List<List<MapNode>> grid)
         {
-            int bossRow = _settings.rowCount - 1;
-            int bossCol = _settings.colCount / 2;
-
-            if (bossRow < 0 || bossRow >= grid.Count)
-                Debug.LogError("보스층 오버 플로우");
-
-            if (bossCol < 0 || bossCol >= grid[bossRow].Count)
-                Debug.LogError("보스 로케이션 null");
-
+            int bossRow = grid.Count - 1;
+            int bossCol = grid[bossRow].Count / 2;
             grid[bossRow][bossCol].type = LocationType.Boss;
         }
 
         /// <summary>
-        /// 한 세대에 대한 경로를 시도 생성합니다.
-        /// 교차 금지 옵션이 켜져 있으면,
-        /// 기존에 _paths 에 쌓인 모든 간선들과 비교합니다.
+        /// 단일 경로 생성을 시도합니다.
         /// </summary>
         private bool TryGenerateSinglePath(List<List<MapNode>> grid, List<List<MapEdge>> paths, int generationId)
         {
             var singlePath = new List<MapEdge>();
-            var startRow = grid[0];
-            var current = startRow[_rng.Next(startRow.Count)];
+            var current = grid[0][_rng.Next(grid[0].Count)];
 
             for (int floor = 1; floor < grid.Count; floor++)
             {
@@ -115,44 +123,27 @@ namespace RoguelikeMap
 
                 if (floor == grid.Count - 1)
                 {
-                    int bossRow = _settings.rowCount - 1;
-                    int bossCol = _settings.colCount / 2;
-
-                    chosen = grid[bossRow][bossCol];
-                    edge = new MapEdge
-                    {
-                        From = current,
-                        To = chosen,
-                        Generation = generationId
-                    };
-
+                    chosen = grid[floor][grid[floor].Count / 2];
+                    edge = new MapEdge { From = current, To = chosen, Generation = generationId };
                     current.Edges.Add(edge);
                     singlePath.Add(edge);
                     break;
                 }
 
-                // 거리순 상위 후보 추출
                 var candidates = grid[floor]
                     .OrderBy(n => Vector2.Distance(n.position, current.position))
                     .Take(_settings.nearestCandidateCount)
                     .ToList();
 
-                // 교차 검사: 꺼져 있으면 모두 유효, 켜져 있으면 교차 없는 것만
                 var valid = !_settings.crossCheck
                     ? candidates
-                    : candidates.Where(c => !IsCrossingAnyExistingEdge(paths,current, c)).ToList();
+                    : candidates.Where(c => !IsCrossingAnyExistingEdge(paths, current, c)).ToList();
 
                 if (valid.Count == 0)
-                    return false;  // 이 층에서 연결 불가 → 실패
+                    return false;
 
-                // 랜덤 선택
                 chosen = valid[_rng.Next(valid.Count)];
-                edge = new MapEdge
-                {
-                    From = current,
-                    To = chosen,
-                    Generation = generationId
-                };
+                edge = new MapEdge { From = current, To = chosen, Generation = generationId };
 
                 current.Edges.Add(edge);
                 singlePath.Add(edge);
@@ -164,71 +155,45 @@ namespace RoguelikeMap
         }
 
         /// <summary>
-        /// 기존에 생성된 모든 간선(Paths)과 비교하여
-        /// from→to 간선이 교차하는지 검사합니다.
+        /// 실패한 세대의 경로를 롤백합니다.
         /// </summary>
-        private bool IsCrossingAnyExistingEdge(List<List<MapEdge>> paths, MapNode from, MapNode to)
+        private void RollbackGeneration(List<List<MapNode>> grid, List<List<MapEdge>> paths, int generationId)
         {
-            var a = from.position;
-            var b = to.position;
-
-            foreach (var path in paths)
-            {
-                foreach (var edge in path)
-                {
-                    // 공유 endpoint는 교차로 보지 않음
-                    if (edge.From == from || edge.To == from ||
-                        edge.From == to || edge.To == to)
-                        continue;
-
-                    var c = edge.From.position;
-                    var d = edge.To.position;
-                    if (SegmentsIntersect(a, b, c, d))
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// 실패한 세대의 모든 간선을 롤백합니다.
-        /// </summary>
-        private void RollbackGeneration( List<List<MapNode>> grid, List<List<MapEdge>> paths, int generationId)
-        {
-            // _paths에서 제거
             paths.RemoveAll(p => p.Any(e => e.Generation == generationId));
-            // 각 노드의 Edges에서도 제거
             foreach (var row in grid)
-                foreach (var node in row)
-                    node.Edges.RemoveAll(e => e.Generation == generationId);
+                row.ForEach(n => n.Edges.RemoveAll(e => e.Generation == generationId));
         }
 
         /// <summary>
-        /// 간선을 하나도 갖지 않은 노드를 제거하고,
-        /// 빈 행도 함께 제거합니다.
+        /// 빈 노드 및 빈 행을 제거합니다.
         /// </summary>
         private void PruneEmptyRows(List<List<MapNode>> grid)
         {
-            foreach (var row in grid)
-                row.RemoveAll(n => n.type == LocationType.None && (n.Edges == null || n.Edges.Count == 0));
-
-            grid.RemoveAll(r => r.Count == 0);
+            grid.ForEach(row => row.RemoveAll(n => n.type == LocationType.None && n.Edges.Count == 0));
+            grid.RemoveAll(row => row.Count == 0);
         }
 
+        /// <summary>
+        /// 0층과 끝 전층에 고정된 타입을 할당합니다.
+        /// </summary>
+        private void AssignFixedFloorLocations(List<List<MapNode>> grid)
+        {
+            grid[0].ForEach(n => n.type = LocationType.Monster);
+            grid[grid.Count - 2].ForEach(n => n.type = LocationType.Camp);
+        }
+
+        /// <summary>
+        /// 가중치에 따른 랜덤 룸 타입을 할당합니다.
+        /// </summary>
         private void AssignRandomFloorLocations(List<List<MapNode>> grid)
         {
             for (int floor = 0; floor < grid.Count; floor++)
             {
                 int actLevel = floor + 1;
-
-                // 1) 이 ActLevel에서 유효한 LocationWeight만 추려둡니다.
                 var validWeights = _settings.locationWeights
-                    .Where(lw => actLevel >= lw.minFloor
-                              && (lw.maxFloor == 0 || actLevel <= lw.maxFloor))
+                    .Where(lw => actLevel >= lw.minFloor && (lw.maxFloor == 0 || actLevel <= lw.maxFloor))
                     .ToList();
 
-                // (선택지 없으면 None 처리)
                 if (validWeights.Count == 0)
                 {
                     Debug.LogWarning($"Act {actLevel}에 할당 가능한 LocationType이 없습니다.");
@@ -237,120 +202,124 @@ namespace RoguelikeMap
 
                 foreach (var node in grid[floor])
                 {
-                    if (node.type != LocationType.None)
-                        continue;
+                    if (node.type != LocationType.None) continue;
 
                     LocationType pick;
                     int tries = 0;
                     do
                     {
-                        // 2) 필터된 가중치 리스트에서 랜덤 선택
                         pick = GetRandomLocationByWeight(actLevel, validWeights);
-                        tries++;
-                        if (tries > 10) break; // 무한 루프 방지
-                    }
-                    while (HasAdjacentSameNonMonster(grid, node, pick, floor));
+                    } while (tries++ < 10 && HasAdjacentSameNonMonster(grid, node, pick, floor));
 
                     node.type = pick;
                 }
             }
         }
+        #endregion
 
-        /// <summary>
-        /// actLevel에 따라 baseW→peakW를 보간한 가중치로부터 LocationType을 랜덤 선택.
-        /// </summary>
-        private LocationType GetRandomLocationByWeight(int actLevel, List<LocationWeight> weights)
+        #region Utilities
+        private bool IsCrossingAnyExistingEdge(List<List<MapEdge>> paths, MapNode from, MapNode to)
         {
-            // 예: 최대 Act 레벨이 20이라고 가정
-            const int maxActLevel = 20;
-            // 1) 각 weight에 대해 보간값 계산
-            var weightedList = weights
-                .Select(lw =>
-                {
-                    float t = (actLevel - 1) / (float)(maxActLevel - 1);
-                    float w = Mathf.Lerp(lw.baseW, lw.peakW, t);
-                    return (lw.type, weight: Mathf.Max(0, w));
-                })
-                .Where(x => x.weight > 0)
-                .ToList();
-
-            // 2) 누적 가중치 계산
-            float total = weightedList.Sum(x => x.weight);
-            float rnd = Random.value * total;
-
-            // 3) 랜덤 추출
-            foreach (var entry in weightedList)
-            {
-                if (rnd < entry.weight)
-                    return entry.type;
-                rnd -= entry.weight;
-            }
-            // 혹시 빠지면 마지막 요소 반환
-            return weightedList.Last().type;
+            var a = from.position;
+            var b = to.position;
+            return paths.SelectMany(p => p).Any(edge =>
+                !(edge.From == from || edge.To == from || edge.From == to || edge.To == to)
+                && SegmentsIntersect(a, b, edge.From.position, edge.To.position));
         }
 
-        /// <summary>
-        /// node의 인접 노드(이전 & 다음 층) 중에
-        /// pick 타입(단 Monster 제외)이 있으면 true.
-        /// 이전 층은 floor-1 행만 검사합니다.
-        /// </summary>
+        private LocationType GetRandomLocationByWeight(int actLevel, List<LocationWeight> weights)
+        {
+            const int maxActLevel = 20;
+            var weighted = weights.Select(lw =>
+            {
+                float t = (actLevel - 1) / (float)(maxActLevel - 1);
+                float w = Mathf.Max(0, Mathf.Lerp(lw.baseW, lw.peakW, t));
+                return (lw.type, w);
+            }).ToList();
+
+            float total = weighted.Sum(x => x.w);
+            float rnd = UnityEngine.Random.value * total;
+
+            foreach (var (type, w) in weighted)
+            {
+                if (rnd < w) return type;
+                rnd -= w;
+            }
+            return weighted.Last().type;
+        }
+
         private bool HasAdjacentSameNonMonster(List<List<MapNode>> grid, MapNode node, LocationType pick, int floor)
         {
-            // Monster 타입은 언제나 허용
-            if (pick == LocationType.Monster)
-                return false;
+            if (pick == LocationType.Monster) return false;
 
-            // 1) 다음 층(자식) 검사: node.Edges 에서 바로 확인
-            foreach (var edge in node.Edges)
-            {
-                if (edge.To.type == pick)
-                    return true;
-            }
+            if (node.Edges.Any(e => e.To.type == pick)) return true;
 
-            // 2) 이전 층(부모) 검사: 바로 위 row[floor-1] 만 뒤집니다.
             if (floor > 0)
             {
-                var prevRow = grid[floor - 1];
-                foreach (var parent in prevRow)
-                {
-                    // parent.Edges 에서 나가는 엣지 중 this node 로 향하는 것이 있는지
-                    foreach (var edge in parent.Edges)
-                    {
-                        if (edge.To == node && parent.type == pick)
-                            return true;
-                    }
-                }
+                foreach (var parent in grid[floor - 1])
+                    if (parent.Edges.Any(e => e.To == node && parent.type == pick))
+                        return true;
             }
 
             return false;
         }
 
-        private void AssignFixedFloorLocations(List<List<MapNode>> grid)
-        {
-            foreach (var node in grid[0])
-                node.type = LocationType.Monster;
-
-            foreach (var node in grid[_settings.rowCount - 2])
-                node.type = LocationType.Camp;
-        }
-
-        /// <summary>
-        /// 두 선분 AB와 CD가 엄밀히 교차하는지 검사합니다.
-        /// 공유점(엔드포인트)은 교차로 처리하지 않음.
-        /// </summary>
         private bool SegmentsIntersect(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
+            => CCW(a, c, d) != CCW(b, c, d)
+            && CCW(a, b, c) != CCW(a, b, d);
+
+        private bool CCW(Vector2 p, Vector2 q, Vector2 r)
+            => (r.y - p.y) * (q.x - p.x) > (q.y - p.y) * (r.x - p.x);
+        #endregion
+
+        #region Data Reconstruction
+        private List<List<MapNode>> BuildGrid(MapData data)
         {
-            return CCW(a, c, d) != CCW(b, c, d)
-                && CCW(a, b, c) != CCW(a, b, d);
+            var grid = new List<List<MapNode>>(data.nodes.Length);
+            var all  = new List<MapNode>();
+
+            foreach (var rowData in data.nodes)
+            {
+                var rowList = new List<MapNode>(rowData.row.Count);
+                foreach (var nd in rowData.row)
+                {
+                    var node = new MapNode(nd.row, nd.col, nd.type, nd.isActive);
+                    rowList.Add(node);
+                    all.Add(node);
+                }
+                grid.Add(rowList);
+            }
+            return grid;
         }
 
-        /// <summary>
-        /// p→q→r 가 반시계(왼쪽) 회전하는지 검사합니다.
-        /// </summary>
-        private bool CCW(Vector2 p, Vector2 q, Vector2 r)
+        private List<List<MapEdge>> BuildPaths(MapData data, List<List<MapNode>> grid)
         {
-            return (r.y - p.y) * (q.x - p.x)
-                 > (q.y - p.y) * (r.x - p.x);
+            var allNodes = grid.SelectMany(r => r).ToList();
+            var paths    = new List<List<MapEdge>>(data.edges.Length);
+
+            foreach (var rowData in data.edges)
+            {
+                var edgeList = new List<MapEdge>(rowData.path.Count);
+                foreach (var ed in rowData.path)
+                {
+                    var from = allNodes[ed.fromIndex];
+                    var to   = allNodes[ed.toIndex];
+                    var edge = new MapEdge
+                    {
+                        From       = from,
+                        To         = to,
+                        Generation = ed.generation,
+                        IsActive   = ed.isActive,
+                        HasPassed  = ed.hasPassed
+                    };
+                    from.Edges.Add(edge);
+                    edgeList.Add(edge);
+                }
+                paths.Add(edgeList);
+            }
+
+            return paths;
         }
+        #endregion
     }
 }

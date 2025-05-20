@@ -16,8 +16,8 @@ namespace RoguelikeMap.UI
         private Vector2Int _cellPosition;
         private LocationType _locationType = LocationType.None;
 
-        public event Action<Vector2Int, LocationType> OnNodeSelected;
-        public event Action<int, int, int> OnRequestNextAction;
+        public event Action<Vector2Int> SelectNodeRequested;
+        public event Action<int, int, int> NodeClickAction;
 
         private const int LabelCharCount = 1;
 
@@ -37,14 +37,15 @@ namespace RoguelikeMap.UI
             _btnLocation.onClick.AddListener(OnClick);
         }
 
-        public void Setup(MapNode mapNode, int xIndex, Vector2 position, Action<Vector2Int, LocationType> handleNodeClick)
+        public void Setup(MapNode mapNode, int xIndex, Vector2 position, Action<Vector2Int> selectNodeRequested, Action<int, int, int> nodeClickAction)
         {
             CacheNodeData(mapNode, xIndex);
             UpdatePosition(position);
             UpdateLabel();
             UpdateIconColor();
 
-            OnNodeSelected += handleNodeClick;
+            SelectNodeRequested += selectNodeRequested;
+            NodeClickAction += nodeClickAction;
         }
 
         private void CacheNodeData(MapNode mapNode, int xIndex)
@@ -85,7 +86,8 @@ namespace RoguelikeMap.UI
         // 버튼 또는 터치 이벤트에 연결
         public void OnClick()
         {
-            OnNodeSelected?.Invoke(_cellPosition, _locationType);
+            SelectNodeRequested?.Invoke(_cellPosition);
+            NodeClickAction?.Invoke(_cellPosition.x, _cellPosition.y, (int)_locationType);
         }
     }
 }

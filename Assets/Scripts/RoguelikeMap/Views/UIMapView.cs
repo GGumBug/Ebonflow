@@ -13,6 +13,8 @@ namespace RoguelikeMap.UI
         [SerializeField] private GameObject     _nodeViewPrefab;
         [SerializeField] private GameObject     _edgeViewPrefab;
 
+        private INodeClickHandler _nodeClickHandler;
+
         [Header("EdgePadding")]
         private float _xScale = 193f;
         private float _xOffset = 400f;
@@ -25,7 +27,12 @@ namespace RoguelikeMap.UI
         private float _cellSpacingHorizontal = 2f;
         private float _cellSpacingVertical = 3f;
 
-        public void RenderMap(MapLayout layout, Action<Vector2Int, LocationType> handleNodeClick)
+        public void Setup(INodeClickHandler nodeClickHandler)
+        {
+            _nodeClickHandler = nodeClickHandler;
+        }
+
+        public void RenderMap(MapLayout layout, Action<Vector2Int> selectNodeRequested)
         {
             foreach (var path in layout.Paths)
             {
@@ -62,7 +69,7 @@ namespace RoguelikeMap.UI
 
                     var go = Instantiate(_nodeViewPrefab, _mapContentRect);
                     var view = go.GetComponent<NodeView>();
-                    view.Setup(mapNode: node, xIndex: j, position: new Vector2(xPos, yPos), handleNodeClick);
+                    view.Setup(mapNode: node, xIndex: j, position: new Vector2(xPos, yPos), selectNodeRequested, _nodeClickHandler.OnNodeClicked);
                 }
             }
 

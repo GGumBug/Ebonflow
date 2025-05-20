@@ -23,7 +23,8 @@ public class MapScene : SceneBase, INodeClickHandler
 
     public override async UniTask SetupScene()
     {
-        _roguelikeMapManager.Setup(_mapGenerationSettings, _mapView, this);
+        _mapView.Setup(this);
+        _roguelikeMapManager.Setup(_mapGenerationSettings, _mapView);
         await UniTask.Yield();
     }
 
@@ -37,7 +38,9 @@ public class MapScene : SceneBase, INodeClickHandler
         _mapGenerationSettings = await AddressableManager.Instance.Load<MapGenerationSettings>(AddressableKeyExtensions.ToKey(AddressableKey.MapGenerationSettings));
         _mapView = await AddressableManager.Instance.InstantiateAsync<UIMapView>(AddressableKeyExtensions.ToKey(AddressableKey.UIMapView));
         _roguelikeMapManager = gameObject.AddComponent<RoguelikeMapManager>();
-        _roguelikeMapManager.Setup(_mapGenerationSettings, _mapView, this);
+
+        _mapView.Setup(this);
+        _roguelikeMapManager.Setup(_mapGenerationSettings, _mapView);
     }
 
     public void OnNodeClicked(int stage, int floor, int locationTypeId)

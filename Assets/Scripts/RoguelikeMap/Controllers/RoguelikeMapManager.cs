@@ -18,7 +18,7 @@ namespace RoguelikeMap
         /// <summary>
         /// 맵 생성 설정과 UIMapView를 초기화합니다.
         /// </summary>
-        public void Setup(MapGenerationSettings settings, UIMapView uiMapView, INodeClickHandler nodeClickHandler)
+        public void Setup(MapGenerationSettings settings, UIMapView uiMapView)
         {
             Debug.Assert(settings != null, "settings must not be null.");
             Debug.Assert(uiMapView != null, "uiMapView must not be null.");
@@ -35,7 +35,7 @@ namespace RoguelikeMap
             _mapController.HasSelection += _mapSaveLoad.HasSelection;
 
             _uiMapView = uiMapView;
-            _uiMapView.RenderMap(_mapLayout, _mapController.HandleNodeClick);
+            _uiMapView.RenderMap(_mapLayout, _mapController.SelectNode);
 
             _mapController.CheckAndActivateFirstRow();
         }
@@ -45,17 +45,20 @@ namespace RoguelikeMap
         /// </summary>
         private MapLayout LoadOrGenerateMap(string saveKey, MapGenerationSettings settings)
         {
-            if (_mapSaveLoad.TryLoadLayout(saveKey, out var layout, settings))
+            _mapGenerator = new RoguelikeMapGenerator(settings);
+
+            if (_mapSaveLoad.TryLoadLayout(saveKey, out var data, settings))
             {
                 Debug.Log("저장된 맵 레이아웃을 불러왔습니다.");
-                return layout;
+                return _mapGenerator.ReconstructLayout(data, settings);
             }
-
-            Debug.Log("저장된 맵 레이아웃이 없어 새로 생성합니다.");
-            _mapGenerator = new RoguelikeMapGenerator(settings);
-            var newLayout = _mapGenerator.CreateMap();
-            _mapSaveLoad.Save(saveKey, newLayout, settings);
-            return newLayout;
+            else
+            {
+                Debug.Log("저장된 맵 레이아웃이 없어 새로 생성합니다.");
+                var newLayout = _mapGenerator.CreateMap();
+                _mapSaveLoad.Save(saveKey, newLayout, settings);
+                return newLayout;
+            }
         }
 
         /// <summary>
