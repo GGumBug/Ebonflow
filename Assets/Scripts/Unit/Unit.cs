@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using AutoBattle;
 
 public class Unit : MonoBehaviour
 {
@@ -47,7 +48,7 @@ public class Unit : MonoBehaviour
         _circleCollider2D.enabled = true;
         _rangeDetector.Setup(Stat.Range);
         _stateMachine = new UnitStateMachine(this);
-        _combatComponent = new CombatComponent(this, _rangeDetector);
+        _combatComponent = new CombatComponent(this, _rangeDetector, AutoBattleManager.Instance.Attack);
         _movementComponent = new MovementComponent(_aStarAgent);
         _healthComponent = new HealthComponent(_stats);
     }

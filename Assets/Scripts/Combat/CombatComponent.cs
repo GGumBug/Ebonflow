@@ -7,7 +7,7 @@ public class CombatComponent
     public event Action OnAttackEnded;
 
     private RangeDetector _detector;
-    private AutoBattleManager _autoBattleManager;
+    private event Func<Unit, Unit, bool> OnAttack;
     private Unit _unit;
     private Unit _currentTarget;
     private Sequence _attackSequence;
@@ -17,11 +17,11 @@ public class CombatComponent
     && !_currentTarget.IsDead
     && _detector.IsTargetInRange(_currentTarget);
 
-    public CombatComponent(Unit host, RangeDetector detector)
+    public CombatComponent(Unit host, RangeDetector detector, Func<Unit, Unit, bool> onAttack)
     {
         _unit = host;
         _detector = detector;
-        _autoBattleManager = AutoBattleManager.Instance;
+        OnAttack += onAttack;
     }
 
     public bool CanAttack()
@@ -50,7 +50,7 @@ public class CombatComponent
             .AppendInterval(_unit.Stat.AttackDelay)
         .AppendCallback(() =>
         {
-            bool targetDied = _autoBattleManager.Attack(_unit, _currentTarget);
+            bool targetDied = OnAttack(_unit, _currentTarget);
 
             if (targetDied)
             {

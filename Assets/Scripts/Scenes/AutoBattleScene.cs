@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using AutoBattle;
 
 public class AutoBattleScene : SceneBase, IAStarGridSettings
 {

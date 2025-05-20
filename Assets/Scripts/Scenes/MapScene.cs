@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using RoguelikeMap;
 using RoguelikeMap.UI;
 using UnityEngine;
+using AutoBattle;
 
 public class MapScene : SceneBase, INodeClickHandler
 {

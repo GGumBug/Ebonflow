@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using AutoBattle;
 
 public class DebugPanelSpawnUnit : MonoBehaviour
 {
