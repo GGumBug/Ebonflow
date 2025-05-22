@@ -1,16 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
 
 public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 {
-    [Header("Movement Settings")]
-    [Tooltip("초당 이동 속도 (단위: 유닛)")]
-    [SerializeField] private float moveSpeed = 6f;
-    [Tooltip("각 타일로 이동할 때 적용되는 지연 시간 (초 단위)")]
-    [SerializeField] private float stepDelay = 0.5f;
-
     [Header("Debug Settings")]
     [Tooltip("경로를 Gizmos로 그릴지 여부 (디버깅용)")]
     [SerializeField] private bool isDrawLine;
@@ -19,13 +12,12 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private List<AStarNode> _currentPath;
     private AStarAlgorithmManager _aStarAlgorithmManager;
     private AStarGrid _grid;
-    private Tween _moveTween;
 
     public Vector2Int CurrentGridPosition { get; private set; }
-    public event Action OnEndWalk;
+    public event Action<Vector2Int> OnMove;
     public event Func<TeamType> OnRequestTeamType;
-    public event Func<bool> OnAttackInitiated;
-    public event Action OnChangeToAttack;
+    public event Action CrushOtherTeamAgent;
+    public event Action OnPathCompleteAction;
 
     /// <summary>
     /// 현재 경로에서 다음 노드가 존재하는지 여부
@@ -65,21 +57,19 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     public void StartFollowPath()
     {
-        List<AStarNode> newPath = _aStarAlgorithmManager.GetPath(this);
+        if (_currentPath == null || _currentPath.Count <= 0)
+        {
+            List<AStarNode> newPath = _aStarAlgorithmManager.GetPath(this);
 
-        SetCurrentPath(newPath);
-        BeginPathFollowing();
+            SetCurrentPath(newPath);
+        }
+            
+        ExecuteGridMove();
     }
 
     public void SetCurrentPath(List<AStarNode> currentPath)
     {
         _currentPath = currentPath;
-    }
-
-    public void BeginPathFollowing()
-    {
-        if (_currentPath != null && _currentPath.Count > 0 )
-            ExecuteGridMove();
     }
 
     /// <summary>
@@ -111,6 +101,13 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
             OnPathComplete();
     }
 
+    private void MoveToNextNode(Vector2Int destPos)
+    {
+        UpdateAgentGridPosition(destPos);
+
+        OnMove?.Invoke(destPos);
+    }
+
     /// <summary>
     /// 현재 그리드 위치를 지정된 destPos로 업데이트하고, AStarGrid에도 해당 위치로 에이전트 정보를 갱신합니다.
     /// </summary>
@@ -124,37 +121,9 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         _grid.UpdateAgentGridPosition(this, destPos);
     }
 
-    private void MoveToNextNode(Vector2Int destPos)
+    public void EndMove()
     {
-        UpdateAgentGridPosition(destPos);
-
-        // 목표 위치를 Vector3로 변환 (z값은 현재 위치 유지)
-        Vector3 destination = new Vector3(destPos.x, destPos.y, transform.position.z);
-
-        // 현재 위치와 목표 위치 사이의 거리를 계산하고, 이동 시간(duration)을 결정합니다.
-        float distance = Vector2.Distance(transform.position, new Vector2(destPos.x, destPos.y));
-        float duration = distance / moveSpeed;
-
-        // DOTween을 사용하여 선형 보간으로 이동시키고, 이동이 완료되면 SnapAndAdvance를 호출합니다.
-        _moveTween = transform.DOMove(destination, duration)
-                    .SetEase(Ease.Linear)
-                    .SetDelay(stepDelay)
-                    .OnComplete(() => SnapAndAdvance(destPos));
-    }
-
-    private void SnapAndAdvance(Vector2Int destPos)
-    {
-        transform.position = new Vector2(destPos.x, destPos.y);
-
-        if (OnAttackInitiated.Invoke())
-        {
-            StopMovement();
-            OnChangeToAttack.Invoke();
-            return;
-        }
-
         _currentPathIndex++;
-        ExecuteGridMove();
     }
 
     private void SnapToLastValidPosition()
@@ -179,8 +148,8 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
         if (crushAgentTeam != GetTeam())
         {
-            StopMovement();
-            OnAttackInitiated.Invoke();
+            CrushOtherTeamAgent?.Invoke();
+            Debug.Log($"적군 충돌 {gameObject.name} IdleState로 변경");
         }
         else
         {
@@ -197,28 +166,10 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
 
     private void OnPathComplete()
     {
-        StopMovement();
-
-        if (OnAttackInitiated.Invoke())
-            OnChangeToAttack.Invoke();
+        OnPathCompleteAction?.Invoke();
     }
 
-    public void CancelMovement()
-    {
-        ClearFllowing();
-        
-        _moveTween?.Kill();
-        _moveTween = null;
-    }
-
-    public void StopMovement()
-    {
-        CancelMovement();
-
-        OnEndWalk.Invoke();
-    }
-
-    private void ClearFllowing()
+    public void ClearFllowing()
     {
         _currentPath = null;
         _currentPathIndex = 1;

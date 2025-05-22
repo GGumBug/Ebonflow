@@ -49,7 +49,7 @@ public class Unit : MonoBehaviour
         _rangeDetector.Setup(Stat.Range);
         _stateMachine = new UnitStateMachine(this);
         _combatComponent = new CombatComponent(this, _rangeDetector, AutoBattleManager.Instance.Attack);
-        _movementComponent = new MovementComponent(_aStarAgent);
+        _movementComponent = new MovementComponent(transform);
         _healthComponent = new HealthComponent(_stats);
     }
 
@@ -58,13 +58,16 @@ public class Unit : MonoBehaviour
         AutoBattleManager.Instance.OnBattleStarted += () => _isBattleActive = true;
         AutoBattleManager.Instance.OnBattleEnded += () => _isBattleActive = false;
 
-        _aStarAgent.OnRequestTeamType       += GetTeam;
-        _rangeDetector.OnRequestTeamType    += GetTeam;
-        _aStarAgent.OnAttackInitiated       += _combatComponent.CanAttack;
-        _aStarAgent.OnEndWalk               += _stateMachine.ChangeToIdle;
-        _aStarAgent.OnChangeToAttack        += _stateMachine.ChangeToAttack;
-        _healthComponent.OnDied             += _stateMachine.ChangeToDead;
-        _combatComponent.OnAttackEnded      += TransitionToState;
+        _aStarAgent.OnRequestTeamType               += GetTeam;
+        _rangeDetector.OnRequestTeamType            += GetTeam;
+        _movementComponent.OnEndMove                += _aStarAgent.EndMove;
+        _movementComponent.OnEndMove                += _stateMachine.ChangeToIdle;
+        _movementComponent.CancelMovementAction     += _aStarAgent.ClearFllowing;
+        _healthComponent.OnDied                     += _stateMachine.ChangeToDead;
+        _combatComponent.OnAttackEnded              += _stateMachine.ChangeToIdle;
+        _aStarAgent.CrushOtherTeamAgent             += _stateMachine.ChangeToIdle;
+        _aStarAgent.OnPathCompleteAction            += _stateMachine.ChangeToIdle;
+        _aStarAgent.OnMove                          += _movementComponent.Move;
     }
 
     /// <summary>
@@ -95,7 +98,7 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
-        if (!_isBattleActive)
+        if (!_isBattleActive || _isDead)
             return;
 
         _stateMachine.Update();
@@ -116,7 +119,7 @@ public class Unit : MonoBehaviour
         Destroy(gameObject, 1f);
     }
 
-    public void OnEnterWalk()   => _movementComponent.StartWalking();
+    public void OnEnterWalk()   => _aStarAgent.StartFollowPath();
     public void OnEnterAttack() => _combatComponent.TryAttack();
     public bool ApplyDamage(int damage) => _healthComponent.ApplyDamage(damage);
 }
