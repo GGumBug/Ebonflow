@@ -52,16 +52,7 @@ public class CombatComponent
         {
             bool targetDied = OnAttack(_unit, _currentTarget);
 
-            if (targetDied)
-            {
-                OnAttackEnded?.Invoke();
-                return;
-            }
-
-            if (_detector.IsTargetInRange(_currentTarget))
-                TryAttack();
-            else
-                OnAttackEnded?.Invoke();
+            OnAttackEnded?.Invoke();
         });
     }
 

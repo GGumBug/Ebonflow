@@ -18,17 +18,15 @@ public class Unit : MonoBehaviour
     private CircleCollider2D        _circleCollider2D;
 
     public event Action<Unit>       OnDied;
-
-    public bool IsDead =>           _isDead;
-    public TeamType GetTeam() =>    _team;
-    public UnitStats Stat =>        _stats;
-    public AStarAgent Agent =>      _aStarAgent;
+    public bool IsDead          =>  _isDead;
+    public TeamType GetTeam()   =>  _team;
+    public UnitStats Stat       =>  _stats;
+    public AStarAgent Agent     =>  _aStarAgent;
 
     public void Setup(TeamType team, UnitStatData statData)
     {
         _team = team;
         
-
         CacheComponents();
         InitializeComponents(statData);
         RegisterEventHandlers();
@@ -81,19 +79,6 @@ public class Unit : MonoBehaviour
     public void StartBattle()
     {
         _isBattleActive = true;
-
-        TransitionToState();
-    }
-
-    public void TransitionToState()
-    {
-        if (!_isBattleActive)
-            return;
-
-        if (_combatComponent.CanAttack())
-            _stateMachine.ChangeToAttack();
-        else
-            _stateMachine.ChangeToWalk();
     }
 
     private void Update()
@@ -102,6 +87,14 @@ public class Unit : MonoBehaviour
             return;
 
         _stateMachine.Update();
+    }
+
+    public void TransitionToState()
+    {
+        if (_combatComponent.CanAttack())
+            _stateMachine.ChangeToAttack();
+        else
+            _stateMachine.ChangeToWalk();
     }
 
     public void HandleDeath()
@@ -119,7 +112,7 @@ public class Unit : MonoBehaviour
         Destroy(gameObject, 1f);
     }
 
-    public void OnEnterWalk()   => _aStarAgent.StartFollowPath();
-    public void OnEnterAttack() => _combatComponent.TryAttack();
+    public void OnEnterWalk()           => _aStarAgent.StartFollowPath();
+    public void OnEnterAttack()         => _combatComponent.TryAttack();
     public bool ApplyDamage(int damage) => _healthComponent.ApplyDamage(damage);
 }
