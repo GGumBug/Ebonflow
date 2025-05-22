@@ -4,8 +4,8 @@ using System;
 
 public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 {
-    [SerializeField] private bool allowDiagonal;
-    [SerializeField] private bool dontCrossCorner;
+    [SerializeField] private bool allowDiagonal = true;
+    [SerializeField] private bool dontCrossCorner = true;
 
     private const int COST_STRAIGHT = 10;
     private const int COST_DIAGONAL = 14;

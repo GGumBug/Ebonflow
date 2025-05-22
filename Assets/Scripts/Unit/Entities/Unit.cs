@@ -53,8 +53,8 @@ public class Unit : MonoBehaviour
 
     private void RegisterEventHandlers()
     {
-        AutoBattleManager.Instance.OnBattleStarted += () => _isBattleActive = true;
-        AutoBattleManager.Instance.OnBattleEnded += () => _isBattleActive = false;
+        AutoBattleManager.Instance.OnBattleStarted  += () => _isBattleActive = true;
+        AutoBattleManager.Instance.OnBattleEnded    += () => _isBattleActive = false;
 
         _aStarAgent.OnRequestTeamType               += GetTeam;
         _rangeDetector.OnRequestTeamType            += GetTeam;
