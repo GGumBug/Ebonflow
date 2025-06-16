@@ -44,12 +44,14 @@ public class MapScene : SceneBase, INodeClickHandler
         _roguelikeMapManager.Setup(_mapGenerationSettings, _mapView);
     }
 
-    public void OnNodeClicked(int stage, int floor, int locationTypeId)
+    public async void OnNodeClicked(int stage, int floor, int locationTypeId)
     {
         AutoBattleDataManager.Instance.SetContext(new AutoBattleSceneContext(
             stage,
             floor,
             locationTypeId
         ));
+
+        await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<AutoBattleScene>();
     }
 }
