@@ -10,16 +10,15 @@ namespace RoguelikeMap
     public class RoguelikeMapController
     {
         // 외부 데이터 제공용 델리게이트
-        private readonly Func<int, List<MapNode>> _getNodeRow;
-        private readonly Func<int, int, MapNode> _getNode;
+        private Func<int, List<MapNode>> _getNodeRow;
+        private Func<int, int, MapNode> _getNode;
 
         // 외부 구독용 이벤트
         public event Action<Vector2Int> OnCellSelected;
-        public event Action OnSaveMap;
         public event Func<Vector2Int> GetCurrentNodePosition;
         public event Func<bool> HasSelection;
 
-        public RoguelikeMapController(MapLayout mapLayout)
+        public void Setup(MapLayout mapLayout)
         {
             if (mapLayout == null) throw new ArgumentNullException(nameof(mapLayout));
             _getNodeRow = mapLayout.GetNodeRow;
@@ -57,8 +56,6 @@ namespace RoguelikeMap
             ActivateEdges(selectedNode.Edges);
 
             OnCellSelected?.Invoke(selectedCellPosition);
-
-            OnSaveMap?.Invoke();
         }
 
         private void DeactivateRow(List<MapNode> prevRow, List<MapNode> currentRow, MapNode currentNode, MapNode selectedNode)

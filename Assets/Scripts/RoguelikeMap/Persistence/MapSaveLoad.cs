@@ -140,12 +140,11 @@ namespace RoguelikeMap
         /// ES3에서 MapData를 로드한 뒤, out 파라미터로 반환합니다.
         /// 성공 여부는 bool 리턴값으로 알 수 있습니다.
         /// </summary>
-        public bool TryLoadData(string fileName, out MapData data)
+        public MapData TryLoadData(string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {
-                data = null;
-                return false;
+                return null;
             }
 
             _currentFileName = fileName;
@@ -153,12 +152,10 @@ namespace RoguelikeMap
             if (loaded == null)
             {
                 Debug.LogWarning($"맵 파일을 찾을 수 없습니다 (ES3) → {Path.Combine(Application.persistentDataPath, RelativePath, FileName)}");
-                data = null;
-                return false;
+                return null;
             }
             _mapData = loaded;
-            data = loaded;
-            return true;
+            return loaded;
         }
 
         /// <summary>
@@ -166,13 +163,15 @@ namespace RoguelikeMap
         /// 저장된 정보가 없으면 false를 반환합니다.
         /// (기존 TryLoadData 로직과 동일하게 동작)
         /// </summary>
-        public bool TryLoadLayout(string fileName, out MapData data, MapGenerationSettings settings)
+        public MapData TryLoadLayout(string fileName, MapGenerationSettings settings)
         {
-            if (!TryLoadData(fileName, out data))
-                return false;
+            var data = TryLoadData(fileName);
+
+            if (data == null)
+                return null;
 
             Debug.Log($"맵 레이아웃이 복원되었습니다 (ES3) → {Path.Combine(Application.persistentDataPath, RelativePath, FileName)}");
-            return true;
+            return data;
         }
 
         /// <summary>

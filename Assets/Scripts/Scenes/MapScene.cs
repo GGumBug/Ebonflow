@@ -8,7 +8,7 @@ public class MapScene : SceneBase, INodeClickHandler
 {
     private MapGenerationSettings _mapGenerationSettings;
     private UIMapView _mapView;
-    private RoguelikeMapManager _roguelikeMapManager;
+    private RoguelikeMapDirector _roguelikeMapManager;
 
     public override async UniTask LoadAssets()
     {
@@ -18,14 +18,17 @@ public class MapScene : SceneBase, INodeClickHandler
 
     public override async UniTask InitializeData()
     {
-        _roguelikeMapManager = gameObject.AddComponent<RoguelikeMapManager>();
+        MapSaveLoadManager.Instance.Init(_mapGenerationSettings);
+        _roguelikeMapManager = gameObject.AddComponent<RoguelikeMapDirector>();
         await UniTask.Yield();
     }
 
     public override async UniTask SetupScene()
     {
         _mapView.Setup(this);
-        _roguelikeMapManager.Setup(_mapGenerationSettings, _mapView);
+        _roguelikeMapManager.Setup(_mapView);
+        MapSaveLoadManager.Instance.Setup(_roguelikeMapManager);
+        _roguelikeMapManager.InitializeMapView();
         await UniTask.Yield();
     }
 
@@ -38,10 +41,14 @@ public class MapScene : SceneBase, INodeClickHandler
     {
         _mapGenerationSettings = await AddressableManager.Instance.Load<MapGenerationSettings>(AddressableKeyExtensions.ToKey(AddressableKey.MapGenerationSettings));
         _mapView = await AddressableManager.Instance.InstantiateAsync<UIMapView>(AddressableKeyExtensions.ToKey(AddressableKey.UIMapView));
-        _roguelikeMapManager = gameObject.AddComponent<RoguelikeMapManager>();
+        
+        MapSaveLoadManager.Instance.Init(_mapGenerationSettings);
+        _roguelikeMapManager = gameObject.AddComponent<RoguelikeMapDirector>();
 
         _mapView.Setup(this);
-        _roguelikeMapManager.Setup(_mapGenerationSettings, _mapView);
+        _roguelikeMapManager.Setup(_mapView);
+        MapSaveLoadManager.Instance.Setup(_roguelikeMapManager);
+        _roguelikeMapManager.InitializeMapView();
     }
 
     public async void OnNodeClicked(int stage, int floor, int locationTypeId)
