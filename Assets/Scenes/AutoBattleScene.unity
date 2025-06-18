@@ -827,7 +827,7 @@ Transform:
   m_GameObject: {fileID: 189704098}
   serializedVersion: 2
   m_LocalRotation: {x: -0.13052624, y: 0, z: 0, w: 0.9914449}
-  m_LocalPosition: {x: 2.5, y: -0.38, z: -8.79}
+  m_LocalPosition: {x: 3.5, y: -0.38, z: -8.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11304,7 +11304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1f151f21abcd4462b9493c68d9581d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDebugMode: 0
+  isDebugMode: 1
   _btnStartBattle: {fileID: 2002450206}
   _gridTopRight: {x: 7, y: 5}
   _gridBottomLeft: {x: 0, y: 0}
