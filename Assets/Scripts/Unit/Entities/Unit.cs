@@ -5,7 +5,6 @@ using AutoBattle;
 public class Unit : MonoBehaviour
 {
     [SerializeField] private TeamType _team;
-    [SerializeField] private SpriteRenderer modelSprite;
 
     private bool                    _isDead;
     private bool                    _isBattleActive;
@@ -17,7 +16,6 @@ public class Unit : MonoBehaviour
     private UnitStateMachine        _stateMachine;
     private UnitStats               _stats;
     private CircleCollider2D        _circleCollider2D;
-    private SpriteScaleByDistance   _spriteScaleByDistance;
 
     public event Action<Unit>       OnDied;
     public bool IsDead          =>  _isDead;
@@ -51,8 +49,6 @@ public class Unit : MonoBehaviour
         _combatComponent = new CombatComponent(this, _rangeDetector, AutoBattleManager.Instance.Attack);
         _movementComponent = new MovementComponent(transform);
         _healthComponent = new HealthComponent(_stats);
-        _spriteScaleByDistance = gameObject.AddComponent<SpriteScaleByDistance>();
-        _spriteScaleByDistance.Setup(modelSprite);
     }
 
     private void RegisterEventHandlers()
