@@ -37,20 +37,6 @@ public class MapScene : SceneBase, INodeClickHandler
         await UniTask.Yield();
     }
 
-    public override async UniTask DebugMode()
-    {
-        _mapGenerationSettings = await AddressableManager.Instance.Load<MapGenerationSettings>(AddressableKeyExtensions.ToKey(AddressableKey.MapGenerationSettings));
-        _mapView = await AddressableManager.Instance.InstantiateAsync<UIMapView>(AddressableKeyExtensions.ToKey(AddressableKey.UIMapView));
-        
-        MapSaveLoadManager.Instance.Init(_mapGenerationSettings);
-        _roguelikeMapManager = gameObject.AddComponent<RoguelikeMapDirector>();
-
-        _mapView.Setup(this);
-        _roguelikeMapManager.Setup(_mapView);
-        MapSaveLoadManager.Instance.Setup(_roguelikeMapManager);
-        _roguelikeMapManager.InitializeMapView();
-    }
-
     public async void OnNodeClicked(int stage, int floor, int locationTypeId)
     {
         AutoBattleDataManager.Instance.SetContext(new AutoBattleSceneContext(

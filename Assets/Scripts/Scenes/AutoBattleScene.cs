@@ -38,14 +38,4 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
 
         await UniTask.Yield();
     }
-
-    public override async UniTask DebugMode()
-    {
-        AStarAlgorithmManager.Instance.InitializeGrid(this);
-        await AutoBattleUnitManager.Instance.LoadAsset();
-        AutoBattleUnitManager.Instance.Setup();
-        AutoBattleManager.Instance.Setup();
-        
-        _btnStartBattle.onClick.AddListener(AutoBattleManager.Instance.StartBattle);
-    }
 }

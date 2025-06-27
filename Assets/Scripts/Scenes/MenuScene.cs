@@ -21,9 +21,4 @@ public class MenuScene : SceneBase
     {
         await UniTask.Yield();
     }
-
-    public override UniTask DebugMode()
-    {
-        throw new System.NotImplementedException();
-    }
 }
