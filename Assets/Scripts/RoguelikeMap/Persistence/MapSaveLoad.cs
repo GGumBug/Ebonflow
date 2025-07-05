@@ -23,28 +23,7 @@ namespace RoguelikeMap
         /// (예: "Maps" 폴더를 만들어서 그 아래에 저장).
         /// 필요에 따라 빈 문자열("")로 두어 바로 persistentDataPath에 저장할 수도 있습니다.
         /// </summary>
-        protected override string RelativePath => "Maps";
-
-        /// <summary>
-        /// 현재 저장/로딩할 파일 이름. 외부 Save/Load 호출 시 내부적으로 세팅됩니다.
-        /// 예: "myMap.json"
-        /// </summary>
-        protected override string FileName
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_currentFileName))
-                    throw new InvalidOperationException("파일 이름이 설정되지 않았습니다.");
-                return _currentFileName + ".json";
-            }
-        }
-
-        /// <summary>
-        /// ES3에서 데이터를 구분하기 위한 Key
-        /// (MapData 형식이 동일하더라도 서로 다른 파일을 구분하려면
-        /// Key에도 파일명을 포함해도 무방합니다.)
-        /// </summary>
-        protected override string Key => $"MapData_{_currentFileName}";
+        protected override string RelativePath => "Map";
 
         // =================================================================================
         // 2) MapSaveLoad 고유 멤버
@@ -52,9 +31,6 @@ namespace RoguelikeMap
 
         // 현재 작업 중인 MapData 인스턴스
         private MapData _mapData;
-
-        // Save/Load/Delete 시에 사용될 파일 이름(확장자 제외)
-        private string _currentFileName;
 
         /// <summary>
         /// 생성자: ES3SerializerBase의 DI 생성자를 그대로 호출할 수 있습니다.

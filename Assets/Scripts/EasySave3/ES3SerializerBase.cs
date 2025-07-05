@@ -7,20 +7,31 @@ using UnityEngine;
 /// </summary>
 public abstract class ES3SerializerBase<T>
 {
+    protected string _currentFileName;
+
+    /// <summary>
+    /// 저장할 파일 이름(.es3 포함)
+    /// </summary>
+    protected string FileName {
+        get
+            {
+                if (string.IsNullOrEmpty(_currentFileName))
+                    throw new InvalidOperationException("파일 이름이 설정되지 않았습니다.");
+                return _currentFileName + ".json";
+            }
+    } 
+    
     /// <summary>
     /// Application.persistentDataPath 밑의 상대 폴더 경로. 반드시 오버라이드하세요.
     /// </summary>
     protected abstract string RelativePath { get; }
 
     /// <summary>
-    /// 저장할 파일 이름(.es3 포함)
+    /// ES3에서 데이터를 구분하기 위한 Key
+    /// (MapData 형식이 동일하더라도 서로 다른 파일을 구분하려면
+    /// Key에도 파일명을 포함해도 무방합니다.)
     /// </summary>
-    protected abstract string FileName { get; }
-
-    /// <summary>
-    /// ES3 키(key)
-    /// </summary>
-    protected abstract string Key { get; }
+    protected string Key => $"{RelativePath}_{_currentFileName}";
 
     private readonly string _basePath;
     private readonly ES3Settings _settings;
