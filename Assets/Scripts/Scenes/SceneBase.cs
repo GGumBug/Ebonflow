@@ -6,10 +6,10 @@ public abstract class SceneBase : MonoBehaviour, ILoadableScene
 {
     public bool isDebugMode = false;
 
-    private void Awake()
+    private async void Awake()
     {
         if (isDebugMode)
-            DebugMode();
+            await DebugMode();
         else
             SetSceneLoadCallbacks();
     }
@@ -31,5 +31,14 @@ public abstract class SceneBase : MonoBehaviour, ILoadableScene
     public abstract UniTask SetupScene();
     public abstract UniTask FinalizeLoading();
 
-    public abstract UniTask DebugMode();
+    public virtual async UniTask DebugMode()
+    {
+        await LoadAssets();
+
+        await InitializeData();
+
+        await SetupScene();
+
+        await FinalizeLoading();
+    }
 }
