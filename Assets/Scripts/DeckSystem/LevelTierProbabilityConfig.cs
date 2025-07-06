@@ -23,10 +23,10 @@ namespace DeckSystem
         }
 
         [CreateAssetMenu(menuName = "Deck/LevelTierProbabilityConfig", fileName = "LevelTierProbabilityConfig")]
-        public class LevelTierProbabilityConfig : ScriptableObject
-        {
-            [Tooltip("레벨별 티어 확률 설정 리스트")]
-            public LevelTierEntry[] LevelTierEntries;
+    public class LevelTierProbabilityConfig : ScriptableObject
+    {
+        [Tooltip("레벨별 티어 확률 설정 리스트")]
+        public LevelTierEntry[] LevelTierEntries;
 
         private void OnValidate()
         {
