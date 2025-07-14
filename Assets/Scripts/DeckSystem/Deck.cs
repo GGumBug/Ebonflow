@@ -5,36 +5,40 @@ namespace DeckSystem
 {
     public class Deck
     {
-        private int[] _counts;
-        private Dictionary<CardTier, List<CardData>> _deck;
+        private const int CARD_COUNT = 9;
+        private int _maxUnitId;
+        private Dictionary<UnitTier, List<CardData>> _deck;
+        private Func<int, bool> _unitIdExists;
+        private Func<int, int, UnitStatData> _getUnitStatDataFunc;
 
-        public Deck()
+        public Deck(int maxUnitId, Func<int, bool> existsUnitIdHandler, Func<int, int, UnitStatData> getUnitStatDataFunc)
         {
-            InitializeCounts();
+            _maxUnitId = maxUnitId;
+            _unitIdExists = existsUnitIdHandler;
+            _getUnitStatDataFunc = getUnitStatDataFunc;
+
+            _deck = new Dictionary<UnitTier, List<CardData>>();
             InitializeCardPools();
         }
 
-        private void InitializeCounts()
+        private bool HasUnit(int unitId)
         {
-            // 총 티어 수
-            int tierCount = Enum.GetValues(typeof(CardTier)).Length;
-            _counts = new int[tierCount];
-
-            // Deck size 고정 예시: 총 50장 기준
-            _counts[(int)CardTier.SoulWisp - 1] = 9;
-            _counts[(int)CardTier.LostSoul - 1] = 9;
-            _counts[(int)CardTier.DeathEnvoy - 1] = 9;
-            _counts[(int)CardTier.GhostGeneral - 1] = 9;
-            _counts[(int)CardTier.UnderworldKing - 1] = 9;
+            return _unitIdExists?.Invoke(unitId) ?? false;
         }
 
         private void InitializeCardPools()
         {
-            _deck = new Dictionary<CardTier, List<CardData>>();
-            foreach (CardTier tier in Enum.GetValues(typeof(CardTier)))
+            foreach (UnitTier tier in Enum.GetValues(typeof(UnitTier)))
                 _deck[tier] = new List<CardData>();
 
-            // UnitID 별로 덱에 카드 넣는 로직 추가
+            for (int i = 0; i <= _maxUnitId; i++)
+            {
+                if (HasUnit(i))
+                {
+                    UnitStatData unitStatData = _getUnitStatDataFunc?.Invoke(i, 1);
+                    //유닛 티어 받아서 카드 데이터 추가
+                }
+            }
         }
     }
 }

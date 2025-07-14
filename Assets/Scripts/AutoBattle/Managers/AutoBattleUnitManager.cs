@@ -9,11 +9,11 @@ namespace AutoBattle
     {
         private GameObject _unitPrefab;
         private IUnitSpawner _spawner;
-        private IUnitStatRepository _statRepository;
+        private IUnitRepository _statRepository;
 
         public event Action<TeamType> OnTeamEliminated;
 
-        public IUnitStatRepository UnitStatRepository => _statRepository;
+        public IUnitRepository UnitStatRepository => _statRepository;
         public HashSet<Unit> AllyUnits { get; private set; }
         public HashSet<Unit> EnemyUnits { get; private set; }
 
@@ -36,7 +36,7 @@ namespace AutoBattle
             _allyContainer.SetParent(transform, false);
             _enemyContainer.SetParent(transform, false);
 
-            _statRepository = new UnitStatRepository();
+            _statRepository = new UnitRepository();
             _spawner = new UnitSpawner(_unitPrefab, _allyContainer, _enemyContainer, UnitStatRepository.GetUnitStatData, HandleUnitDeath);
 
             AllyUnits = new HashSet<Unit>();

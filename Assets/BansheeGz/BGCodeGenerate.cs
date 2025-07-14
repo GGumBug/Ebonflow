@@ -40,6 +40,11 @@ public partial class DB_Units : BGEntity
 		get => _f_NameKey[Index];
 		set => _f_NameKey[Index] = value;
 	}
+	public UnitTier f_UnitTier
+	{
+		get => (UnitTier) _f_UnitTier[Index];
+		set => _f_UnitTier[Index] = value;
+	}
 	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
 	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(4762821637793240553UL, 2073662938292457094UL), () => _ufle12jhs77_f_name = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_UnitId;
@@ -48,6 +53,8 @@ public partial class DB_Units : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldString _f_UnitCode => _ufle12jhs77_f_UnitCode ?? (_ufle12jhs77_f_UnitCode = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldString>(MetaDefault, new BGId(4842338906164633299UL, 18443979152524210569UL), () => _ufle12jhs77_f_UnitCode = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_NameKey;
 	public static BansheeGz.BGDatabase.BGFieldInt _f_NameKey => _ufle12jhs77_f_NameKey ?? (_ufle12jhs77_f_NameKey = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4865234553763274604UL, 17058006971073422733UL), () => _ufle12jhs77_f_NameKey = null));
+	private static BansheeGz.BGDatabase.BGFieldEnum _ufle12jhs77_f_UnitTier;
+	public static BansheeGz.BGDatabase.BGFieldEnum _f_UnitTier => _ufle12jhs77_f_UnitTier ?? (_ufle12jhs77_f_UnitTier = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEnum>(MetaDefault, new BGId(4815675110958628569UL, 13834618053216661660UL), () => _ufle12jhs77_f_UnitTier = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();

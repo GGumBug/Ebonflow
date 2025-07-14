@@ -2,7 +2,7 @@ namespace DeckSystem
 {
     public struct CardData
     {
-        public CardTier tier;
+        public UnitTier tier;
         public int price;
         public int unitID;
     }

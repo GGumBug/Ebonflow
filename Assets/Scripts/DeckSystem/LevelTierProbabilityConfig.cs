@@ -8,7 +8,7 @@ namespace DeckSystem
         public struct TierProbability
         {
             [Tooltip("티어")]
-            public CardTier Tier;
+            public UnitTier Tier;
             [Range(0f, 1f), Tooltip("해당 레벨에서 이 티어가 선택될 확률 (0~1)")]
             public float Probability;
         }
@@ -33,7 +33,7 @@ namespace DeckSystem
             if (LevelTierEntries == null) return;
 
             // 모든 CardTier 값을 가져와 배열 생성
-            var allTiers = Enum.GetValues(typeof(CardTier)).Cast<CardTier>().ToArray();
+            var allTiers = Enum.GetValues(typeof(UnitTier)).Cast<UnitTier>().ToArray();
 
             for (int i = 0; i < LevelTierEntries.Length; i++)
             {
