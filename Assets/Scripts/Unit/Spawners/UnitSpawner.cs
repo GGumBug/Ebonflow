@@ -12,9 +12,9 @@ public class UnitSpawner : IUnitSpawner
     private readonly Transform                  _allyContainer;
     private readonly Transform                  _enemyContainer;
     private event Action<Unit>                  OnUnitDied;
-    private event Func<int, int, UnitStatData>  OnRequestUnitStatData;
+    private event Func<int, int, UnitAggregate>  OnRequestUnitStatData;
 
-    public UnitSpawner(GameObject prefab, Transform allyContainer, Transform enemyContainer, Func<int, int, UnitStatData> onRequestUnitStatData, Action<Unit> onUnitDied)
+    public UnitSpawner(GameObject prefab, Transform allyContainer, Transform enemyContainer, Func<int, int, UnitAggregate> onRequestUnitStatData, Action<Unit> onUnitDied)
     {        
         _prefab = prefab;
         _allyContainer = allyContainer;
@@ -30,7 +30,7 @@ public class UnitSpawner : IUnitSpawner
         GameObject go = UnityEngine.Object.Instantiate(_prefab, spawnPos, Quaternion.identity, container);
         var unit = go.GetComponent<Unit>();
 
-        unit.Setup(team, OnRequestUnitStatData.Invoke(unitId, starLevel));
+        unit.Setup(team, OnRequestUnitStatData.Invoke(unitId, starLevel).Stat);
         unit.OnDied += OnUnitDied;
         return unit;
     }

@@ -37,7 +37,7 @@ namespace AutoBattle
             _enemyContainer.SetParent(transform, false);
 
             _statRepository = new UnitRepository();
-            _spawner = new UnitSpawner(_unitPrefab, _allyContainer, _enemyContainer, UnitStatRepository.GetUnitStatData, HandleUnitDeath);
+            _spawner = new UnitSpawner(_unitPrefab, _allyContainer, _enemyContainer, UnitStatRepository.Get, HandleUnitDeath);
 
             AllyUnits = new HashSet<Unit>();
             EnemyUnits = new HashSet<Unit>();
