@@ -4,8 +4,10 @@ namespace AutoBattle
     {
         Setup,
         Starting,
-        InProgress,
-        Paused,
+        PreparationPhase,
+        BattlePhase,
+        ResolutionPhase,
+        Pause,
         Victory,
         Defeat
     }

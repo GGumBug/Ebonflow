@@ -21,7 +21,7 @@ namespace AutoBattle
 
         public void StartBattle()
         {
-            StateController.GameState = AutoBattleGameState.InProgress;
+            StateController.GameState = AutoBattleGameState.PreparationPhase;
 
             OnBattleStarted?.Invoke();
         }
