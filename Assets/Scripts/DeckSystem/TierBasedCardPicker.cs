@@ -27,7 +27,7 @@ namespace DeckSystem
                     $"레벨 {playerLevel}은 설정 가능한 범위를 벗어났습니다. 유효 범위: 0 ~ {_config.LevelTierEntries.Length - 1}");
 
             // 1) 레벨별 설정 가져오기 (정확 매칭 없으면 낮은 레벨 중 최대값으로 대체)
-            var entry = _config.LevelTierEntries[playerLevel];
+            var entry = _config.LevelTierEntries.FirstOrDefault(f => f.Level == playerLevel);
 
             // 2) 가중치 랜덤으로 티어 결정
             var tier = PickTier(entry.TierProbabilities);
