@@ -8,7 +8,8 @@ public enum AddressableKey
     NodeTile,
     EdgeView,
     UIAutoBattleShop,
-    CardView
+    CardView,
+    LevelTierProbabilityConfig
 }
 
 public static class AddressableKeyExtensions
@@ -21,6 +22,7 @@ public static class AddressableKeyExtensions
         { AddressableKey.UIMapView, "RoguelikeMap/UIMapView" },
         { AddressableKey.UIAutoBattleShop, "Assets/Prefabs/UI/UIAutoBattleShop.prefab" },
         { AddressableKey.CardView, "Assets/Prefabs/UI/CardView.prefab" },
+        { AddressableKey.LevelTierProbabilityConfig, "Assets/ScriptableObjects/Deck/LevelTierProbabilityConfig.asset" },
     };
 
     public static string ToKey(this AddressableKey key)

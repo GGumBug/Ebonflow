@@ -1,7 +1,8 @@
+using AutoBattle;
 using Cysharp.Threading.Tasks;
+using DeckSystem;
 using UnityEngine;
 using UnityEngine.UI;
-using AutoBattle;
 
 public class AutoBattleScene : SceneBase, IAStarGridSettings
 {
@@ -9,32 +10,38 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
     [SerializeField] private Vector2Int _gridTopRight;
     [SerializeField] private Vector2Int _gridBottomLeft;
 
+    private UIAutoBattleShop _uIAutoBattleShop;
+    private CardDrawManager _cardDrawManager;
+
     public Vector2Int GridTopRight => _gridTopRight;
     public Vector2Int GridBottomLeft => _gridBottomLeft;
-
-    public override async UniTask FinalizeLoading()
-    {
-        await UniTask.Yield();
-    }
-
-    public override async UniTask InitializeData()
-    {
-        await UniTask.Yield();
-    }
 
     public override async UniTask LoadAssets()
     {
         await AutoBattleUnitManager.Instance.LoadAsset();
-        await UIManager.Instance.OpenUIAsync<UIAutoBattleShop>();
+        _uIAutoBattleShop = await UIManager.Instance.OpenUIAsync<UIAutoBattleShop>();
+        _cardDrawManager = new CardDrawManager();
     }
 
-    public override async UniTask SetupScene()
+    public override async UniTask InitializeData()
     {
         AStarAlgorithmManager.Instance.InitializeGrid(this);
         AutoBattleUnitManager.Instance.Setup();
         AutoBattleManager.Instance.Setup();
+        await _uIAutoBattleShop.SetUp();
+        await _cardDrawManager.SetUp(AutoBattleUnitManager.Instance, _uIAutoBattleShop);
+    }
 
+    public override async UniTask SetupScene()
+    {
         _btnStartBattle.onClick.AddListener(AutoBattleManager.Instance.StartBattle);
+
+        await UniTask.Yield();
+    }
+
+    public override async UniTask FinalizeLoading()
+    {
+        AutoBattleManager.Instance.StartBattle();
 
         await UniTask.Yield();
     }

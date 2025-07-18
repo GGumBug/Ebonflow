@@ -23,7 +23,9 @@ public class UIAutoBattleShop : UIBase
 
     public void CreateCard(int index, CardData data)
     {
-        var cardView = _poolManager.GetFromPool<CardView>(_cardViewOrigin, cardsPanelRect, default, default);
+        var cardGo = _poolManager.GetFromPool<Poolable>(_cardViewOrigin, cardsPanelRect, default, default);
+        CardView cardView = cardGo.GetComponent<CardView>();
+
         if (cardView == null)
             throw new InvalidOperationException("CardView 컴포넌트가 prefab에 없습니다.");
 
