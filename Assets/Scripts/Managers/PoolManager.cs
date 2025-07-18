@@ -111,7 +111,7 @@ public class PoolManager : Singleton<PoolManager>
         _pool[name].Push(poolable);
     }
 
-    public T GetFromPool<T>(GameObject original, Transform parent = null, Vector3 position = default, Quaternion rotation = default) where T : Poolable
+    public T GetFromPool<T>(GameObject original, Transform parent = null, Vector3 position = default, Quaternion rotation = default) where T : Component
     {
         string key = original.GetInstanceID().ToString();
 

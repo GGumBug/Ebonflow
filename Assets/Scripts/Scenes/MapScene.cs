@@ -12,8 +12,8 @@ public class MapScene : SceneBase, INodeClickHandler
 
     public override async UniTask LoadAssets()
     {
-        _mapGenerationSettings = await AddressableManager.Instance.Load<MapGenerationSettings>(AddressableKeyExtensions.ToKey(AddressableKey.MapGenerationSettings));
-        _mapView = await AddressableManager.Instance.InstantiateAsync<UIMapView>(AddressableKeyExtensions.ToKey(AddressableKey.UIMapView));
+        _mapGenerationSettings = await AddressableManager.Instance.Load<MapGenerationSettings>(AddressableKey.MapGenerationSettings);
+        _mapView = await UIManager.Instance.OpenUIAsync<UIMapView>(); 
     }
 
     public override async UniTask InitializeData()

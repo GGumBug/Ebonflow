@@ -379,7 +379,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b94a77ac002a4550be0a4ab97f93dce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDebugMode: 0
+  isDebugMode: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

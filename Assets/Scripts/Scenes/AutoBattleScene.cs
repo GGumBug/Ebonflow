@@ -12,7 +12,6 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
     public Vector2Int GridTopRight => _gridTopRight;
     public Vector2Int GridBottomLeft => _gridBottomLeft;
 
-
     public override async UniTask FinalizeLoading()
     {
         await UniTask.Yield();
@@ -26,6 +25,7 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
     public override async UniTask LoadAssets()
     {
         await AutoBattleUnitManager.Instance.LoadAsset();
+        await UIManager.Instance.OpenUIAsync<UIAutoBattleShop>();
     }
 
     public override async UniTask SetupScene()

@@ -20,7 +20,7 @@ namespace AutoBattle
         public async UniTask LoadAsset()
         {
             _unitPrefab = await AddressableManager.Instance
-                .Load<GameObject>(AddressableKeyExtensions.ToKey(AddressableKey.AutoBattleUnitPrefab));
+                .Load<GameObject>(AddressableKey.AutoBattleUnitPrefab);
 
             if (_unitPrefab == null)
             {

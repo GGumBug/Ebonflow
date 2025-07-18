@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace RoguelikeMap.UI
 {
-    public class UIMapView : MonoBehaviour
+    public class UIMapView : UIBase
     {
         [Header("References")]
         [SerializeField] private ScrollRect     _mapScrollRect;
