@@ -46,4 +46,12 @@ public class BenchSlot
         IsLocked = locked;
         OnLockChanged?.Invoke(this, locked);
     }
+
+    /// <summary>
+    /// 이벤트를 발생시키지 않고 Unit 참조만 교체 (벤치 내부 스왑 전용)
+    /// </summary>
+    internal void SetUnitRaw(Unit unit)
+    {
+        Unit = unit;
+    }
 }

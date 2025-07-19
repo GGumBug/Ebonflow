@@ -59,4 +59,162 @@ public class UnitBench
     }
     #endregion
 
+    #region 배치 / 제거
+    /// <summary>
+    /// 특정 인덱스에 유닛 배치 시도.
+    /// </summary>
+    public bool TryPlace(Unit unit, int index)
+    {
+        if (unit == null) return false;
+        if (!IsValidIndex(index)) return false;
+        return _slots[index].TrySet(unit);
+    }
+
+    /// <summary>
+    /// 자동으로 첫 빈 슬롯을 찾아 배치. 성공 시 그 인덱스를 out.
+    /// </summary>
+    public bool TryPlaceFirstEmpty(Unit unit, out int placedIndex)
+    {
+        placedIndex = -1;
+        if (unit == null) return false;
+        for (int i = 0; i < Capacity; i++)
+        {
+            if (_slots[i].TrySet(unit))
+            {
+                placedIndex = i;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// 해당 인덱스에서 유닛 제거.
+    /// </summary>
+    public bool TryRemove(int index, out Unit removed)
+    {
+        removed = null;
+        if (!IsValidIndex(index)) return false;
+        return _slots[index].TryClear() && (removed = removed ?? null) == null
+            ? AssignRemoved(index, out removed)
+            : removed != null;
+    }
+
+    // TryClear 내에서 removed 유닛을 직접 받을 수 없으므로 별도 처리
+    private bool AssignRemoved(int index, out Unit removed)
+    {
+        // 이벤트에서 이미 알림이 나갔기 때문에 여기선 null
+        removed = null;
+        return true;
+    }
+
+    /// <summary>
+    /// 유닛 객체 참조를 직접 찾아 제거 (동일 레퍼런스 기준).
+    /// </summary>
+    public bool TryRemove(Unit unit)
+    {
+        if (unit == null) return false;
+        for (int i = 0; i < Capacity; i++)
+        {
+            if (_slots[i].Unit == unit)
+                return _slots[i].TryClear();
+        }
+        return false;
+    }
+    #endregion
+
+
+    #region 스왑 / 이동
+    public bool TrySwap(int indexA, int indexB)
+    {
+        if (indexA == indexB) return true;
+        if (!IsValidIndex(indexA) || !IsValidIndex(indexB)) return false;
+
+        var slotA = _slots[indexA];
+        var slotB = _slots[indexB];
+
+        if (slotA.IsLocked || slotB.IsLocked) return false;
+
+        var uA = slotA.Unit;
+        var uB = slotB.Unit;
+
+        // 잠시 보호: 직접 교체 (이벤트 중복 방지를 위해 내부적으로 Set/Clear를 우회)
+        slotA.SetUnitRaw(uB);
+        slotB.SetUnitRaw(uA);
+
+        // 수동으로 이벤트 재전파 (DirectSet 에서 이벤트 발생 안한다고 가정)
+        if (uB != uA)
+        {
+            if (uB != null) OnUnitPlaced?.Invoke(this, slotA, uB);
+            if (uA != null) OnUnitPlaced?.Invoke(this, slotB, uA);
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// A -> B 로 이동 (B가 비어 있어야 함)
+    /// </summary>
+    public bool TryMove(int from, int to)
+    {
+        if (from == to) return true;
+        if (!IsValidIndex(from) || !IsValidIndex(to)) return false;
+
+        var src = _slots[from];
+        var dst = _slots[to];
+
+        if (src.IsLocked || dst.IsLocked) return false;
+        if (dst.Unit != null) return false;
+        if (src.Unit == null) return false;
+
+        var unit = src.Unit;
+        src.SetUnitRaw(null);
+        OnUnitRemoved?.Invoke(this, src, unit);
+
+        dst.SetUnitRaw(unit);
+        OnUnitPlaced?.Invoke(this, dst, unit);
+        return true;
+    }
+    #endregion
+
+    #region 락 / 초기화
+    public void SetLock(int index, bool locked)
+    {
+        GetSlot(index).SetLock(locked);
+    }
+
+    public void UnlockAll()
+    {
+        for (int i = 0; i < Capacity; i++)
+            _slots[i].SetLock(false);
+    }
+
+    public void ClearAll()
+    {
+        for (int i = 0; i < Capacity; i++)
+            _slots[i].TryClear();
+    }
+    #endregion
+
+    #region 유틸
+    /// <summary>첫 빈 슬롯 인덱스. 없으면 -1.</summary>
+    public int FirstEmptyIndex()
+    {
+        for (int i = 0; i < Capacity; i++)
+            if (_slots[i].IsEmpty) return i;
+        return -1;
+    }
+
+    public int OccupiedCount()
+    {
+        int c = 0;
+        for (int i = 0; i < Capacity; i++)
+            if (!_slots[i].IsEmpty) c++;
+        return c;
+    }
+
+    public override string ToString()
+    {
+        return $"UnitBench(Capacity={Capacity}, Occupied={OccupiedCount()})";
+    }
+    #endregion
 }
