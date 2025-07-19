@@ -34,14 +34,14 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
 
     public override async UniTask SetupScene()
     {
-        _btnStartBattle.onClick.AddListener(AutoBattleManager.Instance.StartBattle);
+        _btnStartBattle.onClick.AddListener(() => AutoBattleManager.Instance.StateController.GameState = AutoBattleGameState.BattlePhase);
 
         await UniTask.Yield();
     }
 
     public override async UniTask FinalizeLoading()
     {
-        AutoBattleManager.Instance.StartBattle();
+        AutoBattleManager.Instance.StateController.GameState = AutoBattleGameState.PreparationPhase;
 
         await UniTask.Yield();
     }
