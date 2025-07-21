@@ -67,6 +67,11 @@ public class Unit : MonoBehaviour
         _aStarAgent.OnMove                          += _movementComponent.Move;
     }
 
+    public void SetSnapTransform(Vector2Int positionInt)
+    {
+        transform.position = new Vector2(positionInt.x, positionInt.y);
+    }
+
     /// <summary>
     /// 현재 위치를 그리드 상에 예약(block) 처리합니다.
     /// </summary>

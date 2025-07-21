@@ -225,6 +225,6 @@ public class AStarGrid : MonoBehaviour, IGridManager
             SetNodeBlock(OriginPosInt, false);
         
         SetNodeBlock(cell, true, agent);
-        agent.SetSnapTransform(cell);
+        draggable.Unit.SetSnapTransform(cell);
     }
 }

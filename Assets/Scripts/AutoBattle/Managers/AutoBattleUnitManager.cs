@@ -8,8 +8,6 @@ namespace AutoBattle
 {
     public class AutoBattleUnitManager : Singleton<AutoBattleUnitManager>
     {
-        private const int BENCH_COUNT = 8;
-
         private GameObject _unitPrefab;
         private UnitBench _unitBench;
         private IUnitSpawner _spawner;
@@ -47,7 +45,7 @@ namespace AutoBattle
 
             _statRepository = new UnitRepository();
             _spawner = new UnitSpawner(_unitPrefab, _allyContainer, _enemyContainer, UnitStatRepository.Get, HandleUnitDeath);
-            _unitBench = new UnitBench(BENCH_COUNT);
+            _unitBench = gameObject.AddComponent<UnitBench>();
             _placementInputGate = new PlacementInputGate(autoBattleManager.StateController);
             _placementService = new DefaultPlacementService(AStarAlgorithmManager.Instance.Grid, _unitBench);
             _dragController = gameObject.AddComponent<UnitDragController>();

@@ -173,11 +173,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         OnPathCompleteAction?.Invoke();
     }
 
-    public void SetSnapTransform(Vector2Int positionInt)
-    {
-        transform.position = new Vector2(positionInt.x, positionInt.y);
-    }
-
     public void ClearFllowing()
     {
         _currentPath = null;

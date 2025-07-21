@@ -2,11 +2,13 @@ using AutoBattle.Input;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.Port;
 
-public class UnitBench : IGridManager
+public class UnitBench : MonoBehaviour, IGridManager
 {
+    private const int BENCH_COUNT = 8;
     private const int BenchY = -2;
-    private readonly BenchSlot[] _slots;
+    private BenchSlot[] _slots;
 
     public int Capacity => _slots.Length;
 
@@ -17,13 +19,13 @@ public class UnitBench : IGridManager
     /// <summary>벤치 단위 이벤트: 슬롯 잠금 상태 변경</summary>
     public event Action<UnitBench, BenchSlot, bool> OnSlotLockChanged;
 
-    public UnitBench(int capacity)
+    private void Awake()
     {
-        if (capacity <= 0)
-            throw new ArgumentOutOfRangeException(nameof(capacity));
+        if (BENCH_COUNT <= 0)
+            throw new ArgumentOutOfRangeException(nameof(BENCH_COUNT));
 
-        _slots = new BenchSlot[capacity];
-        for (int i = 0; i < capacity; i++)
+        _slots = new BenchSlot[BENCH_COUNT];
+        for (int i = 0; i < BENCH_COUNT; i++)
         {
             var slot = new BenchSlot(i);
             // 슬롯 이벤트 → 벤치 이벤트로 재전파
@@ -240,10 +242,40 @@ public class UnitBench : IGridManager
         }
 
         int index = cell.x;
-        if (!_slots[index].TrySet(draggable.Unit))
+        Vector3 originPos = draggable.OriginalPosition;
+        Vector2Int originPosInt = new Vector2Int(Mathf.RoundToInt(originPos.x), Mathf.RoundToInt(originPos.y));
+
+        if (TryMove(originPosInt.x, cell.x))
+        {
+            draggable.Unit.SetSnapTransform(cell);
+        }
+        else
         {
             Debug.LogWarning($"PlaceUnit: 슬롯 {index}에 유닛을 배치할 수 없습니다.");
         }
+
     }
     #endregion
+
+    private void OnDrawGizmos()
+    {
+        if (_slots == null)
+            return;
+
+        // _grid 배열의 모든 셀을 순회
+        for (int i = 0; i < _slots.Length; i++)
+        {
+            var slot = _slots[i];
+            if (slot.IsEmpty)
+            {
+                Gizmos.color = Color.green;
+            }
+            else
+            {
+                Gizmos.color = Color.red;
+            }
+
+             Gizmos.DrawWireSphere(new Vector2(i, BenchY), 0.4f);
+        }
+    }
 }
