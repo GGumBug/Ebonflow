@@ -218,7 +218,13 @@ public class AStarGrid : MonoBehaviour, IGridManager
             Debug.LogError("PlaceUnit: AStarAgent 컴포넌트를 찾을 수 없습니다.");
             return;
         }
+        Vector3 OriginPos = draggable.OriginalPosition;
+        Vector2Int OriginPosInt = new Vector2Int(Mathf.RoundToInt(OriginPos.x), Mathf.RoundToInt(OriginPos.y));
 
-        UpdateAgentGridPosition(agent, cell);
+        if (!IsOutOfBounds(OriginPosInt))
+            SetNodeBlock(OriginPosInt, false);
+        
+        SetNodeBlock(cell, true, agent);
+        agent.SetSnapTransform(cell);
     }
 }

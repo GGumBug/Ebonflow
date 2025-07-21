@@ -1,6 +1,7 @@
 using UnityEngine;
 using AutoBattle.Input;
 using System.Collections;
+using System;
 
 [RequireComponent(typeof(Unit))]
 public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable
@@ -8,11 +9,11 @@ public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable
     public Unit Unit { get; private set; }
 
     // 드래그 전 원위치·부모 저장
-    private Vector3 _originalPosition;
     private Transform _originalParent;
-
     // 애니메이션 코루틴 핸들
     private Coroutine _revertCoroutine;
+
+    public Vector3 OriginalPosition { get; private set; }
 
     private void Awake()
     {
@@ -24,7 +25,7 @@ public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable
     public void OnDragBegin()
     {
         // 원위치 및 부모 저장
-        _originalPosition = transform.position;
+        OriginalPosition = transform.position;
         _originalParent = transform.parent;
     }
 
@@ -59,13 +60,13 @@ public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable
         {
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
-            transform.position = Vector3.Lerp(startPos, _originalPosition, t);
+            transform.position = Vector3.Lerp(startPos, OriginalPosition, t);
             yield return null;
         }
 
         // 애니메이션 끝나면 원래 부모 복원
         transform.SetParent(_originalParent, true);
-        transform.position = _originalPosition;
+        transform.position = OriginalPosition;
         _revertCoroutine = null;
     }
 }

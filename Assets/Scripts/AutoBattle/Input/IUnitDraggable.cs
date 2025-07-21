@@ -7,6 +7,8 @@ namespace AutoBattle.Input
         /// <summary>이 슬롯/필드에 속한 실제 유닛 게임 오브젝트</summary>
         Unit Unit { get; }
 
+        Vector3 OriginalPosition { get; }
+
         /// <summary>
         /// 드래그가 시작될 때 호출됩니다.
         /// 예: 원위치 저장, 레이어 변경, 애니메이션 트리거 등.

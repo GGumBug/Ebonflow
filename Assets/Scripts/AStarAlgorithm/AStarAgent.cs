@@ -34,7 +34,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         Mathf.RoundToInt(transform.position.y)
     );
 
-    public Unit Unit => throw new NotImplementedException();
+    public Unit Unit => gameObject.GetComponent<Unit>();
 
     public TeamType GetTeam() => OnRequestTeamType.Invoke();
 
@@ -43,6 +43,8 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         _aStarAlgorithmManager = AStarAlgorithmManager.Instance;
         transform.position = (Vector3Int)PathPoint;
         CurrentGridPosition = PathPoint;
+
+        
     }
 
     public void ReserveCurrentGridCell()
@@ -169,6 +171,11 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private void OnPathComplete()
     {
         OnPathCompleteAction?.Invoke();
+    }
+
+    public void SetSnapTransform(Vector2Int positionInt)
+    {
+        transform.position = new Vector2(positionInt.x, positionInt.y);
     }
 
     public void ClearFllowing()
