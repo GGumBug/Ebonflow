@@ -1,6 +1,7 @@
+using AutoBattle.Input;
 using UnityEngine;
 
-public class AStarGrid : MonoBehaviour
+public class AStarGrid : MonoBehaviour, IGridManager
 {
     private const float TILE_COLLIDER_RADIUS = 0.4f;
 
@@ -195,5 +196,29 @@ public class AStarGrid : MonoBehaviour
                 Gizmos.DrawWireSphere(pos, TILE_COLLIDER_RADIUS);
             }
         }
+    }
+
+    public bool IsValidCell(Vector2Int cell)
+    {
+        return IsOutOfBounds(cell);
+    }
+
+    public bool IsCellOccupied(Vector2Int cell)
+    {
+        if (!IsOutOfBounds(cell)) return false;
+        return IsNodeBlocked(cell);
+    }
+
+    public void PlaceUnit(IUnitDraggable draggable, Vector2Int cell)
+    {
+        // 2) 해당 게임 오브젝트에서 AStarAgent 컴포넌트 추출
+        var agent = draggable.Unit.Agent;
+        if (agent == null)
+        {
+            Debug.LogError("PlaceUnit: AStarAgent 컴포넌트를 찾을 수 없습니다.");
+            return;
+        }
+
+        UpdateAgentGridPosition(agent, cell);
     }
 }

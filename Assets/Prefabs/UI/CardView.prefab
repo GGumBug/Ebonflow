@@ -436,6 +436,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 872891e7d85021848aabf56839ceef77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  btnBuy: {fileID: 8145630584620514876}
   txtUnitTier: {fileID: 5624063586162702443}
   txtPrice: {fileID: 5037839570159524560}
   txtUnitID: {fileID: 2787855898695424094}

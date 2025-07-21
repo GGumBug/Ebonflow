@@ -1,4 +1,7 @@
-public interface IPlacementInputGate
+namespace AutoBattle.Input
 {
-    bool IsEnabled { get; }
+    public interface IPlacementInputGate
+    {
+        bool IsEnabled { get; }
+    }
 }

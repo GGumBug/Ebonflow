@@ -34,6 +34,8 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         Mathf.RoundToInt(transform.position.y)
     );
 
+    public Unit Unit => throw new NotImplementedException();
+
     public TeamType GetTeam() => OnRequestTeamType.Invoke();
 
     private void Awake() 

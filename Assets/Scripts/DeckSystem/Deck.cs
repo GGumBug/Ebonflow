@@ -42,15 +42,16 @@ namespace DeckSystem
                 if (!HasUnit(i))
                     continue;
 
-                var unitData = _getUnitStatDataFunc(i, 1).Data;
+                var aggregate = _getUnitStatDataFunc(i, 1);
                 var card = new CardData(
-                    unitData.UnitTier,
-                    /* price 로직 필요 시 대체 */ (int)unitData.UnitTier,
-                    unitData.UnitId
+                    aggregate.Data.UnitTier,
+                    /* price 로직 필요 시 대체 */ (int)aggregate.Data.UnitTier,
+                    aggregate.Data.UnitId,
+                    aggregate.Stat.StarLevel
                 );
 
                 for (int j = 0; j < CARD_COUNT; j++)
-                    _deck[unitData.UnitTier].Add(card);
+                    _deck[aggregate.Data.UnitTier].Add(card);
             }
         }
 

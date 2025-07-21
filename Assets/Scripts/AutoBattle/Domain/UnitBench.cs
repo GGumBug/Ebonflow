@@ -1,8 +1,9 @@
+using AutoBattle.Input;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitBench
+public class UnitBench : IGridManager
 {
     private const int BenchY = -2;
     private readonly BenchSlot[] _slots;
@@ -211,10 +212,38 @@ public class UnitBench
             if (!_slots[i].IsEmpty) c++;
         return c;
     }
+    #endregion
 
-    public override string ToString()
+    #region IGridManager<Unit>
+    public bool IsValidCell(Vector2Int cell)
     {
-        return $"UnitBench(Capacity={Capacity}, Occupied={OccupiedCount()})";
+        // Y 좌표가 BenchY여야 하며, X는 슬롯 인덱스 범위 내여야 함
+        return cell.y == BenchY && cell.x >= 0 && cell.x < Capacity;
+    }
+
+    public bool IsCellOccupied(Vector2Int cell)
+    {
+        if (!IsValidCell(cell))
+            return false;
+        return !_slots[cell.x].IsEmpty;
+    }
+
+    public void PlaceUnit(IUnitDraggable draggable, Vector2Int cell)
+    {
+        if (draggable == null)
+            throw new ArgumentNullException(nameof(draggable));
+
+        if (!IsValidCell(cell))
+        {
+            Debug.LogError($"PlaceUnit: 그리드 범위를 벗어난 셀 {cell}");
+            return;
+        }
+
+        int index = cell.x;
+        if (!_slots[index].TrySet(draggable.Unit))
+        {
+            Debug.LogWarning($"PlaceUnit: 슬롯 {index}에 유닛을 배치할 수 없습니다.");
+        }
     }
     #endregion
 }
