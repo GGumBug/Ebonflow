@@ -50,7 +50,7 @@ namespace AutoBattle
             _unitBench = new UnitBench(BENCH_COUNT);
             _placementInputGate = new PlacementInputGate(autoBattleManager.StateController);
             _placementService = new DefaultPlacementService(AStarAlgorithmManager.Instance.Grid, _unitBench);
-            _dragController = new UnitDragController();
+            _dragController = gameObject.AddComponent<UnitDragController>();
 
             AllyUnits = new HashSet<Unit>();
             EnemyUnits = new HashSet<Unit>();
@@ -105,6 +105,8 @@ namespace AutoBattle
                 starLevel,
                 TeamType.Ally,   // 벤치는 아군 범주로 처리
                 benchCell);
+
+            _unitBench.TryPlaceFirstEmpty(newUnit, out slotIndex);
         }
 
         private void HandleUnitDeath(Unit unit)
@@ -114,11 +116,6 @@ namespace AutoBattle
 
             if (set.Count == 0)
                 OnTeamEliminated?.Invoke(unit.GetTeam());
-        }
-
-        private void OnDisable()
-        {
-            _dragController.OnDisableEvents();
         }
     }
 }

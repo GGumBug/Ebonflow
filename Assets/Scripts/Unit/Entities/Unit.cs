@@ -15,7 +15,7 @@ public class Unit : MonoBehaviour
     private HealthComponent         _healthComponent;
     private UnitStateMachine        _stateMachine;
     private UnitStats               _stats;
-    private CircleCollider2D        _circleCollider2D;
+    private CapsuleCollider2D       _capsuleCollider2D;
 
     public event Action<Unit>       OnDied;
     public bool IsDead          =>  _isDead;
@@ -30,20 +30,19 @@ public class Unit : MonoBehaviour
         CacheComponents();
         InitializeComponents(statData);
         RegisterEventHandlers();
-        ReserveGridCell();
     }
 
     private void CacheComponents()
     {
         _aStarAgent          = GetComponent<AStarAgent>();
         _rangeDetector       = GetComponentInChildren<RangeDetector>();
-        _circleCollider2D    = GetComponent<CircleCollider2D>();
+        _capsuleCollider2D   = GetComponent<CapsuleCollider2D>();
     }
 
     private void InitializeComponents(UnitStatData statData)
     {
         _stats = new UnitStats(statData);
-        _circleCollider2D.enabled = true;
+        _capsuleCollider2D.enabled = true;
         _rangeDetector.Setup(Stat.Range);
         _stateMachine = new UnitStateMachine(this);
         _combatComponent = new CombatComponent(this, _rangeDetector, AutoBattleManager.Instance.Attack);
@@ -101,7 +100,7 @@ public class Unit : MonoBehaviour
     {
         _isDead = true;
         Agent.UnreserveCurrentGridCell();
-        _circleCollider2D.enabled = false;
+        _capsuleCollider2D.enabled = false;
 
         _combatComponent.CancelAttack();
         _movementComponent.CancelMovement();

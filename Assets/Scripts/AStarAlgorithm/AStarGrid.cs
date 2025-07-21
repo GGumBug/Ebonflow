@@ -200,12 +200,12 @@ public class AStarGrid : MonoBehaviour, IGridManager
 
     public bool IsValidCell(Vector2Int cell)
     {
-        return IsOutOfBounds(cell);
+        return !IsOutOfBounds(cell);
     }
 
     public bool IsCellOccupied(Vector2Int cell)
     {
-        if (!IsOutOfBounds(cell)) return false;
+        if (IsOutOfBounds(cell)) return false;
         return IsNodeBlocked(cell);
     }
 
