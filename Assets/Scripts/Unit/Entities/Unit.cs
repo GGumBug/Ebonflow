@@ -55,8 +55,9 @@ public class Unit : MonoBehaviour
 
     private void RegisterEventHandlers()
     {
-        AutoBattleManager.Instance.StateController.OnBattlePhase  += () => _isBattleActive = true;
-        AutoBattleManager.Instance.StateController.OnResolutionPhase += () => _isBattleActive = false;
+        AutoBattleManager.Instance.StateController.BattleEntered.Add(() => _isBattleActive = true, 0);
+        AutoBattleManager.Instance.StateController.VictoryEntered.Add(() => _isBattleActive = false, 0);
+        AutoBattleManager.Instance.StateController.DefeatEntered.Add(() => _isBattleActive = false, 0);
 
         _aStarAgent.OnRequestTeamType               += GetTeam;
         _rangeDetector.OnRequestTeamType            += GetTeam;

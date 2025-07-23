@@ -6,10 +6,10 @@ namespace AutoBattle
         Starting,
         PreparationPhase,
         BattlePhase,
+        Victory,
+        Defeat,
         ResolutionPhase,
         Pause,
-        Victory,
-        Defeat
     }
 
     public enum GridType

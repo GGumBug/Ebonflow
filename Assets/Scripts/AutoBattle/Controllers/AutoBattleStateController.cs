@@ -6,14 +6,15 @@ namespace AutoBattle
     {
         private AutoBattleGameState _gameState = AutoBattleGameState.Setup;
 
-        public event Action OnSetup;
-        public event Action OnStarting;
-        public event Action OnPreparationPhase;
-        public event Action OnBattlePhase;
-        public event Action OnResolutionPhase;
-        public event Action OnPause;
-        public event Action OnVictory;
-        public event Action OnDefeat;
+        // 우선순위 이벤트 컬렉션
+        public PriorityEvent SetupEntered { get; } = new();
+        public PriorityEvent StartingEntered { get; } = new();
+        public PriorityEvent PreparationEntered { get; } = new();
+        public PriorityEvent BattleEntered { get; } = new();
+        public PriorityEvent ResolutionEntered { get; } = new();
+        public PriorityEvent PauseEntered { get; } = new();
+        public PriorityEvent VictoryEntered { get; } = new();
+        public PriorityEvent DefeatEntered { get; } = new();
 
         public AutoBattleGameState GameState
         {
@@ -25,35 +26,17 @@ namespace AutoBattle
 
                 switch (_gameState)
                 {
-                    case AutoBattleGameState.Setup:
-                        OnSetup?.Invoke();
-                        break;
-                    case AutoBattleGameState.Starting:
-                        OnStarting?.Invoke();
-                        break;
-                    case AutoBattleGameState.PreparationPhase:
-                        OnPreparationPhase?.Invoke();
-                        break;
-                    case AutoBattleGameState.BattlePhase:
-                        OnBattlePhase?.Invoke();
-                        break;
-                    case AutoBattleGameState.ResolutionPhase:
-                        OnResolutionPhase?.Invoke();
-                        break;
-                    case AutoBattleGameState.Pause:
-                        OnPause?.Invoke();
-                        break;
-                    case AutoBattleGameState.Victory:
-                        OnVictory?.Invoke();
-                        break;
-                    case AutoBattleGameState.Defeat:
-                        OnDefeat?.Invoke();
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    case AutoBattleGameState.Setup: SetupEntered.Invoke(); break;
+                    case AutoBattleGameState.Starting: StartingEntered.Invoke(); break;
+                    case AutoBattleGameState.PreparationPhase: PreparationEntered.Invoke(); break;
+                    case AutoBattleGameState.BattlePhase: BattleEntered.Invoke(); break;
+                    case AutoBattleGameState.Victory: VictoryEntered.Invoke(); break;
+                    case AutoBattleGameState.Defeat: DefeatEntered.Invoke(); break;
+                    case AutoBattleGameState.ResolutionPhase: ResolutionEntered.Invoke(); break;
+                    case AutoBattleGameState.Pause: PauseEntered.Invoke(); break;
+                    default: throw new ArgumentOutOfRangeException();
                 }
             }
         }
     }
-
 }

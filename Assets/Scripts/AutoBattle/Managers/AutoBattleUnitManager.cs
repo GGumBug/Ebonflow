@@ -51,7 +51,7 @@ namespace AutoBattle
             AStarAlgorithmManager.Instance.OnRequestAllyUnits += () => { return Roster.Allies; };
             AStarAlgorithmManager.Instance.OnRequestEnemyUnits += () => { return Roster.Enemies; };
 
-            autoBattleManager.StateController.OnBattlePhase += StartAllUnitsBattle;
+            autoBattleManager.StateController.BattleEntered.Add(StartAllUnitsBattle, 1);
 
             _dragController.Setup(_placementInputGate, _placementService);
         }

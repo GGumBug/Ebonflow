@@ -21,7 +21,7 @@ namespace DeckSystem
 
             requestCreateCard = uIAutoBattleShop.CreateCard;
 
-            AutoBattleManager.Instance.StateController.OnPreparationPhase += DrawFiveCard;
+            AutoBattleManager.Instance.StateController.PreparationEntered.Add(DrawFiveCard);
         }
 
         private void DrawFiveCard()
