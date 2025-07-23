@@ -6,28 +6,28 @@ public class Unit : MonoBehaviour
 {
     [SerializeField] private TeamType _team;
 
-    private bool                    _isDead;
-    private bool                    _isBattleActive;
-    private AStarAgent              _aStarAgent;
-    private RangeDetector           _rangeDetector;
-    private CombatComponent         _combatComponent;
-    private MovementComponent       _movementComponent;
-    private HealthComponent         _healthComponent;
-    private UnitStateMachine        _stateMachine;
-    private UnitStats               _stats;
-    private CapsuleCollider2D       _capsuleCollider2D;
-    private UnitDraggableBehaviour  _draggableBehaviour;
+    private bool _isDead;
+    private bool _isBattleActive;
+    private AStarAgent _aStarAgent;
+    private RangeDetector _rangeDetector;
+    private CombatComponent _combatComponent;
+    private MovementComponent _movementComponent;
+    private HealthComponent _healthComponent;
+    private UnitStateMachine _stateMachine;
+    private UnitStats _stats;
+    private CapsuleCollider2D _capsuleCollider2D;
+    private UnitDraggableBehaviour _draggableBehaviour;
 
-    public event Action<Unit>       OnDied;
-    public bool IsDead          =>  _isDead;
-    public TeamType GetTeam()   =>  _team;
-    public UnitStats Stat       =>  _stats;
-    public AStarAgent Agent     =>  _aStarAgent;
+    public event Action<Unit> OnDied;
+    public bool IsDead => _isDead;
+    public TeamType GetTeam() => _team;
+    public UnitStats Stat => _stats;
+    public AStarAgent Agent => _aStarAgent;
 
     public void Setup(TeamType team, UnitStatData statData, IGridManager gridManager)
     {
         _team = team;
-        
+
         CacheComponents();
         InitializeComponents(statData, gridManager);
         RegisterEventHandlers();
@@ -35,10 +35,10 @@ public class Unit : MonoBehaviour
 
     private void CacheComponents()
     {
-        _aStarAgent          = GetComponent<AStarAgent>();
-        _rangeDetector       = GetComponentInChildren<RangeDetector>();
-        _capsuleCollider2D   = GetComponent<CapsuleCollider2D>();
-        _draggableBehaviour  = gameObject.AddComponent<UnitDraggableBehaviour>();
+        _aStarAgent = GetComponent<AStarAgent>();
+        _rangeDetector = GetComponentInChildren<RangeDetector>();
+        _capsuleCollider2D = GetComponent<CapsuleCollider2D>();
+        _draggableBehaviour = gameObject.AddComponent<UnitDraggableBehaviour>();
     }
 
     private void InitializeComponents(UnitStatData statData, IGridManager gridManager)
@@ -59,16 +59,16 @@ public class Unit : MonoBehaviour
         AutoBattleManager.Instance.StateController.VictoryEntered.Add(() => _isBattleActive = false, 0);
         AutoBattleManager.Instance.StateController.DefeatEntered.Add(() => _isBattleActive = false, 0);
 
-        _aStarAgent.OnRequestTeamType               += GetTeam;
-        _rangeDetector.OnRequestTeamType            += GetTeam;
-        _movementComponent.OnEndMove                += _aStarAgent.EndMove;
-        _movementComponent.OnEndMove                += _stateMachine.ChangeToIdle;
-        _movementComponent.CancelMovementAction     += _aStarAgent.ClearFllowing;
-        _healthComponent.OnDied                     += _stateMachine.ChangeToDead;
-        _combatComponent.OnAttackEnded              += _stateMachine.ChangeToIdle;
-        _aStarAgent.CrushOtherTeamAgent             += _stateMachine.ChangeToIdle;
-        _aStarAgent.OnPathCompleteAction            += _stateMachine.ChangeToIdle;
-        _aStarAgent.OnMove                          += _movementComponent.Move;
+        _aStarAgent.OnRequestTeamType += GetTeam;
+        _rangeDetector.OnRequestTeamType += GetTeam;
+        _movementComponent.OnEndMove += _aStarAgent.EndMove;
+        _movementComponent.OnEndMove += _stateMachine.ChangeToIdle;
+        _movementComponent.CancelMovementAction += _aStarAgent.ClearFllowing;
+        _healthComponent.OnDied += _stateMachine.ChangeToDead;
+        _combatComponent.OnAttackEnded += _stateMachine.ChangeToIdle;
+        _aStarAgent.CrushOtherTeamAgent += _stateMachine.ChangeToIdle;
+        _aStarAgent.OnPathCompleteAction += _stateMachine.ChangeToIdle;
+        _aStarAgent.OnMove += _movementComponent.Move;
     }
 
     public void SetSnapTransform(Vector2Int positionInt)
@@ -116,12 +116,17 @@ public class Unit : MonoBehaviour
         _movementComponent.CancelMovement();
 
         OnDied?.Invoke(this);
-        
+
         //나중에 풀링으로 수정
         Destroy(gameObject, 1f);
     }
 
+    public void OnEnterAttack()
+    {
+        _aStarAgent.ClearFllowing();
+        _combatComponent.TryAttack();
+    }
+
     public void OnEnterWalk()           => _aStarAgent.StartFollowPath();
-    public void OnEnterAttack()         => _combatComponent.TryAttack();
     public bool ApplyDamage(int damage) => _healthComponent.ApplyDamage(damage);
 }
