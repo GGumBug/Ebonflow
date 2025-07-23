@@ -25,9 +25,16 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
 
     public override async UniTask InitializeData()
     {
-        AStarAlgorithmManager.Instance.InitializeGrid(this);
+        AStarAlgorithmManager aStarAlgorithmManager = AStarAlgorithmManager.Instance;
+        aStarAlgorithmManager.InitializeGrid(this);
+
         AutoBattleManager.Instance.Setup();
-        AutoBattleUnitManager.Instance.Setup();
+
+        AutoBattleUnitManager autoBattleUnitManager = AutoBattleUnitManager.Instance;
+        autoBattleUnitManager.Setup(aStarAlgorithmManager.Grid);
+
+        aStarAlgorithmManager.RegisteBattleRoster(autoBattleUnitManager.Roster);
+
         await _uIAutoBattleShop.SetUp();
         await _cardDrawManager.SetUp(AutoBattleUnitManager.Instance, _uIAutoBattleShop);
     }

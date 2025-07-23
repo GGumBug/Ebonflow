@@ -34,17 +34,14 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         Mathf.RoundToInt(transform.position.y)
     );
 
-    public Unit Unit => gameObject.GetComponent<Unit>();
-
     public TeamType GetTeam() => OnRequestTeamType.Invoke();
+    public void SetCurrentGridPosition(Vector2Int NewGridPosition) => CurrentGridPosition = NewGridPosition;
 
     private void Awake() 
     {
         _aStarAlgorithmManager = AStarAlgorithmManager.Instance;
         transform.position = (Vector3Int)PathPoint;
         CurrentGridPosition = PathPoint;
-
-        
     }
 
     public void ReserveCurrentGridCell()
@@ -83,6 +80,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     /// <param name="targetWorldCoordinate">이동하려는 목표 월드 좌표</param>
     private void ExecuteGridMove()
     {
+        _grid ??= AStarAlgorithmManager.Instance.Grid;
         AStarNode currentNode = _currentPath[_currentPathIndex];
         Vector2Int destPos = new Vector2Int(currentNode.X, currentNode.Y);
 
@@ -116,7 +114,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     /// 현재 그리드 위치를 지정된 destPos로 업데이트하고, AStarGrid에도 해당 위치로 에이전트 정보를 갱신합니다.
     /// </summary>
     /// <param name="destPos">업데이트할 목표 월드 좌표</param>
-    private void UpdateAgentGridPosition(Vector2Int destPos)
+    public void UpdateAgentGridPosition(Vector2Int destPos)
     {
         // 현재 그리드 위치를 업데이트
         CurrentGridPosition = destPos;

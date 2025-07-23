@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using AutoBattle;
 
 public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 {
@@ -19,15 +20,10 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 
     private float GetFinalPathCost => _targetNode.F;
 
-    public Func<HashSet<Unit>> OnRequestAllyUnits;
-    public Func<HashSet<Unit>> OnRequestEnemyUnits;
+    public Func<IReadOnlyCollection<Unit>> OnRequestAllyUnits;
+    public Func<IReadOnlyCollection<Unit>> OnRequestEnemyUnits;
 
     public AStarGrid Grid { get; private set; }
-
-    protected override void Init()
-    {
-        base.Init();
-    }
 
     public void InitializeGrid(IAStarGridSettings gridSettings)
     {
@@ -42,7 +38,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 
     public List<AStarNode> GetPath(AStarAgent startPoint)
     {
-        HashSet<Unit> targetUnits = startPoint.GetTeam() == TeamType.Ally ? OnRequestEnemyUnits.Invoke() : OnRequestAllyUnits.Invoke();
+        IReadOnlyCollection<Unit> targetUnits = startPoint.GetTeam() == TeamType.Ally ? OnRequestEnemyUnits.Invoke() : OnRequestAllyUnits.Invoke();
 
         return FindClosestTargetPath(startPoint, targetUnits, allowDiagonal, dontCrossCorner);
     }
@@ -83,7 +79,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return null;
     }
 
-    private List<AStarNode> FindClosestTargetPath(AStarAgent startPoint, HashSet<Unit> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
+    private List<AStarNode> FindClosestTargetPath(AStarAgent startPoint, IReadOnlyCollection<Unit> targetPoints, bool allowDiagonal = false, bool dontCrossCorner = false)
     {
         if (targetPoints == null || targetPoints.Count == 0)
             throw new System.ArgumentNullException(nameof(targetPoints), "The targets set cannot be null.");
@@ -114,7 +110,7 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return pathQueue.Dequeue(); 
     }
 
-    private HashSet<Unit> FilterTargetsByHeuristic(AStarAgent startPoint, HashSet<Unit> targetPoints)
+    private HashSet<Unit> FilterTargetsByHeuristic(AStarAgent startPoint, IReadOnlyCollection<Unit> targetPoints)
     {
         PriorityQueue<Unit> targetQueue = new PriorityQueue<Unit>(targetPoints.Count, SortOrder.Ascending);
         foreach (var target in targetPoints)
@@ -217,4 +213,6 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
 
         return finalPathNodes;
     }
+
+    public void RegisteBattleRoster(IBattleRoster battleRoster) => Grid.RegisteBattleRoster(battleRoster);
 }

@@ -21,6 +21,7 @@ public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable
     {
         Unit = GetComponent<Unit>();
         _gridManager = gridManager;
+
         _originalParent = transform.parent;
     }
 

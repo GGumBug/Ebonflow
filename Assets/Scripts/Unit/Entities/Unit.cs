@@ -1,6 +1,5 @@
 using AutoBattle;
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -56,8 +55,8 @@ public class Unit : MonoBehaviour
 
     private void RegisterEventHandlers()
     {
-        AutoBattleManager.Instance.OnBattleStarted  += () => _isBattleActive = true;
-        AutoBattleManager.Instance.OnBattleEnded    += () => _isBattleActive = false;
+        AutoBattleManager.Instance.StateController.OnBattlePhase  += () => _isBattleActive = true;
+        AutoBattleManager.Instance.StateController.OnResolutionPhase += () => _isBattleActive = false;
 
         _aStarAgent.OnRequestTeamType               += GetTeam;
         _rangeDetector.OnRequestTeamType            += GetTeam;
@@ -74,6 +73,7 @@ public class Unit : MonoBehaviour
     public void SetSnapTransform(Vector2Int positionInt)
     {
         transform.position = new Vector2(positionInt.x, positionInt.y);
+        Agent.SetCurrentGridPosition(positionInt);
     }
 
     /// <summary>

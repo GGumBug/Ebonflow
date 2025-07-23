@@ -9,6 +9,7 @@ public class AStarGrid : MonoBehaviour, IGridManager
     private Vector2Int _gridBottomLeft;
     private Vector2Int _gridTopRight;
     private AStarNode[,] _grid;
+    private IBattleRoster _roster;
 
     public GridType Type => GridType.Battle;
 
@@ -24,6 +25,7 @@ public class AStarGrid : MonoBehaviour, IGridManager
     {
         _gridBottomLeft = gridSettings.GridBottomLeft;
         _gridTopRight = gridSettings.GridTopRight;
+        
 
         int sizeX = _gridTopRight.x - _gridBottomLeft.x + 1;
         int sizeY = _gridTopRight.y - _gridBottomLeft.y + 1;
@@ -31,6 +33,11 @@ public class AStarGrid : MonoBehaviour, IGridManager
         _grid = new AStarNode[sizeX, sizeY];
 
         CreateGridFromTilemap(sizeX, sizeY);
+    }
+
+    public void RegisteBattleRoster(IBattleRoster battleRoster)
+    {
+        _roster = battleRoster;
     }
 
     /// <summary>
@@ -226,9 +233,11 @@ public class AStarGrid : MonoBehaviour, IGridManager
 
         if (!IsOutOfBounds(OriginPosInt))
             SetNodeBlock(OriginPosInt, false);
-        
+
         SetNodeBlock(cell, true, agent);
         draggable.Unit.SetSnapTransform(cell);
+
+        SyncRosterOnPlace(draggable.Unit);
     }
 
     public void RemoveUnit(IUnitDraggable draggable)
@@ -238,5 +247,19 @@ public class AStarGrid : MonoBehaviour, IGridManager
 
         if (!IsOutOfBounds(OriginPosInt))
             SetNodeBlock(OriginPosInt, false);
+
+        SyncRosterOnRemove(draggable.Unit);
+    }
+
+    private void SyncRosterOnPlace(Unit unit)
+    {
+        if (!_roster.Contains(unit))
+            _roster.Register(unit);
+    }
+
+    private void SyncRosterOnRemove(Unit unit)
+    {
+        if (_roster.Contains(unit))
+            _roster.Unregister(unit);
     }
 }

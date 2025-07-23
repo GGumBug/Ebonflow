@@ -7,9 +7,6 @@ namespace AutoBattle
     {
         private DamageCalculator _damageCalculator;
 
-        public event Action OnBattleStarted;
-        public event Action OnBattleEnded;
-
         public AutoBattleStateController StateController { get; private set; }
 
         public void Setup()
@@ -17,7 +14,6 @@ namespace AutoBattle
             _damageCalculator = new DamageCalculator();
             StateController = new AutoBattleStateController();
             AutoBattleUnitManager.Instance.OnTeamEliminated += HandleTeamEliminated;
-            StateController.OnBattlePhase += OnBattleStarted;
         }
 
         public bool Attack(Unit attacker, Unit defender)
@@ -42,8 +38,6 @@ namespace AutoBattle
 
         private void BattleEnded(bool victory)
         {
-            OnBattleEnded?.Invoke();
-
             StateController.GameState = victory
                 ? AutoBattleGameState.Victory
                 : AutoBattleGameState.Defeat;

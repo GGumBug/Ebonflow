@@ -58,8 +58,15 @@ public class DebugPanelSpawnUnit : MonoBehaviour
             return;
         }
 
-        TeamType team = (TeamType)_teamDropdown.value;
         Vector2Int spawnPos = new Vector2Int(x, y);
+
+        if (AStarAlgorithmManager.Instance.Grid.IsOutOfBounds(spawnPos))
+        {
+            Debug.LogWarning("BattleGrid 범위를 벗어났습니다.");
+            return;
+        }
+
+        TeamType team = (TeamType)_teamDropdown.value;
 
         CreateDebugUnit(id, starLevel, team, spawnPos);
     }
@@ -72,6 +79,7 @@ public class DebugPanelSpawnUnit : MonoBehaviour
             ? mgr.SpawnAlly( /*unitID*/ unitID, /*star*/ starLevel, pos, AutoBattleUnitManager.Instance.UnitBench)
             : mgr.SpawnEnemy(/*unitID*/ unitID, /*star*/ starLevel, pos, AStarAlgorithmManager.Instance.Grid);
 
+        AStarAlgorithmManager.Instance.Grid.SetNodeBlock(pos, true, newUnit.Agent);
         Debug.Log($"DebugUI: {team} 유닛 생성 완료 @ {pos}");
     }
 }

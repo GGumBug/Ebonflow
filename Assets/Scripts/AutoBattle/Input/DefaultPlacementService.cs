@@ -17,6 +17,9 @@ namespace AutoBattle.Input
         /// <param name="benchGrid">벤치 그리드 매니저 (경계, 점유 상태 확인, 배치)</param>
         public DefaultPlacementService(IGridManager fieldGrid, IGridManager benchGrid)
         {
+            if ((fieldGrid == null) || (benchGrid == null))
+                Debug.LogError("IGridManager가 할당되지 않았습니다.");
+
             _fieldGrid = fieldGrid;
             _benchGrid = benchGrid;
         }
