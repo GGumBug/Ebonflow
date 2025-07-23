@@ -7,6 +7,8 @@ namespace AutoBattle.Input
         /// <summary>이 슬롯/필드에 속한 실제 유닛 게임 오브젝트</summary>
         Unit Unit { get; }
 
+        IGridManager CurrentGrid { get; }
+
         Vector3 OriginalPosition { get; }
 
         /// <summary>
@@ -34,5 +36,7 @@ namespace AutoBattle.Input
         /// 예: 부드러운 트윈 백 애니메이션.
         /// </summary>
         void Revert();
+
+        void SetCurrentGrid(IGridManager grid);
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace AutoBattle.Input
@@ -22,29 +23,42 @@ namespace AutoBattle.Input
 
         public void ProcessDrop(IUnitDraggable draggable, Vector2Int targetCell)
         {
-            // 필드 영역 내 유효한 셀인지 확인
-            if (_fieldGrid.IsValidCell(targetCell))
+            // 1) 어떤 Grid로 드롭하려는가?
+            IGridManager targetGrid = null;
+            if (_fieldGrid.IsValidCell(targetCell)) targetGrid = _fieldGrid;
+            else if (_benchGrid.IsValidCell(targetCell)) targetGrid = _benchGrid;
+
+            if (targetGrid == null)
             {
-                if (!_fieldGrid.IsCellOccupied(targetCell))
-                {
-                    _fieldGrid.PlaceUnit(draggable, targetCell);
-                    return;
-                }
-                Debug.LogWarning($"Field cell {targetCell} is already occupied.");
+                Debug.LogWarning($"No valid grid for {targetCell}, reverting.");
+                draggable.Revert();
+                return;
             }
-            // 벤치 영역 내 유효한 셀인지 확인
-            if (_benchGrid.IsValidCell(targetCell))
+
+            // 2) 타겟 셀 사용 가능 여부
+            if (targetGrid.IsCellOccupied(targetCell))
             {
-                if (!_benchGrid.IsCellOccupied(targetCell))
-                {
-                    _benchGrid.PlaceUnit(draggable, targetCell);
-                    return;
-                }
-                Debug.LogWarning($"Bench cell {targetCell} is already occupied.");
+                Debug.LogWarning($"{targetGrid} cell {targetCell} is occupied.");
+                draggable.Revert();
+                return;
             }
-            // 유효하지 않거나 점유된 셀인 경우 되돌리기
-            Debug.LogWarning($"Cannot place unit at {targetCell}, reverting.");
-            draggable.Revert();
+
+            if (draggable.CurrentGrid.Type != targetGrid.Type)
+            {
+                draggable.CurrentGrid.RemoveUnit(draggable);
+            }
+
+            // 4) 배치 시도
+            try
+            {
+                targetGrid.PlaceUnit(draggable, targetCell);
+                draggable.SetCurrentGrid(targetGrid);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Place failed: {e.Message}, reverting.");
+                draggable.Revert();
+            }
         }
     }
 }

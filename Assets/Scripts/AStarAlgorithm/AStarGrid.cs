@@ -1,3 +1,4 @@
+using AutoBattle;
 using AutoBattle.Input;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ public class AStarGrid : MonoBehaviour, IGridManager
     private Vector2Int _gridBottomLeft;
     private Vector2Int _gridTopRight;
     private AStarNode[,] _grid;
+
+    public GridType Type => GridType.Battle;
 
     public bool IsOutOfBounds(int x, int y) => 
         x < 0 || x >= _grid.GetLength(0) || 
@@ -226,5 +229,14 @@ public class AStarGrid : MonoBehaviour, IGridManager
         
         SetNodeBlock(cell, true, agent);
         draggable.Unit.SetSnapTransform(cell);
+    }
+
+    public void RemoveUnit(IUnitDraggable draggable)
+    {
+        Vector3 OriginPos = draggable.OriginalPosition;
+        Vector2Int OriginPosInt = new Vector2Int(Mathf.RoundToInt(OriginPos.x), Mathf.RoundToInt(OriginPos.y));
+
+        if (!IsOutOfBounds(OriginPosInt))
+            SetNodeBlock(OriginPosInt, false);
     }
 }

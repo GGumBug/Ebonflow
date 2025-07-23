@@ -1,6 +1,7 @@
-using System;
-using UnityEngine;
 using AutoBattle;
+using System;
+using Unity.VisualScripting;
+using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class Unit : MonoBehaviour
     private UnitStateMachine        _stateMachine;
     private UnitStats               _stats;
     private CapsuleCollider2D       _capsuleCollider2D;
+    private UnitDraggableBehaviour  _draggableBehaviour;
 
     public event Action<Unit>       OnDied;
     public bool IsDead          =>  _isDead;
@@ -23,12 +25,12 @@ public class Unit : MonoBehaviour
     public UnitStats Stat       =>  _stats;
     public AStarAgent Agent     =>  _aStarAgent;
 
-    public void Setup(TeamType team, UnitStatData statData)
+    public void Setup(TeamType team, UnitStatData statData, IGridManager gridManager)
     {
         _team = team;
         
         CacheComponents();
-        InitializeComponents(statData);
+        InitializeComponents(statData, gridManager);
         RegisterEventHandlers();
     }
 
@@ -37,9 +39,10 @@ public class Unit : MonoBehaviour
         _aStarAgent          = GetComponent<AStarAgent>();
         _rangeDetector       = GetComponentInChildren<RangeDetector>();
         _capsuleCollider2D   = GetComponent<CapsuleCollider2D>();
+        _draggableBehaviour  = gameObject.AddComponent<UnitDraggableBehaviour>();
     }
 
-    private void InitializeComponents(UnitStatData statData)
+    private void InitializeComponents(UnitStatData statData, IGridManager gridManager)
     {
         _stats = new UnitStats(statData);
         _capsuleCollider2D.enabled = true;
@@ -48,6 +51,7 @@ public class Unit : MonoBehaviour
         _combatComponent = new CombatComponent(this, _rangeDetector, AutoBattleManager.Instance.Attack);
         _movementComponent = new MovementComponent(transform);
         _healthComponent = new HealthComponent(_stats);
+        _draggableBehaviour.Setup(this, gridManager);
     }
 
     private void RegisterEventHandlers()

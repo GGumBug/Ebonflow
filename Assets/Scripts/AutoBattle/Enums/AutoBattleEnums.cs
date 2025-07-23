@@ -11,4 +11,10 @@ namespace AutoBattle
         Victory,
         Defeat
     }
+
+    public enum GridType
+    {
+        Bench,
+        Battle
+    }
 }

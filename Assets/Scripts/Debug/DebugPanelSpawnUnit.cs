@@ -69,8 +69,8 @@ public class DebugPanelSpawnUnit : MonoBehaviour
         AutoBattleUnitManager mgr = AutoBattleUnitManager.Instance;
 
         Unit newUnit = team == TeamType.Ally
-            ? mgr.SpawnAlly( /*unitID*/ unitID, /*star*/ starLevel, pos)
-            : mgr.SpawnEnemy(/*unitID*/ unitID, /*star*/ starLevel, pos);
+            ? mgr.SpawnAlly( /*unitID*/ unitID, /*star*/ starLevel, pos, AutoBattleUnitManager.Instance.UnitBench)
+            : mgr.SpawnEnemy(/*unitID*/ unitID, /*star*/ starLevel, pos, AStarAlgorithmManager.Instance.Grid);
 
         Debug.Log($"DebugUI: {team} 유닛 생성 완료 @ {pos}");
     }

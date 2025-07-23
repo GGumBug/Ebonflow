@@ -1,8 +1,8 @@
+using AutoBattle;
 using AutoBattle.Input;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.Port;
 
 public class UnitBench : MonoBehaviour, IGridManager
 {
@@ -11,6 +11,8 @@ public class UnitBench : MonoBehaviour, IGridManager
     private BenchSlot[] _slots;
 
     public int Capacity => _slots.Length;
+
+    public GridType Type => GridType.Bench;
 
     /// <summary>벤치 단위 이벤트: 슬롯에 유닛 배치</summary>
     public event Action<UnitBench, BenchSlot, Unit> OnUnitPlaced;
@@ -245,15 +247,37 @@ public class UnitBench : MonoBehaviour, IGridManager
         Vector3 originPos = draggable.OriginalPosition;
         Vector2Int originPosInt = new Vector2Int(Mathf.RoundToInt(originPos.x), Mathf.RoundToInt(originPos.y));
 
-        if (TryMove(originPosInt.x, cell.x))
+        PlaceUnitOrMove(draggable, originPosInt, cell, index);
+    }
+
+    public void PlaceUnitOrMove(IUnitDraggable draggable, Vector2Int originPosInt, Vector2Int cell, int index)
+    {
+        bool success = draggable.CurrentGrid.Type == Type
+            ? TryMove(originPosInt.x, cell.x)
+            : TryPlace(draggable.Unit, index);
+
+        if (success)
         {
             draggable.Unit.SetSnapTransform(cell);
-        }
-        else
-        {
-            Debug.LogWarning($"PlaceUnit: 슬롯 {index}에 유닛을 배치할 수 없습니다.");
+            return;
         }
 
+        LogCannotPlace(index);
+    }
+
+    // 공통 로그 메서드
+    private static void LogCannotPlace(int index)
+    {
+        Debug.LogWarning($"PlaceUnit: 슬롯 {index}에 유닛을 배치할 수 없습니다.");
+    }
+
+    public void RemoveUnit(IUnitDraggable draggable)
+    {
+        Vector3 originPos = draggable.OriginalPosition;
+        Vector2Int originPosInt = new Vector2Int(Mathf.RoundToInt(originPos.x), Mathf.RoundToInt(originPos.y));
+
+        Unit outUnit = null;
+        TryRemove(originPosInt.x, out outUnit);
     }
     #endregion
 

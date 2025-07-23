@@ -3,7 +3,7 @@ using System;
 
 public interface IUnitSpawner
 {
-    Unit Spawn(int unitId, int starLevel, TeamType team, Vector2Int position);
+    Unit Spawn(int unitId, int starLevel, TeamType team, Vector2Int position, IGridManager gridManager);
 }
 
 public class UnitSpawner : IUnitSpawner
@@ -23,14 +23,14 @@ public class UnitSpawner : IUnitSpawner
         OnUnitDied = onUnitDied;
     }
 
-    public Unit Spawn(int unitId, int starLevel, TeamType team, Vector2Int pos)
+    public Unit Spawn(int unitId, int starLevel, TeamType team, Vector2Int pos, IGridManager gridManager)
     {
         Vector3 spawnPos = new Vector3(pos.x, pos.y, 0);
         Transform container = team == TeamType.Ally ? _allyContainer : _enemyContainer;
         GameObject go = UnityEngine.Object.Instantiate(_prefab, spawnPos, Quaternion.identity, container);
         var unit = go.GetComponent<Unit>();
 
-        unit.Setup(team, OnRequestUnitStatData.Invoke(unitId, starLevel).Stat);
+        unit.Setup(team, OnRequestUnitStatData.Invoke(unitId, starLevel).Stat, gridManager);
         unit.OnDied += OnUnitDied;
         return unit;
     }
