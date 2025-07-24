@@ -16,8 +16,8 @@ TagManager:
   - StartAgent
   - TargetAgent
   - Ground
-  - 
-  - 
+  - RangeDetector
+  - Interactive
   - 
   - 
   - 

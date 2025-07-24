@@ -11,8 +11,7 @@ public class UnitDragController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
 
     [Header("Layers")]
-    [Tooltip("7번 레이어: 드래그 가능한 유닛")]
-    [SerializeField] private int draggableLayer = 7;
+    [SerializeField] private int draggableLayer = 12;
 
     private LayerMask DraggableMask => 1 << draggableLayer;
 
@@ -45,13 +44,14 @@ public class UnitDragController : MonoBehaviour
         Vector3 world3D = ScreenToWorld3D(_reader.MousePosition);
         Vector2 world2D = world3D;
 
-        Debug.DrawRay(world3D, Vector3.zero, Color.green, 1f);
-
-        // 클릭 지점에 드래그 가능한 유닛이 있는지 검사
         Collider2D col = Physics2D.OverlapPoint(world2D, DraggableMask);
-        if (col != null && col.TryGetComponent<IUnitDraggable>(out var draggable))
+        if (col == null) return;
+
+        var draggable = col.GetComponentInParent<IUnitDraggable>();
+        if (draggable != null)
         {
             _currentDraggable = draggable;
+
             draggable.OnDragBegin();
         }
     }
@@ -61,7 +61,6 @@ public class UnitDragController : MonoBehaviour
         if (!CanProcess || _currentDraggable == null) return;
 
         Vector3 world3D = ScreenToWorld3D(_reader.MousePosition);
-        Debug.DrawRay(world3D, Vector3.zero, Color.yellow, 1f);
 
         _currentDraggable.OnDrag(world3D);
     }
@@ -78,15 +77,31 @@ public class UnitDragController : MonoBehaviour
         _currentDraggable = null;
     }
 
-    /// <summary>
-    /// 화면상의 Vector2(mouse) → Z=0 평면 상의 월드 좌표(Vector3) 변환
-    /// </summary>
     private Vector3 ScreenToWorld3D(Vector2 screenPos)
     {
-        float zDistance = -mainCamera.transform.position.z;
-        var screenPoint = new Vector3(screenPos.x, screenPos.y, zDistance);
-        return mainCamera.ScreenToWorldPoint(screenPoint);
+        // 1) 카메라 회전값 계산
+        Quaternion cameraRotation = mainCamera.transform.rotation;
+        Vector3 cameraEuler = cameraRotation.eulerAngles;
+        // (필요하다면 cameraRotation 또는 cameraEuler를 다른 로직에 활용)
+
+        // 2) 스크린 좌표를 이용해 Ray 생성 (카메라 회전·투영 자동 반영)
+        Ray ray = mainCamera.ScreenPointToRay(screenPos);
+
+        // 3) 월드 Z=0 평면(월드 XY 평면) 정의
+        Plane plane = new Plane(Vector3.forward, Vector3.zero);
+
+        // 4) Ray–평면 교차 지점 계산
+        if (plane.Raycast(ray, out float enter))
+        {
+            Vector3 worldPoint = ray.GetPoint(enter);
+            return worldPoint;
+        }
+
+        // 평면과 교차하지 않을 경우 예외 처리
+        Debug.LogWarning("ScreenToWorld3D: Ray did not hit the Z=0 plane.");
+        return Vector3.zero;
     }
+
 
     /// <summary>
     /// 월드 좌표 → 그리드 셀 좌표 변환

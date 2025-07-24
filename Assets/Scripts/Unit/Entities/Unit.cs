@@ -8,6 +8,7 @@ public class Unit : MonoBehaviour
 
     private bool _isDead;
     private bool _isBattleActive;
+    private UnitModel _model;
     private AStarAgent _aStarAgent;
     private RangeDetector _rangeDetector;
     private CombatComponent _combatComponent;
@@ -15,7 +16,7 @@ public class Unit : MonoBehaviour
     private HealthComponent _healthComponent;
     private UnitStateMachine _stateMachine;
     private UnitStats _stats;
-    private CapsuleCollider2D _capsuleCollider2D;
+    private CircleCollider2D _circleCollider2D;
     private UnitDraggableBehaviour _draggableBehaviour;
 
     public event Action<Unit> OnDied;
@@ -35,16 +36,17 @@ public class Unit : MonoBehaviour
 
     private void CacheComponents()
     {
+        _model = GetComponentInChildren<UnitModel>();
         _aStarAgent = GetComponent<AStarAgent>();
         _rangeDetector = GetComponentInChildren<RangeDetector>();
-        _capsuleCollider2D = GetComponent<CapsuleCollider2D>();
+        _circleCollider2D = GetComponent<CircleCollider2D>();
         _draggableBehaviour = gameObject.AddComponent<UnitDraggableBehaviour>();
     }
 
     private void InitializeComponents(UnitStatData statData, IGridManager gridManager)
     {
         _stats = new UnitStats(statData);
-        _capsuleCollider2D.enabled = true;
+        _circleCollider2D.enabled = true;
         _rangeDetector.Setup(Stat.Range);
         _stateMachine = new UnitStateMachine(this);
         _combatComponent = new CombatComponent(this, _rangeDetector, AutoBattleManager.Instance.Attack);
@@ -110,7 +112,7 @@ public class Unit : MonoBehaviour
     {
         _isDead = true;
         Agent.UnreserveCurrentGridCell();
-        _capsuleCollider2D.enabled = false;
+        _circleCollider2D.enabled = false;
 
         _combatComponent.CancelAttack();
         _movementComponent.CancelMovement();

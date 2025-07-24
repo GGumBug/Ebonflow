@@ -9,9 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5914393921319794543}
+  - component: {fileID: 5838527707428911635}
   - component: {fileID: 5829533692208552}
   - component: {fileID: 7106288250439437919}
-  m_Layer: 7
+  m_Layer: 12
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33,6 +34,43 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8973191947696726651}
   m_LocalEulerAnglesHint: {x: -15, y: 0, z: 0}
+--- !u!70 &5838527707428911635
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1220057098975988959}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: -0.3}
+  m_Size: {x: 0.9, y: 1.5}
+  m_Direction: 0
 --- !u!212 &5829533692208552
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -109,7 +147,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8973191947696726651}
-  - component: {fileID: 2186920243991133863}
+  - component: {fileID: 2748213584780491239}
   - component: {fileID: 4437910121935158980}
   - component: {fileID: 7007604737241054472}
   - component: {fileID: 7017370457788964135}
@@ -137,8 +175,8 @@ Transform:
   - {fileID: 3566791140931403889}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &2186920243991133863
-CapsuleCollider2D:
+--- !u!58 &2748213584780491239
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -171,9 +209,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.5}
-  m_Size: {x: 0.75, y: 1.5}
-  m_Direction: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.5
 --- !u!50 &4437910121935158980
 Rigidbody2D:
   serializedVersion: 5
@@ -241,7 +278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 178718776924080374, guid: 97d4a28b9edc1b94cb90284fee3ed68a, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 4698945460856950554, guid: 97d4a28b9edc1b94cb90284fee3ed68a, type: 3}
       propertyPath: detectionRadius

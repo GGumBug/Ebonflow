@@ -1,6 +1,7 @@
 using UnityEngine;
 using AutoBattle.Input;
 using System.Collections;
+using System;
 
 [RequireComponent(typeof(Unit))]
 public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable
@@ -19,7 +20,7 @@ public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable
 
     public void Setup(Unit unit, IGridManager gridManager)
     {
-        Unit = GetComponent<Unit>();
+        Unit = unit;
         _gridManager = gridManager;
 
         _originalParent = transform.parent;
@@ -40,7 +41,7 @@ public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable
 
     public void OnDragEnd(Vector2Int finalCell)
     {
-       
+
     }
 
     public void Revert()
