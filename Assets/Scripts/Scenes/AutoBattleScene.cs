@@ -28,7 +28,8 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
         AStarAlgorithmManager aStarAlgorithmManager = AStarAlgorithmManager.Instance;
         aStarAlgorithmManager.InitializeGrid(this);
 
-        AutoBattleDataManager.Instance.Setup();
+        AutoBattleDataManager autoBattleDataManager = AutoBattleDataManager.Instance;
+        autoBattleDataManager.Setup();
 
         AutoBattleManager.Instance.Setup();
 
@@ -37,8 +38,11 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
 
         aStarAlgorithmManager.RegisteBattleRoster(autoBattleUnitManager.Roster);
 
-        _uIAutoBattleShop.RequestSoulCoin += AutoBattleDataManager.Instance.AutoBattlePlayerDataContext.GetSoulCoin;
-        _uIAutoBattleShop.SetUp();
+        _uIAutoBattleShop.RequestSoulCoin += autoBattleDataManager.AutoBattlePlayerDataContext.GetSoulCoin;
+        _uIAutoBattleShop.SetUp(autoBattleDataManager.AutoBattlePlayerDataContext);
+        autoBattleDataManager.AutoBattlePlayerDataContext.OnAddSoulCoin += _uIAutoBattleShop.CheckCanBuyCards;
+        autoBattleDataManager.AutoBattlePlayerDataContext.OnSpendSoulCoin += _uIAutoBattleShop.CheckCanBuyCards;
+
         await _cardDrawManager.SetUp(AutoBattleUnitManager.Instance, _uIAutoBattleShop);
     }
 

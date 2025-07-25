@@ -10,14 +10,16 @@ public class UIAutoBattleShop : UIBase
 
     public event Func<int> RequestSoulCoin;
 
-    public void SetUp()
+    public void SetUp(AutoBattlePlayerDataContext autoBattlePlayerDataContext)
     {
-        CashCards();
+        CashCards(autoBattlePlayerDataContext);
     }
 
-    public void CashCards()
+    public void CashCards(AutoBattlePlayerDataContext autoBattlePlayerDataContext)
     {
         cardViews = cardsPanelRect.GetComponentsInChildren<CardView>();
+        foreach (var cardView in cardViews)
+            cardView.SetEvents(autoBattlePlayerDataContext);
     }
 
     public void SetNewCardData(int index, CardData cardData)
@@ -31,5 +33,11 @@ public class UIAutoBattleShop : UIBase
         int currentSoulCoin = RequestSoulCoin.Invoke();
         bool canBuy = currentSoulCoin >= cardData.price;
         TargetCard.SetData(cardData, canBuy);
+    }
+
+    public void CheckCanBuyCards(int soulCoin)
+    {
+        foreach (var cardView in cardViews)
+            cardView.CheckCanBuy(soulCoin);
     }
 }
