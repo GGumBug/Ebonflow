@@ -34,6 +34,11 @@ public class CombatComponent
 
     public void TryAttack()
     {
+        // 기존 시퀀트가 남아 있으면 즉시 취소
+        if (_attackSequence != null && _attackSequence.IsActive())
+            _attackSequence.Kill();
+
+        // 유효 타겟 확보
         _currentTarget = HasValidTarget
             ? _currentTarget
             : _detector.GetClosestEnemy();
@@ -46,15 +51,27 @@ public class CombatComponent
 
         OnAttackStarted?.Invoke();
 
-        _attackSequence = DOTween.Sequence()
-            .AppendInterval(_unit.Stat.AttackDelay)
-        .AppendCallback(() =>
-        {
-            bool targetDied = OnAttack(_unit, _currentTarget);
+        // 클로저 안전성 확보를 위해 로컬 변수에 복사
+        var attacker = _unit;
+        var target = _currentTarget;
 
-            OnAttackEnded?.Invoke();
-        });
+        _attackSequence = DOTween.Sequence()
+            .AppendInterval(attacker.Stat.AttackDelay)
+            .AppendCallback(() =>
+            {
+                // 콜백 직전에 항상 null/죽음 검사
+                if (target == null || target.IsDead)
+                {
+                    OnAttackEnded?.Invoke();
+                    return;
+                }
+
+                bool targetDied = OnAttack(attacker, target);
+                OnAttackEnded?.Invoke();
+            })
+            .SetAutoKill(true);  // 시퀀스 완료 후 자동 해제
     }
+
 
     public void CancelAttack()
     {
