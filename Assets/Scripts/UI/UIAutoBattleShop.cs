@@ -1,36 +1,31 @@
 using Cysharp.Threading.Tasks;
 using DeckSystem;
-using System;
 using UnityEngine;
 
 public class UIAutoBattleShop : UIBase
 {
     [SerializeField] private RectTransform cardsPanelRect;
 
-    private PoolManager _poolManager;
-    private GameObject _cardViewOrigin;
+    private CardView[] cardViews;
 
-    public async UniTask SetUp()
+    public void SetUp()
     {
-        _poolManager = PoolManager.Instance;
-        await LoadCardViewOrigin();
+        CashCards();
     }
 
-    private async UniTask LoadCardViewOrigin()
+    public void CashCards()
     {
-        _cardViewOrigin = await AddressableManager.Instance.Load<GameObject>(AddressableKey.CardView);
+        cardViews = cardsPanelRect.GetComponentsInChildren<CardView>();
     }
 
-    public void CreateCard(int index, CardData data)
+    public void SetNewCardData(int index, CardData cardData)
     {
-        var cardGo = _poolManager.GetFromPool<Poolable>(_cardViewOrigin, cardsPanelRect, default, default);
-        CardView cardView = cardGo.GetComponent<CardView>();
+        if (index >= cardViews.Length)
+        {
+            throw new System.Exception("카드 뷰의 범위를 벗어난 Index입니다.");
+        }
 
-        if (cardView == null)
-            throw new InvalidOperationException("CardView 컴포넌트가 prefab에 없습니다.");
-
-        cardView.transform.SetSiblingIndex(index);
-
-        cardView.SetData(data);
+        var TargetCard = cardViews[index];
+        TargetCard.SetData(cardData);
     }
 }

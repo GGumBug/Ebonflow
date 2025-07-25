@@ -35,7 +35,7 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
 
         aStarAlgorithmManager.RegisteBattleRoster(autoBattleUnitManager.Roster);
 
-        await _uIAutoBattleShop.SetUp();
+        _uIAutoBattleShop.SetUp();
         await _cardDrawManager.SetUp(AutoBattleUnitManager.Instance, _uIAutoBattleShop);
     }
 

@@ -9,7 +9,7 @@ namespace DeckSystem
         private LevelTierProbabilityConfig _levelTierProbabilityConfig;
         private Deck _deck;
         private TierBasedCardPicker _tierBasedCardPicker;
-        private Action<int, CardData> requestCreateCard;
+        private Action<int, CardData> requestSetCardView;
 
         public async UniTask SetUp(AutoBattleUnitManager autoBattleUnitManager, UIAutoBattleShop uIAutoBattleShop)
         {
@@ -19,7 +19,7 @@ namespace DeckSystem
             _deck = new Deck(unitStatRepository.GetMaxId(), unitStatRepository.Exists, unitStatRepository.Get);
             _tierBasedCardPicker = new TierBasedCardPicker(_levelTierProbabilityConfig, _deck);
 
-            requestCreateCard = uIAutoBattleShop.CreateCard;
+            requestSetCardView = uIAutoBattleShop.SetNewCardData;
 
             AutoBattleManager.Instance.StateController.PreparationEntered.Add(DrawFiveCard);
         }
@@ -30,7 +30,7 @@ namespace DeckSystem
             for (int i = 0; i < 5; i++)
             {
                 CardData newCardData = DrawCard(1);
-                requestCreateCard(i, newCardData);
+                requestSetCardView(i, newCardData);
             }
         }
 
