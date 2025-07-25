@@ -20,7 +20,6 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
     {
         await AutoBattleUnitManager.Instance.LoadAsset();
         _uIAutoBattleShop = await UIManager.Instance.OpenUIAsync<UIAutoBattleShop>();
-        _cardDrawManager = new CardDrawManager();
     }
 
     public override async UniTask InitializeData()
@@ -31,6 +30,8 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
         AutoBattleDataManager autoBattleDataManager = AutoBattleDataManager.Instance;
         autoBattleDataManager.Setup();
 
+        _cardDrawManager = new CardDrawManager();
+
         AutoBattleManager.Instance.Setup();
 
         AutoBattleUnitManager autoBattleUnitManager = AutoBattleUnitManager.Instance;
@@ -39,7 +40,7 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
         aStarAlgorithmManager.RegisteBattleRoster(autoBattleUnitManager.Roster);
 
         _uIAutoBattleShop.RequestSoulCoin += autoBattleDataManager.AutoBattlePlayerDataContext.GetSoulCoin;
-        _uIAutoBattleShop.SetUp(autoBattleDataManager.AutoBattlePlayerDataContext);
+        _uIAutoBattleShop.SetUp(_cardDrawManager, autoBattleDataManager.AutoBattlePlayerDataContext);
         autoBattleDataManager.AutoBattlePlayerDataContext.OnAddSoulCoin += _uIAutoBattleShop.CheckCanBuyCards;
         autoBattleDataManager.AutoBattlePlayerDataContext.OnSpendSoulCoin += _uIAutoBattleShop.CheckCanBuyCards;
 

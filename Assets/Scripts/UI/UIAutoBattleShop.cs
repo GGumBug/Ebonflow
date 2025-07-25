@@ -10,16 +10,16 @@ public class UIAutoBattleShop : UIBase
 
     public event Func<int> RequestSoulCoin;
 
-    public void SetUp(AutoBattlePlayerDataContext autoBattlePlayerDataContext)
+    public void SetUp(CardDrawManager cardDrawManager, AutoBattlePlayerDataContext autoBattlePlayerDataContext)
     {
-        CashCards(autoBattlePlayerDataContext);
+        CashCards(cardDrawManager, autoBattlePlayerDataContext);
     }
 
-    public void CashCards(AutoBattlePlayerDataContext autoBattlePlayerDataContext)
+    public void CashCards(CardDrawManager cardDrawManager, AutoBattlePlayerDataContext autoBattlePlayerDataContext)
     {
         cardViews = cardsPanelRect.GetComponentsInChildren<CardView>();
-        foreach (var cardView in cardViews)
-            cardView.SetEvents(autoBattlePlayerDataContext);
+        for (int i = 0; i < cardViews.Length; i++)
+            cardViews[i].SetCardView(i, cardDrawManager, autoBattlePlayerDataContext);
     }
 
     public void SetNewCardData(int index, CardData cardData)

@@ -10,13 +10,16 @@ public class AutoBattlePlayerDataContext
     public event Action<int> OnAddSoulCoin;
     public event Action<int> OnSpendSoulCoin;
 
+    public int GetLevel() => _playerData.level;
+    public int GetSoulCoin() => _playerData.soulCoin;
+
     public AutoBattlePlayerDataContext()
     {
         _autoBattlePlayerDataSaveLoad = new AutoBattlePlayerDataSaveLoad();
         _playerData = _autoBattlePlayerDataSaveLoad.Load(PlayerDataFileName);
         if (_playerData == null)
         {
-            _playerData = new AutoBattlePlayerData(1);
+            _playerData = new AutoBattlePlayerData(1, 10);
         }
     }
 
@@ -35,11 +38,6 @@ public class AutoBattlePlayerDataContext
         _playerData.soulCoin = Math.Max(0, _playerData.soulCoin - amount);
         OnSpendSoulCoin?.Invoke(_playerData.soulCoin);
         return true;
-    }
-
-    public int GetSoulCoin()
-    {
-        return _playerData.soulCoin;
     }
 
     public void SaveAutoBattlePlayerData()

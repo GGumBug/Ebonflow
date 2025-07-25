@@ -77,14 +77,14 @@ namespace AutoBattle
                 enemy.StartBattle();
         }
 
-        public void SpawnToBench(int unitId, int starLevel)
+        public bool SpawnToBench(int unitId, int starLevel)
         {
             // 1) 빈 슬롯 인덱스 조회
             int slotIndex = UnitBench.FirstEmptyIndex();
             if (slotIndex < 0)
             {
                 Debug.LogWarning("벤치가 가득 찼습니다.");
-                return;
+                return false;
             }
 
             // 2) 셀 좌표 얻기
@@ -100,6 +100,7 @@ namespace AutoBattle
                 );
 
             UnitBench.TryPlaceFirstEmpty(newUnit, out slotIndex);
+            return true;
         }
 
         private void HandleUnitDeath(Unit unit)
