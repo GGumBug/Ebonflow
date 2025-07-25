@@ -12,6 +12,7 @@ public class AutoBattlePlayerDataContext
 
     public int GetLevel() => _playerData.level;
     public int GetSoulCoin() => _playerData.soulCoin;
+    public bool CanBuy(int price) => _playerData.soulCoin >= price;
 
     public AutoBattlePlayerDataContext()
     {
@@ -19,7 +20,7 @@ public class AutoBattlePlayerDataContext
         _playerData = _autoBattlePlayerDataSaveLoad.Load(PlayerDataFileName);
         if (_playerData == null)
         {
-            _playerData = new AutoBattlePlayerData(1, 5);
+            _playerData = new AutoBattlePlayerData(1, 10);
         }
     }
 

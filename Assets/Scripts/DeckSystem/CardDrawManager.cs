@@ -27,7 +27,7 @@ namespace DeckSystem
             AutoBattleManager.Instance.StateController.PreparationEntered.Add(DrawFiveCard);
         }
 
-        private void DrawFiveCard()
+        public void DrawFiveCard()
         {
             // 임시 상수 1레벨
             for (int i = 0; i < 5; i++)

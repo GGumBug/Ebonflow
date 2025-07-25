@@ -14,6 +14,7 @@ public class UIAutoBattleShop : UIBase
     {
         CashCards(cardDrawManager);
         SetBuyButtons(autoBattlePlayerDataContext);
+        SetButtonEvents(cardDrawManager);
     }
 
     private void CashCards(CardDrawManager cardDrawManager)
@@ -30,6 +31,11 @@ public class UIAutoBattleShop : UIBase
 
         btnReroll.SetBuyButton(autoBattlePlayerDataContext);
         btnLevelUp.SetBuyButton(autoBattlePlayerDataContext);
+    }
+
+    private void SetButtonEvents(CardDrawManager cardDrawManager)
+    {
+        btnReroll.SetEvent(cardDrawManager);
     }
 
     public void SetNewCardData(int index, CardData cardData)

@@ -7,18 +7,19 @@ public class BuyButtonBase : MonoBehaviour
     [SerializeField] protected Button btnBuy;
 
     protected int price;
-    protected Func<int> getSoulCoin;
     protected Func<int, bool> requestSpendSoulCoin;
+    protected Func<int, bool> requestCanBuy;
 
     public virtual void SetBuyButton(AutoBattlePlayerDataContext autoBattlePlayerDataContext)
     {
-        getSoulCoin = autoBattlePlayerDataContext.GetSoulCoin;
-        requestSpendSoulCoin += autoBattlePlayerDataContext.SpendSoulCoin;
+        requestCanBuy = autoBattlePlayerDataContext.CanBuy;
+        requestSpendSoulCoin = autoBattlePlayerDataContext.SpendSoulCoin;
     }
 
-    public void CheckCanBuy()
+    public bool CheckCanBuy()
     {
-        bool canBuy = price <= getSoulCoin.Invoke();
+        bool canBuy = requestCanBuy(price);
         btnBuy.interactable = canBuy;
+        return canBuy;
     }
 }

@@ -1,4 +1,4 @@
-using UnityEngine;
+using DeckSystem;
 
 public class RerollButton : BuyButtonBase
 {
@@ -10,5 +10,10 @@ public class RerollButton : BuyButtonBase
 
         price = REROLL_PRICE;
         CheckCanBuy();
+    }
+
+    public void SetEvent(CardDrawManager cardDrawManager)
+    {
+        btnBuy.onClick.AddListener(cardDrawManager.DrawFiveCard);
     }
 }

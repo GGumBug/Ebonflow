@@ -20,7 +20,7 @@ public class CardView : BuyButtonBase
 
     private void Awake()
     {
-        btnBuy.onClick.AddListener(BuyCardUnit);
+        btnBuy.onClick.AddListener(Buy);
         _autoBattleUnitManager = AutoBattleUnitManager.Instance;
     }
 
@@ -40,12 +40,17 @@ public class CardView : BuyButtonBase
         RequestNewCardData += cardDrawManager.ResetIndexCard;
     }
 
-    private void BuyCardUnit()
+    protected void Buy()
     {
-        if (_autoBattleUnitManager.UnitBench.FirstEmptyIndex() >= 0 && requestSpendSoulCoin.Invoke(price))
+        if (_autoBattleUnitManager.UnitBench.FirstEmptyIndex() >= 0 && CheckCanBuy())
         {
             _autoBattleUnitManager.SpawnToBench(Data.unitID, Data.starLevel);
+            requestSpendSoulCoin.Invoke(price);
             RequestNewCardData?.Invoke(Index);
+        }
+        else
+        {
+            Debug.Log("Unit Bench 자리가 부족합니다.");
         }
     }
 }
