@@ -3,12 +3,10 @@ using DeckSystem;
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using static BansheeGz.BGDatabase.BGJsonRepoModel;
 
-public class CardView : MonoBehaviour
+public class CardView : BuyButtonBase
 {
-    [SerializeField] private Button btnBuy;
+    
     [SerializeField] private TextMeshProUGUI txtUnitTier;
     [SerializeField] private TextMeshProUGUI txtPrice;
     [SerializeField] private TextMeshProUGUI txtUnitID;
@@ -18,7 +16,6 @@ public class CardView : MonoBehaviour
     public int Index { get; private set; }
     public CardData Data { get; private set; }
 
-    public event Func<int, bool> RequestSpendSoulCoin;
     public event Action<int> RequestNewCardData;
 
     private void Awake()
@@ -27,32 +24,25 @@ public class CardView : MonoBehaviour
         _autoBattleUnitManager = AutoBattleUnitManager.Instance;
     }
 
-    public void SetData(CardData cardData, bool canBuy)
+    public void SetData(CardData cardData)
     {
-        btnBuy.interactable = canBuy;
-
         Data = cardData;
+        price = cardData.price;
         txtUnitTier.text = Data.tier.ToString();
         txtPrice.text = "Price" + Data.price.ToString();
         txtUnitID.text = "UnitID" + Data.unitID.ToString();
+        CheckCanBuy();
     }
 
-    public void SetCardView(int index, CardDrawManager cardDrawManager, AutoBattlePlayerDataContext autoBattlePlayerDataContext)
+    public void SetCardView(int index, CardDrawManager cardDrawManager)
     {
         Index = index;
-        RequestNewCardData += cardDrawManager.Reroll;
-        RequestSpendSoulCoin += autoBattlePlayerDataContext.SpendSoulCoin;
-    }
-
-    public void CheckCanBuy(int soulCoin)
-    {
-        bool canBuy = Data.price <= soulCoin;
-        btnBuy.interactable = canBuy;
+        RequestNewCardData += cardDrawManager.ResetIndexCard;
     }
 
     private void BuyCardUnit()
     {
-        if (_autoBattleUnitManager.UnitBench.FirstEmptyIndex() >= 0 && RequestSpendSoulCoin.Invoke(Data.price))
+        if (_autoBattleUnitManager.UnitBench.FirstEmptyIndex() >= 0 && requestSpendSoulCoin.Invoke(price))
         {
             _autoBattleUnitManager.SpawnToBench(Data.unitID, Data.starLevel);
             RequestNewCardData?.Invoke(Index);

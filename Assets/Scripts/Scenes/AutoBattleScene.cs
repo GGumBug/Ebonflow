@@ -39,7 +39,6 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
 
         aStarAlgorithmManager.RegisteBattleRoster(autoBattleUnitManager.Roster);
 
-        _uIAutoBattleShop.RequestSoulCoin += autoBattleDataManager.AutoBattlePlayerDataContext.GetSoulCoin;
         _uIAutoBattleShop.SetUp(_cardDrawManager, autoBattleDataManager.AutoBattlePlayerDataContext);
         autoBattleDataManager.AutoBattlePlayerDataContext.OnAddSoulCoin += _uIAutoBattleShop.CheckCanBuyCards;
         autoBattleDataManager.AutoBattlePlayerDataContext.OnSpendSoulCoin += _uIAutoBattleShop.CheckCanBuyCards;

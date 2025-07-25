@@ -1,25 +1,35 @@
 using DeckSystem;
-using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIAutoBattleShop : UIBase
 {
     [SerializeField] private RectTransform cardsPanelRect;
+    [SerializeField] private RerollButton btnReroll;
+    [SerializeField] private LevelUpButton btnLevelUp;
 
     private CardView[] cardViews;
 
-    public event Func<int> RequestSoulCoin;
-
     public void SetUp(CardDrawManager cardDrawManager, AutoBattlePlayerDataContext autoBattlePlayerDataContext)
     {
-        CashCards(cardDrawManager, autoBattlePlayerDataContext);
+        CashCards(cardDrawManager);
+        SetBuyButtons(autoBattlePlayerDataContext);
     }
 
-    public void CashCards(CardDrawManager cardDrawManager, AutoBattlePlayerDataContext autoBattlePlayerDataContext)
+    private void CashCards(CardDrawManager cardDrawManager)
     {
         cardViews = cardsPanelRect.GetComponentsInChildren<CardView>();
         for (int i = 0; i < cardViews.Length; i++)
-            cardViews[i].SetCardView(i, cardDrawManager, autoBattlePlayerDataContext);
+            cardViews[i].SetCardView(i, cardDrawManager);   
+    }
+
+    private void SetBuyButtons(AutoBattlePlayerDataContext autoBattlePlayerDataContext)
+    {
+        foreach (var cardView in cardViews)
+            cardView.SetBuyButton(autoBattlePlayerDataContext);
+
+        btnReroll.SetBuyButton(autoBattlePlayerDataContext);
+        btnLevelUp.SetBuyButton(autoBattlePlayerDataContext);
     }
 
     public void SetNewCardData(int index, CardData cardData)
@@ -30,14 +40,15 @@ public class UIAutoBattleShop : UIBase
         }
 
         var TargetCard = cardViews[index];
-        int currentSoulCoin = RequestSoulCoin.Invoke();
-        bool canBuy = currentSoulCoin >= cardData.price;
-        TargetCard.SetData(cardData, canBuy);
+        TargetCard.SetData(cardData);
     }
 
-    public void CheckCanBuyCards(int soulCoin)
+    public void CheckCanBuyCards()
     {
         foreach (var cardView in cardViews)
-            cardView.CheckCanBuy(soulCoin);
+            cardView.CheckCanBuy();
+
+        btnLevelUp.CheckCanBuy();
+        btnReroll.CheckCanBuy();
     }
 }

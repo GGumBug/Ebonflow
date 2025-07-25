@@ -37,7 +37,7 @@ namespace DeckSystem
             }
         }
 
-        public void Reroll(int cardIndex)
+        public void ResetIndexCard(int cardIndex)
         {
             CardData newCardData = DrawCard();
             requestSetCardView(cardIndex, newCardData);
