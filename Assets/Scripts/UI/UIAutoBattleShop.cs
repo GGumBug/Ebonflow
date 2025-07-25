@@ -1,5 +1,5 @@
-using Cysharp.Threading.Tasks;
 using DeckSystem;
+using System;
 using UnityEngine;
 
 public class UIAutoBattleShop : UIBase
@@ -7,6 +7,8 @@ public class UIAutoBattleShop : UIBase
     [SerializeField] private RectTransform cardsPanelRect;
 
     private CardView[] cardViews;
+
+    public event Func<int> RequestSoulCoin;
 
     public void SetUp()
     {
@@ -26,6 +28,8 @@ public class UIAutoBattleShop : UIBase
         }
 
         var TargetCard = cardViews[index];
-        TargetCard.SetData(cardData);
+        int currentSoulCoin = RequestSoulCoin.Invoke();
+        bool canBuy = currentSoulCoin >= cardData.price;
+        TargetCard.SetData(cardData, canBuy);
     }
 }

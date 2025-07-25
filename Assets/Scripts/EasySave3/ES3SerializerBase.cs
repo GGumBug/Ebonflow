@@ -73,8 +73,10 @@ public abstract class ES3SerializerBase<T>
     /// <summary>
     /// 데이터 저장 (성공 여부 리턴)
     /// </summary>
-    public bool Save(T data)
+    public bool Save(T data, string fileName)
     {
+        _currentFileName = fileName;
+
         EnsureDirectory();
         try
         {
@@ -93,8 +95,10 @@ public abstract class ES3SerializerBase<T>
     /// <summary>
     /// 데이터 로드 (실패 시 default(T) 리턴)
     /// </summary>
-    public T Load()
+    public T Load(string fileName)
     {
+        _currentFileName = fileName;
+
         EnsureDirectory();
         try
         {

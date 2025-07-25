@@ -75,8 +75,6 @@ namespace RoguelikeMap
             if (settings == null)
                 throw new ArgumentNullException(nameof(settings));
 
-            // 1) 현재 파일명을 세팅
-            _currentFileName = fileName;
 
             // 2) _mapData 초기화 및 노드/엣지 데이터 채우기
             InitializeMapDataIfNeeded(mapLayout, settings);
@@ -84,7 +82,7 @@ namespace RoguelikeMap
             PopulateEdgeDataRows(mapLayout);
 
             // 3) ES3SerializerBase.Save 호출
-            bool success = base.Save(_mapData);
+            bool success = base.Save(_mapData, fileName);
             if (success)
                 Debug.Log($"맵이 저장되었습니다 (ES3) → {Path.Combine(Application.persistentDataPath, RelativePath, FileName)}");
             else
@@ -123,8 +121,7 @@ namespace RoguelikeMap
                 return null;
             }
 
-            _currentFileName = fileName;
-            var loaded = base.Load();
+            var loaded = base.Load(fileName);
             if (loaded == null)
             {
                 Debug.LogWarning($"맵 파일을 찾을 수 없습니다 (ES3) → {Path.Combine(Application.persistentDataPath, RelativePath, FileName)}");

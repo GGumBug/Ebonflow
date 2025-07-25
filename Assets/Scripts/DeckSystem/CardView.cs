@@ -18,8 +18,9 @@ public class CardView : MonoBehaviour
         btnBuy.onClick.AddListener(BuyCardUnit);
     }
 
-    public void SetData(CardData cardData)
+    public void SetData(CardData cardData, bool canBuy)
     {
+        btnBuy.interactable = canBuy;
         Data = cardData;
         txtUnitTier.text = Data.tier.ToString();
         txtPrice.text = "Price" + Data.price.ToString();

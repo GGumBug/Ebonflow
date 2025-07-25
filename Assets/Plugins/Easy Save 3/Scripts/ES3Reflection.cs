@@ -20,7 +20,7 @@ namespace ES3Internal
         public static readonly Type serializeFieldAttributeType = typeof(SerializeField);
         public static readonly Type obsoleteAttributeType = typeof(System.ObsoleteAttribute);
         public static readonly Type nonSerializedAttributeType = typeof(System.NonSerializedAttribute);
-        public static readonly Type es3SerializableAttributeType = typeof(ES3Serializable);
+        public static readonly Type es3SerializableAttributeType = typeof(ES3SerializerBase);
         public static readonly Type es3NonSerializableAttributeType = typeof(ES3NonSerializable);
 
         public static Type[] EmptyTypes = new Type[0];
