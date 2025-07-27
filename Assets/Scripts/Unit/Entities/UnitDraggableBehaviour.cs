@@ -17,6 +17,8 @@ public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable
     public Vector3 OriginalPosition { get; private set; }
     public IGridManager CurrentGrid => _gridManager;
 
+    public bool CanDrag => !Unit.IsBattleActive && !Unit.IsDead;
+
     public void Setup(Unit unit, IGridManager gridManager)
     {
         Unit = unit;

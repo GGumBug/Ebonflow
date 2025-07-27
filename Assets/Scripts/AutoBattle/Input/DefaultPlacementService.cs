@@ -24,7 +24,7 @@ namespace AutoBattle.Input
             _benchGrid = benchGrid;
         }
 
-        public void ProcessDrop(IUnitDraggable draggable, Vector2Int targetCell)
+        public bool ProcessDrop(IUnitDraggable draggable, Vector2Int targetCell)
         {
             // 1) 어떤 Grid로 드롭하려는가?
             IGridManager targetGrid = null;
@@ -35,7 +35,14 @@ namespace AutoBattle.Input
             {
                 Debug.LogWarning($"No valid grid for {targetCell}, reverting.");
                 draggable.Revert();
-                return;
+                return false;
+            }
+
+            if (!targetGrid.CanDrop)
+            {
+                Debug.LogWarning($"Grid is can not Drop, reverting.");
+                draggable.Revert();
+                return false;
             }
 
             // 2) 타겟 셀 사용 가능 여부
@@ -43,7 +50,7 @@ namespace AutoBattle.Input
             {
                 Debug.LogWarning($"{targetGrid} cell {targetCell} is occupied.");
                 draggable.Revert();
-                return;
+                return false;
             }
 
             if (draggable.CurrentGrid.Type != targetGrid.Type)
@@ -56,11 +63,13 @@ namespace AutoBattle.Input
             {
                 targetGrid.PlaceUnit(draggable, targetCell);
                 draggable.SetCurrentGrid(targetGrid);
+                return true;
             }
             catch (Exception e)
             {
                 Debug.LogError($"Place failed: {e.Message}, reverting.");
                 draggable.Revert();
+                return false;
             }
         }
     }

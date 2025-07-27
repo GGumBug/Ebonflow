@@ -5,6 +5,7 @@ using UnityEngine;
 public interface IGridManager
 {
     GridType Type { get; }
+    bool CanDrop { get; }
     bool IsValidCell(Vector2Int cell);
     bool IsCellOccupied(Vector2Int cell);
     void PlaceUnit(IUnitDraggable draggable, Vector2Int cell);

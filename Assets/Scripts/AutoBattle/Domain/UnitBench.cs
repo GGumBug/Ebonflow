@@ -8,11 +8,15 @@ public class UnitBench : MonoBehaviour, IGridManager
 {
     private const int BENCH_COUNT = 8;
     private const int BenchY = -2;
+
+    private Func<bool> requestCanDrop;
     private BenchSlot[] _slots;
 
     public int Capacity => _slots.Length;
 
     public GridType Type => GridType.Bench;
+
+    public bool CanDrop => requestCanDrop.Invoke();
 
     /// <summary>벤치 단위 이벤트: 슬롯에 유닛 배치</summary>
     public event Action<UnitBench, BenchSlot, Unit> OnUnitPlaced;
@@ -36,6 +40,10 @@ public class UnitBench : MonoBehaviour, IGridManager
             slot.OnLockChanged += HandleSlotLockChanged;
             _slots[i] = slot;
         }
+
+        var stateController = AutoBattleManager.Instance.StateController;
+        requestCanDrop = () =>  stateController.GameState == AutoBattleGameState.PreparationPhase ||
+                                stateController.GameState == AutoBattleGameState.BattlePhase;
     }
 
     #region 이벤트 재전파 핸들러

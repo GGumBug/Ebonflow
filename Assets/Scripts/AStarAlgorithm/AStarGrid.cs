@@ -1,5 +1,6 @@
 using AutoBattle;
 using AutoBattle.Input;
+using System;
 using UnityEngine;
 
 public class AStarGrid : MonoBehaviour, IGridManager
@@ -10,8 +11,10 @@ public class AStarGrid : MonoBehaviour, IGridManager
     private Vector2Int _gridTopRight;
     private AStarNode[,] _grid;
     private IBattleRoster _roster;
+    private Func<bool> requestCanDrop;
 
     public GridType Type => GridType.Battle;
+    public bool CanDrop => requestCanDrop();
 
     public bool IsOutOfBounds(int x, int y) => 
         x < 0 || x >= _grid.GetLength(0) || 
@@ -25,7 +28,6 @@ public class AStarGrid : MonoBehaviour, IGridManager
     {
         _gridBottomLeft = gridSettings.GridBottomLeft;
         _gridTopRight = gridSettings.GridTopRight;
-        
 
         int sizeX = _gridTopRight.x - _gridBottomLeft.x + 1;
         int sizeY = _gridTopRight.y - _gridBottomLeft.y + 1;
@@ -33,6 +35,8 @@ public class AStarGrid : MonoBehaviour, IGridManager
         _grid = new AStarNode[sizeX, sizeY];
 
         CreateGridFromTilemap(sizeX, sizeY);
+
+        requestCanDrop = () => AutoBattleManager.Instance.StateController.GameState == AutoBattleGameState.PreparationPhase;
     }
 
     public void RegisteBattleRoster(IBattleRoster battleRoster)

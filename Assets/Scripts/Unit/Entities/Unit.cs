@@ -6,9 +6,6 @@ public class Unit : MonoBehaviour
 {
     [SerializeField] private TeamType _team;
 
-    private bool _isDead;
-    private bool _isBattleActive;
-    private UnitModel _model;
     private AStarAgent _aStarAgent;
     private RangeDetector _rangeDetector;
     private CombatComponent _combatComponent;
@@ -21,7 +18,8 @@ public class Unit : MonoBehaviour
     private AutoBattleManager _autoBattleManager;
 
     public event Action<Unit> OnDied;
-    public bool IsDead => _isDead;
+    public bool IsBattleActive { get; private set; }
+    public bool IsDead { get; private set; }
     public TeamType GetTeam() => _team;
     public UnitStats Stat => _stats;
     public AStarAgent Agent => _aStarAgent;
@@ -42,7 +40,6 @@ public class Unit : MonoBehaviour
 
     private void CacheComponents()
     {
-        _model = GetComponentInChildren<UnitModel>();
         _aStarAgent = GetComponent<AStarAgent>();
         _rangeDetector = GetComponentInChildren<RangeDetector>();
         _circleCollider2D = GetComponent<CircleCollider2D>();
@@ -91,7 +88,7 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
-        if (!_isBattleActive || _isDead)
+        if (!IsBattleActive || IsDead)
             return;
 
         _stateMachine.Update();
@@ -107,7 +104,7 @@ public class Unit : MonoBehaviour
 
     public void HandleDeath()
     {
-        _isDead = true;
+        IsDead = true;
         Agent.UnreserveCurrentGridCell();
         _circleCollider2D.enabled = false;
 
@@ -129,17 +126,17 @@ public class Unit : MonoBehaviour
     public void SubscribeBattleStateHandlers()
     {
         var ctrl = _autoBattleManager.StateController;
-        ctrl.BattleEntered.Add(() => _isBattleActive = true, priority: 0);
-        ctrl.VictoryEntered.Add(() => _isBattleActive = false, priority: 0);
-        ctrl.DefeatEntered.Add(() => _isBattleActive = false, priority: 0);
+        ctrl.BattleEntered.Add(() => IsBattleActive = true, priority: 0);
+        ctrl.VictoryEntered.Add(() => IsBattleActive = false, priority: 0);
+        ctrl.DefeatEntered.Add(() => IsBattleActive = false, priority: 0);
     }
 
     public void UnsubscribeBattleStateHandlers()
     {
         var ctrl = _autoBattleManager.StateController;
-        ctrl.BattleEntered.Remove(() => _isBattleActive = true);
-        ctrl.VictoryEntered.Remove(() => _isBattleActive = false);
-        ctrl.DefeatEntered.Remove(() => _isBattleActive = false);
+        ctrl.BattleEntered.Remove(() => IsBattleActive = true);
+        ctrl.VictoryEntered.Remove(() => IsBattleActive = false);
+        ctrl.DefeatEntered.Remove(() => IsBattleActive = false);
     }
 
     public void OnEnterWalk()               => _aStarAgent.StartFollowPath();

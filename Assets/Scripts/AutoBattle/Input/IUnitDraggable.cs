@@ -7,6 +7,8 @@ namespace AutoBattle.Input
         /// <summary>이 슬롯/필드에 속한 실제 유닛 게임 오브젝트</summary>
         Unit Unit { get; }
 
+        bool CanDrag { get; }
+
         IGridManager CurrentGrid { get; }
 
         Vector3 OriginalPosition { get; }

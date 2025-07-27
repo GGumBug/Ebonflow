@@ -35,7 +35,7 @@ public class UnitDragController : MonoBehaviour
         _reader.OnSelectCanceled += OnDragEnded;
     }
 
-    private bool CanProcess => _inputGate?.IsEnabled == true && _reader != null && mainCamera != null;
+    private bool CanProcess => _inputGate?.IsEnabled == true && _reader != null;
 
     private void OnDragStarted()
     {
@@ -50,6 +50,9 @@ public class UnitDragController : MonoBehaviour
         var draggable = col.GetComponentInParent<IUnitDraggable>();
         if (draggable != null)
         {
+            if (!draggable.CanDrag)
+                return;
+            
             _currentDraggable = draggable;
 
             draggable.OnDragBegin();
@@ -72,8 +75,9 @@ public class UnitDragController : MonoBehaviour
         Vector3 world3D = ScreenToWorld3D(_reader.MousePosition);
         Vector2Int cell = WorldToCell(world3D);
 
-        _placementService.ProcessDrop(_currentDraggable, cell);
-        _currentDraggable.OnDragEnd(cell);
+        if (_placementService.ProcessDrop(_currentDraggable, cell))
+            _currentDraggable.OnDragEnd(cell);
+
         _currentDraggable = null;
     }
 

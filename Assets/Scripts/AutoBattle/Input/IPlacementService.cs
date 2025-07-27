@@ -13,6 +13,6 @@ namespace AutoBattle.Input
         /// </summary>
         /// <param name="draggable">드래그 대상 유닛 인터페이스</param>
         /// <param name="targetCell">드롭된 셀의 좌표(Vector2Int)</param>
-        void ProcessDrop(IUnitDraggable draggable, Vector2Int targetCell);
+        bool ProcessDrop(IUnitDraggable draggable, Vector2Int targetCell);
     }
 }
