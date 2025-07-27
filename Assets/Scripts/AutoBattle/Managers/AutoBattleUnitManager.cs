@@ -51,8 +51,6 @@ namespace AutoBattle
             AStarAlgorithmManager.Instance.OnRequestAllyUnits += () => { return Roster.Allies; };
             AStarAlgorithmManager.Instance.OnRequestEnemyUnits += () => { return Roster.Enemies; };
 
-            autoBattleManager.StateController.BattleEntered.Add(StartAllUnitsBattle, 1);
-
             _dragController.Setup(_placementInputGate, _placementService);
         }
 
@@ -66,15 +64,6 @@ namespace AutoBattle
         {
             var newEnemy = _spawner.Spawn(unitId, starLevel, TeamType.Enemy, pos, gridManager);
             return newEnemy;
-        }
-
-        private void StartAllUnitsBattle()
-        {
-            foreach (var ally in Roster.Allies)
-                ally.StartBattle();
-
-            foreach (var enemy in Roster.Enemies)
-                enemy.StartBattle();
         }
 
         public bool SpawnToBench(int unitId, int starLevel)

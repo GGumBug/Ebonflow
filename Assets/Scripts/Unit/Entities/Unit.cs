@@ -18,12 +18,18 @@ public class Unit : MonoBehaviour
     private UnitStats _stats;
     private CircleCollider2D _circleCollider2D;
     private UnitDraggableBehaviour _draggableBehaviour;
+    private AutoBattleManager _autoBattleManager;
 
     public event Action<Unit> OnDied;
     public bool IsDead => _isDead;
     public TeamType GetTeam() => _team;
     public UnitStats Stat => _stats;
     public AStarAgent Agent => _aStarAgent;
+
+    private void Awake()
+    {
+        _autoBattleManager = AutoBattleManager.Instance;
+    }
 
     public void Setup(TeamType team, UnitStatData statData, IGridManager gridManager)
     {
@@ -49,7 +55,7 @@ public class Unit : MonoBehaviour
         _circleCollider2D.enabled = true;
         _rangeDetector.Setup(Stat.Range);
         _stateMachine = new UnitStateMachine(this);
-        _combatComponent = new CombatComponent(this, _rangeDetector, AutoBattleManager.Instance.Attack);
+        _combatComponent = new CombatComponent(this, _rangeDetector, _autoBattleManager.Attack);
         _movementComponent = new MovementComponent(transform);
         _healthComponent = new HealthComponent(_stats);
         _draggableBehaviour.Setup(this, gridManager);
@@ -57,10 +63,6 @@ public class Unit : MonoBehaviour
 
     private void RegisterEventHandlers()
     {
-        AutoBattleManager.Instance.StateController.BattleEntered.Add(() => _isBattleActive = true, 0);
-        AutoBattleManager.Instance.StateController.VictoryEntered.Add(() => _isBattleActive = false, 0);
-        AutoBattleManager.Instance.StateController.DefeatEntered.Add(() => _isBattleActive = false, 0);
-
         _aStarAgent.OnRequestTeamType += GetTeam;
         _rangeDetector.OnRequestTeamType += GetTeam;
         _movementComponent.OnEndMove += _aStarAgent.EndMove;
@@ -85,11 +87,6 @@ public class Unit : MonoBehaviour
     private void ReserveGridCell()
     {
         Agent.ReserveCurrentGridCell();
-    }
-
-    public void StartBattle()
-    {
-        _isBattleActive = true;
     }
 
     private void Update()
@@ -129,6 +126,22 @@ public class Unit : MonoBehaviour
         _combatComponent.TryAttack();
     }
 
-    public void OnEnterWalk()           => _aStarAgent.StartFollowPath();
-    public bool ApplyDamage(int damage) => _healthComponent.ApplyDamage(damage);
+    public void SubscribeBattleStateHandlers()
+    {
+        var ctrl = _autoBattleManager.StateController;
+        ctrl.BattleEntered.Add(() => _isBattleActive = true, priority: 0);
+        ctrl.VictoryEntered.Add(() => _isBattleActive = false, priority: 0);
+        ctrl.DefeatEntered.Add(() => _isBattleActive = false, priority: 0);
+    }
+
+    public void UnsubscribeBattleStateHandlers()
+    {
+        var ctrl = _autoBattleManager.StateController;
+        ctrl.BattleEntered.Remove(() => _isBattleActive = true);
+        ctrl.VictoryEntered.Remove(() => _isBattleActive = false);
+        ctrl.DefeatEntered.Remove(() => _isBattleActive = false);
+    }
+
+    public void OnEnterWalk()               => _aStarAgent.StartFollowPath();
+    public bool ApplyDamage(int damage)     => _healthComponent.ApplyDamage(damage);
 }

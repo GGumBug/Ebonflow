@@ -18,6 +18,7 @@ namespace AutoBattle
         {
             var team = unit.GetTeam();
             bool added = _map[team].Add(unit);
+            unit.SubscribeBattleStateHandlers();
 
             if (added)
                 Debug.Log($"[BattleRoster] Register: {unit.name} ({team})");
@@ -29,6 +30,7 @@ namespace AutoBattle
         {
             var team = unit.GetTeam();
             bool removed = _map[team].Remove(unit);
+            unit.UnsubscribeBattleStateHandlers();
 
             if (removed)
                 Debug.Log($"[BattleRoster] Unregister: {unit.name} ({team})");

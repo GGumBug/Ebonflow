@@ -85,6 +85,7 @@ public class DeadState : IUnitState
         // 애니메이션 재생, 콜라이더 비활성화 등
         unit.HandleDeath();
     }
+
     public void Execute(Unit unit) { }
     public void Exit(Unit unit) { }
 }

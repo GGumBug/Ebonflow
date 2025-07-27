@@ -15,7 +15,6 @@ public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable
     private IGridManager _gridManager;
 
     public Vector3 OriginalPosition { get; private set; }
-
     public IGridManager CurrentGrid => _gridManager;
 
     public void Setup(Unit unit, IGridManager gridManager)
