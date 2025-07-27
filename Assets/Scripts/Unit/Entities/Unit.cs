@@ -113,8 +113,7 @@ public class Unit : MonoBehaviour
 
         OnDied?.Invoke(this);
 
-        //나중에 풀링으로 수정
-        Destroy(gameObject, 1f);
+        PoolManager.Instance.Push(GetComponent<Poolable>());
     }
 
     public void OnEnterAttack()
@@ -126,6 +125,7 @@ public class Unit : MonoBehaviour
     public void SubscribeBattleStateHandlers()
     {
         var ctrl = _autoBattleManager.StateController;
+        ctrl.BattleEntered.Add(() => Agent.RegistPosition(), priority: 0);
         ctrl.BattleEntered.Add(() => IsBattleActive = true, priority: 0);
         ctrl.VictoryEntered.Add(() => IsBattleActive = false, priority: 0);
         ctrl.DefeatEntered.Add(() => IsBattleActive = false, priority: 0);
@@ -134,6 +134,7 @@ public class Unit : MonoBehaviour
     public void UnsubscribeBattleStateHandlers()
     {
         var ctrl = _autoBattleManager.StateController;
+        ctrl.BattleEntered.Remove(() => Agent.RegistPosition());
         ctrl.BattleEntered.Remove(() => IsBattleActive = true);
         ctrl.VictoryEntered.Remove(() => IsBattleActive = false);
         ctrl.DefeatEntered.Remove(() => IsBattleActive = false);

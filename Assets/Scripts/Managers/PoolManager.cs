@@ -57,7 +57,6 @@ public class PoolManager : Singleton<PoolManager>
                 poolable = Create();
 
             poolable.transform.SetParent(parent);
-
             poolable.transform.localPosition = position;
             poolable.transform.rotation = rotation;
 
@@ -111,19 +110,19 @@ public class PoolManager : Singleton<PoolManager>
         _pool[name].Push(poolable);
     }
 
-    public T GetFromPool<T>(GameObject original, Transform parent = null, Vector3 position = default, Quaternion rotation = default) where T : Poolable
+    public T GetFromPool<T>(GameObject original, Transform parent = null, Vector3 position = default, Quaternion rotation = default) where T : Component
     {
         string key = original.GetInstanceID().ToString();
 
         if (!_pool.ContainsKey(key))
             CreatePool(original);
 
-        var poolable = _pool[key].Pop(parent, position, rotation) as T;
-        if (poolable == null)
+        var component = _pool[key].Pop(parent, position, rotation).GetComponent<T>();
+        if (component == null)
             throw new InvalidCastException($"[PoolManager] {original.name}을(를) {typeof(T)} 타입으로 변환할 수 없습니다. " +
                                            $"해당 프리팹이 {typeof(T)}을(를) 상속하고 있는지 확인하십시오.");
 
-        return poolable;
+        return component;
     }
 
     public GameObject GetOriginal(string name)

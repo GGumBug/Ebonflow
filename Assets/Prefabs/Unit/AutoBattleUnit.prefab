@@ -151,6 +151,7 @@ GameObject:
   - component: {fileID: 4437910121935158980}
   - component: {fileID: 7007604737241054472}
   - component: {fileID: 7017370457788964135}
+  - component: {fileID: 8967733378863289760}
   m_Layer: 7
   m_Name: AutoBattleUnit
   m_TagString: Untagged
@@ -264,6 +265,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDrawLine: 1
+--- !u!114 &8967733378863289760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3762167806928269837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 444eaadae612d0142bc0dc7ced195f1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7020876094182379482
 PrefabInstance:
   m_ObjectHideFlags: 0

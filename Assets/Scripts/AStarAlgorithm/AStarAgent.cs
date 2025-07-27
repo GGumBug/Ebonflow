@@ -40,6 +40,10 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private void Awake() 
     {
         _aStarAlgorithmManager = AStarAlgorithmManager.Instance;
+    }
+
+    public void RegistPosition()
+    {
         transform.position = (Vector3Int)PathPoint;
         CurrentGridPosition = PathPoint;
     }
@@ -53,7 +57,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     public void UnreserveCurrentGridCell()
     {
         _grid ??= AStarAlgorithmManager.Instance.Grid;
-        _grid.RemoveNodeBlock(PathPoint);
+        _grid.RemoveNodeBlock(CurrentGridPosition);
     }
 
     public void StartFollowPath()

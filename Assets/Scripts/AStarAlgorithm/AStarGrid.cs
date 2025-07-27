@@ -185,33 +185,6 @@ public class AStarGrid : MonoBehaviour, IGridManager
         targetNode.SetBlock = lockEndpoints;
     }
 
-    private void OnDrawGizmos()
-    {
-        if (_grid == null)
-            return;
-
-        // _grid 배열의 모든 셀을 순회
-        for (int i = 0; i < _grid.GetLength(0); i++)
-        {
-            for (int j = 0; j < _grid.GetLength(1); j++)
-            {
-                AStarNode node = _grid[i, j];
-                // 노드의 좌표를 Vector2로 변환 (노드에 저장된 좌표는 world 좌표여야 합니다)
-                Vector2 pos = new Vector2(node.X, node.Y);
-                // isBlock 상태에 따라 색상을 설정
-                if (node.GetBlock && node.Agent)
-                    Gizmos.color = Color.red;
-                else if (node.GetBlock)
-                    Gizmos.color = Color.yellow;
-                else
-                    Gizmos.color = Color.green;
-
-                // 0.4f 반지름의 원을 그립니다.
-                Gizmos.DrawWireSphere(pos, TILE_COLLIDER_RADIUS);
-            }
-        }
-    }
-
     public bool IsValidCell(Vector2Int cell)
     {
         return !IsOutOfBounds(cell);
@@ -265,5 +238,32 @@ public class AStarGrid : MonoBehaviour, IGridManager
     {
         if (_roster.Contains(unit))
             _roster.Unregister(unit);
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (_grid == null)
+            return;
+
+        // _grid 배열의 모든 셀을 순회
+        for (int i = 0; i < _grid.GetLength(0); i++)
+        {
+            for (int j = 0; j < _grid.GetLength(1); j++)
+            {
+                AStarNode node = _grid[i, j];
+                // 노드의 좌표를 Vector2로 변환 (노드에 저장된 좌표는 world 좌표여야 합니다)
+                Vector2 pos = new Vector2(node.X, node.Y);
+                // isBlock 상태에 따라 색상을 설정
+                if (node.GetBlock && node.Agent)
+                    Gizmos.color = Color.red;
+                else if (node.GetBlock)
+                    Gizmos.color = Color.yellow;
+                else
+                    Gizmos.color = Color.green;
+
+                // 0.4f 반지름의 원을 그립니다.
+                Gizmos.DrawWireSphere(pos, TILE_COLLIDER_RADIUS);
+            }
+        }
     }
 }

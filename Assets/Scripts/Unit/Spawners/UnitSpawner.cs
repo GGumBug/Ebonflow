@@ -41,9 +41,7 @@ public class UnitSpawner : IUnitSpawner
     {
         Vector3 spawnPos = new Vector3(pos.x, pos.y, 0);
         Transform container = team == TeamType.Ally ? _allyContainer : _enemyContainer;
-        GameObject go = UnityEngine.Object.Instantiate(_prefab, spawnPos, Quaternion.identity, container);
-        var unit = go.GetComponent<Unit>();
-
+        var unit = PoolManager.Instance.GetFromPool<Unit>(_prefab, container, spawnPos, Quaternion.identity);
         unit.Setup(team, OnRequestUnitStatData.Invoke(unitId, starLevel).Stat, gridManager);
         unit.OnDied += OnUnitDied;
 
