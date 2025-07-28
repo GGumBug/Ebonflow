@@ -1,4 +1,5 @@
 using AutoBattle;
+using AutoBattle.UI;
 using Cysharp.Threading.Tasks;
 using DeckSystem;
 using UnityEngine;
@@ -10,8 +11,7 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
     [SerializeField] private Vector2Int _gridTopRight;
     [SerializeField] private Vector2Int _gridBottomLeft;
 
-    private UIAutoBattleShop _uIAutoBattleShop;
-    private CardDrawManager _cardDrawManager;
+    private UIAutoBattle _uiAutoBattle;
 
     public Vector2Int GridTopRight => _gridTopRight;
     public Vector2Int GridBottomLeft => _gridBottomLeft;
@@ -19,7 +19,7 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
     public override async UniTask LoadAssets()
     {
         await AutoBattleUnitManager.Instance.LoadAsset();
-        _uIAutoBattleShop = await UIManager.Instance.OpenUIAsync<UIAutoBattleShop>();
+        _uiAutoBattle = await UIManager.Instance.OpenUIAsync<UIAutoBattle>();
     }
 
     public override async UniTask InitializeData()
@@ -30,8 +30,6 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
         AutoBattleDataManager autoBattleDataManager = AutoBattleDataManager.Instance;
         autoBattleDataManager.Setup();
 
-        _cardDrawManager = new CardDrawManager();
-
         AutoBattleManager.Instance.Setup();
 
         AutoBattleUnitManager autoBattleUnitManager = AutoBattleUnitManager.Instance;
@@ -39,11 +37,11 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
 
         aStarAlgorithmManager.RegisteBattleRoster(autoBattleUnitManager.Roster);
 
-        _uIAutoBattleShop.SetUp(_cardDrawManager, autoBattleDataManager.AutoBattlePlayerDataContext);
-        autoBattleDataManager.AutoBattlePlayerDataContext.OnAddSoulCoin += _uIAutoBattleShop.CheckCanBuyCards;
-        autoBattleDataManager.AutoBattlePlayerDataContext.OnSpendSoulCoin += _uIAutoBattleShop.CheckCanBuyCards;
+        _uiAutoBattle.SetUp(CardDrawManager.Instance, autoBattleDataManager.AutoBattlePlayerDataContext);
+        autoBattleDataManager.AutoBattlePlayerDataContext.OnAddSoulCoin += _uiAutoBattle.AutoBattleShopUI.CheckCanBuyCards;
+        autoBattleDataManager.AutoBattlePlayerDataContext.OnSpendSoulCoin += _uiAutoBattle.AutoBattleShopUI.CheckCanBuyCards;
 
-        await _cardDrawManager.SetUp(AutoBattleUnitManager.Instance, _uIAutoBattleShop);
+        await CardDrawManager.Instance.SetUp(AutoBattleUnitManager.Instance, _uiAutoBattle.AutoBattleShopUI);
     }
 
     public override async UniTask SetupScene()

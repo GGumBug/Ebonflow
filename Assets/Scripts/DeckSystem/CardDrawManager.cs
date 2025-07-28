@@ -1,10 +1,11 @@
 using AutoBattle;
+using AutoBattle.UI;
 using Cysharp.Threading.Tasks;
 using System;
 
 namespace DeckSystem
 {
-    public class CardDrawManager
+    public class CardDrawManager : Singleton<CardDrawManager>
     {
         private AutoBattlePlayerDataContext _autoBattlePlayerDataContext;
         private LevelTierProbabilityConfig _levelTierProbabilityConfig;
@@ -51,5 +52,7 @@ namespace DeckSystem
 
             return _tierBasedCardPicker.DrawRandomCard(_autoBattlePlayerDataContext.GetLevel());
         }
+
+        public void ReturnCardToDeck(CardData cardData) => _deck.ReturnCard(cardData);
     }
 }

@@ -12,13 +12,13 @@ namespace AutoBattle
         private IUnitRepository         _statRepository;
         private IPlacementInputGate     _placementInputGate;
         private IPlacementService       _placementService;
-        private UnitDragController      _dragController;
 
         public event Action<TeamType> OnTeamEliminated;
 
         public IUnitRepository UnitStatRepository => _statRepository;
         public BattleRoster Roster { get; private set; }
         public UnitBench UnitBench { get; private set; }
+        public UnitDragController DragController { get; private set; }
 
         public async UniTask LoadAsset()
         {
@@ -46,12 +46,12 @@ namespace AutoBattle
             UnitBench = gameObject.AddComponent<UnitBench>();
             _placementInputGate = new PlacementInputGate(autoBattleManager.StateController);
             _placementService = new DefaultPlacementService(AStarAlgorithmManager.Instance.Grid, UnitBench);
-            _dragController = gameObject.AddComponent<UnitDragController>();
+            DragController = gameObject.AddComponent<UnitDragController>();
 
             AStarAlgorithmManager.Instance.OnRequestAllyUnits += () => { return Roster.Allies; };
             AStarAlgorithmManager.Instance.OnRequestEnemyUnits += () => { return Roster.Enemies; };
 
-            _dragController.Setup(_placementInputGate, _placementService);
+            DragController.Setup(_placementInputGate, _placementService);
         }
 
         public Unit SpawnAlly(int unitId, int starLevel, Vector2Int pos, IGridManager gridManager)

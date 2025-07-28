@@ -7,7 +7,7 @@ public enum AddressableKey
     UIMapView,
     NodeTile,
     EdgeView,
-    UIAutoBattleShop,
+    UIAutoBattle,
     CardView,
     LevelTierProbabilityConfig
 }
@@ -20,7 +20,7 @@ public static class AddressableKeyExtensions
         { AddressableKey.AutoBattleUnitPrefab, "AutoBattle/UnitPrefab" },
         { AddressableKey.MapGenerationSettings, "Config/MapGenSettings" },
         { AddressableKey.UIMapView, "RoguelikeMap/UIMapView" },
-        { AddressableKey.UIAutoBattleShop, "Assets/Prefabs/UI/UIAutoBattleShop.prefab" },
+        { AddressableKey.UIAutoBattle, "Assets/Prefabs/UI/UIAutoBattle.prefab" },
         { AddressableKey.CardView, "Assets/Prefabs/UI/CardView.prefab" },
         { AddressableKey.LevelTierProbabilityConfig, "Assets/ScriptableObjects/Deck/LevelTierProbabilityConfig.asset" },
     };

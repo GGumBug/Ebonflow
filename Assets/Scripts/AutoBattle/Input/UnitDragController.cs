@@ -1,5 +1,6 @@
 using UnityEngine;
 using AutoBattle.Input;
+using System;
 
 public class UnitDragController : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class UnitDragController : MonoBehaviour
     private IPlacementService _placementService;
     private InputReader _reader;
     private IUnitDraggable _currentDraggable;
+
+    public Action OnDragStartedAction;
+    public Action OnDragEndedAction;
 
     /// <summary>
     /// 초기 설정: InputGate, PlacementService 주입 및 이벤트 구독
@@ -56,6 +60,7 @@ public class UnitDragController : MonoBehaviour
             _currentDraggable = draggable;
 
             draggable.OnDragBegin();
+            OnDragStartedAction?.Invoke();
         }
     }
 
@@ -79,6 +84,7 @@ public class UnitDragController : MonoBehaviour
             _currentDraggable.OnDragEnd(cell);
 
         _currentDraggable = null;
+        OnDragEndedAction?.Invoke();
     }
 
     private Vector3 ScreenToWorld3D(Vector2 screenPos)
