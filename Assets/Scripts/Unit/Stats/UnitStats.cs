@@ -12,19 +12,19 @@ public class UnitStats
         (StatType[])Enum.GetValues(typeof(StatType));
 
     private readonly StatModifierBucket[] _buckets;
-    private UnitStatData _baseStats;
 
-    public int MaxHP => _buckets[(int)StatType.Hp].Apply(_baseStats.BaseHp);
-    public int Attack => _buckets[(int)StatType.Attack].Apply(_baseStats.BaseAtk);
-    public int Range => _buckets[(int)StatType.Range].Apply(_baseStats.BaseRange);
-    public float AttackDelay => _buckets[(int)StatType.AttackDelay].Apply(_baseStats.BaseAttackDelay);
+    public UnitStatData BaseStats { get; private set; }
+    public int MaxHP => _buckets[(int)StatType.Hp].Apply(BaseStats.BaseHp);
+    public int Attack => _buckets[(int)StatType.Attack].Apply(BaseStats.BaseAtk);
+    public int Range => _buckets[(int)StatType.Range].Apply(BaseStats.BaseRange);
+    public float AttackDelay => _buckets[(int)StatType.AttackDelay].Apply(BaseStats.BaseAttackDelay);
 
     /// <summary>현재 남아 있는 HP. 데미지를 받거나 회복하면 이 값을 변경합니다.</summary>
     public int CurrentHP { get; private set; }
 
     public UnitStats(UnitStatData unitStatData)
     {
-        _baseStats = unitStatData;
+        BaseStats = unitStatData;
         _buckets = new StatModifierBucket[AllStatTypes.Length];
         foreach (var statType in AllStatTypes)
             _buckets[(int)statType] = new StatModifierBucket();
@@ -32,7 +32,7 @@ public class UnitStats
         // 생성 시 현재 HP를 최대 HP로 초기화
         CurrentHP = MaxHP;
 
-        Debug.Log($"[UnitStats] ★{_baseStats.StarLevel} 생성 → MaxHP={MaxHP}, CurrentHP={CurrentHP}, MaxAtk={Attack}");
+        Debug.Log($"[UnitStats] ★{BaseStats.StarLevel} 생성 → MaxHP={MaxHP}, CurrentHP={CurrentHP}, MaxAtk={Attack}");
     }
 
     /// <summary>
@@ -73,8 +73,8 @@ public class UnitStats
     {
         float hpRatio = (float)CurrentHP / MaxHP;
 
-        _baseStats = newBaseStats;
-        Debug.Log($"[UnitStats] 레벨 변경 ★{_baseStats.StarLevel} → MaxHP={MaxHP}, MaxAtk={Attack}");
+        BaseStats = newBaseStats;
+        Debug.Log($"[UnitStats] 레벨 변경 ★{BaseStats.StarLevel} → MaxHP={MaxHP}, MaxAtk={Attack}");
 
         // 기존 남은 체력 비율 유지
         CurrentHP = Mathf.Clamp(Mathf.RoundToInt(MaxHP * hpRatio), 0, MaxHP);

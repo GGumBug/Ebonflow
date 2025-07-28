@@ -30,6 +30,8 @@ namespace DeckSystem
 
         public void DrawFiveCard()
         {
+            // CurrentHand 가 null 이아니라면 CardPool로 되돌린다.
+
             // 임시 상수 1레벨
             for (int i = 0; i < 5; i++)
             {

@@ -1,6 +1,7 @@
 using UnityEngine;
 using AutoBattle.Input;
 using System;
+using AutoBattle.UI;
 
 public class UnitDragController : MonoBehaviour
 {
@@ -14,8 +15,7 @@ public class UnitDragController : MonoBehaviour
     [Header("Layers")]
     [SerializeField] private int draggableLayer = 12;
 
-    private LayerMask DraggableMask => 1 << draggableLayer;
-
+    private bool _isOverSellZone;
     private IPlacementInputGate _inputGate;
     private IPlacementService _placementService;
     private InputReader _reader;
@@ -24,10 +24,14 @@ public class UnitDragController : MonoBehaviour
     public Action OnDragStartedAction;
     public Action OnDragEndedAction;
 
+    private LayerMask DraggableMask => 1 << draggableLayer;
+
+    private void OnSellZoneHoverChanged(bool isOver) => _isOverSellZone = isOver;
+
     /// <summary>
     /// 초기 설정: InputGate, PlacementService 주입 및 이벤트 구독
     /// </summary>
-    public void Setup(IPlacementInputGate inputGate, IPlacementService placementService)
+    public void Setup(IPlacementInputGate inputGate, IPlacementService placementService, SellZonePanel sellZonePanel)
     {
         _inputGate = inputGate;
         _placementService = placementService;
@@ -37,6 +41,7 @@ public class UnitDragController : MonoBehaviour
         _reader.OnSelectStarted += OnDragStarted;
         _reader.OnSelectDown += OnDragUpdated;
         _reader.OnSelectCanceled += OnDragEnded;
+        sellZonePanel.OnHoverChanged += OnSellZoneHoverChanged;
     }
 
     private bool CanProcess => _inputGate?.IsEnabled == true && _reader != null;
@@ -77,11 +82,18 @@ public class UnitDragController : MonoBehaviour
     {
         if (!CanProcess || _currentDraggable == null) return;
 
-        Vector3 world3D = ScreenToWorld3D(_reader.MousePosition);
-        Vector2Int cell = WorldToCell(world3D);
+        if (_isOverSellZone)
+        {
+            _currentDraggable.Unit.SaleComponent.Sell();
+        }
+        else
+        {
+            Vector3 world3D = ScreenToWorld3D(_reader.MousePosition);
+            Vector2Int cell = WorldToCell(world3D);
 
-        if (_placementService.ProcessDrop(_currentDraggable, cell))
-            _currentDraggable.OnDragEnd(cell);
+            if (_placementService.ProcessDrop(_currentDraggable, cell))
+                _currentDraggable.OnDragEnd(cell);
+        }
 
         _currentDraggable = null;
         OnDragEndedAction?.Invoke();

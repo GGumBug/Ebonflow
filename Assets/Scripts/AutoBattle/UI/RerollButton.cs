@@ -14,6 +14,15 @@ public class RerollButton : BuyButtonBase
 
     public void SetEvent(CardDrawManager cardDrawManager)
     {
-        btnBuy.onClick.AddListener(cardDrawManager.DrawFiveCard);
+        btnBuy.onClick.AddListener(() => HandleReroll(cardDrawManager));
+    }
+
+    public void HandleReroll(CardDrawManager cardDrawManager)
+    {
+        if (requestCanBuy(REROLL_PRICE))
+        {
+            requestSpendSoulCoin(REROLL_PRICE);
+            cardDrawManager.DrawFiveCard();
+        }
     }
 }

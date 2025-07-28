@@ -17,7 +17,6 @@ public class Unit : MonoBehaviour
     private CircleCollider2D _circleCollider2D;
     private UnitDraggableBehaviour _draggableBehaviour;
     private AutoBattleManager _autoBattleManager;
-    private UnitSaleComponent _unitSaleComponent;
 
     public event Action<Unit> OnDied;
     public bool IsBattleActive { get; private set; }
@@ -26,6 +25,7 @@ public class Unit : MonoBehaviour
     public UnitStats Stat => _stats;
     public AStarAgent Agent => _aStarAgent;
     public IGridManager CurrentGrid { get; private set; }
+    public UnitSaleComponent SaleComponent { get; private set; }
 
     private void Awake()
     {
@@ -61,7 +61,7 @@ public class Unit : MonoBehaviour
         SetCurrentGrid(gridManager);
         _draggableBehaviour.Setup(this);
         int price = AutoBattleUnitManager.Instance.UnitStatRepository.Get(statData.UnitId, statData.StarLevel).Price;
-        _unitSaleComponent = new UnitSaleComponent(price);
+        SaleComponent = new UnitSaleComponent(price);
     }
 
     private void RegisterEventHandlers()
@@ -76,7 +76,8 @@ public class Unit : MonoBehaviour
         _aStarAgent.CrushOtherTeamAgent += _stateMachine.ChangeToIdle;
         _aStarAgent.OnPathCompleteAction += _stateMachine.ChangeToIdle;
         _aStarAgent.OnMove += _movementComponent.Move;
-        _unitSaleComponent.RequestReleaseAndPool += ReleaseAndPool;
+        SaleComponent.RequestReleaseAndPool += ReleaseAndPool;
+        SaleComponent.RequestCardData += MakeCardData;
     }
 
     public void UnregisterEventHandlers()
@@ -91,7 +92,8 @@ public class Unit : MonoBehaviour
         _aStarAgent.CrushOtherTeamAgent -= _stateMachine.ChangeToIdle;
         _aStarAgent.OnPathCompleteAction -= _stateMachine.ChangeToIdle;
         _aStarAgent.OnMove -= _movementComponent.Move;
-        _unitSaleComponent.RequestReleaseAndPool -= ReleaseAndPool;
+        SaleComponent.RequestReleaseAndPool -= ReleaseAndPool;
+        SaleComponent.RequestCardData -= MakeCardData;
     }
 
     public void SetSnapTransform(Vector2Int positionInt)
@@ -160,6 +162,19 @@ public class Unit : MonoBehaviour
         ctrl.BattleEntered.Add(() => _rangeDetector.FindEnemiesInRange());
         ctrl.VictoryEntered.Remove(() => IsBattleActive = false);
         ctrl.DefeatEntered.Remove(() => IsBattleActive = false);
+    }
+
+    private CardData MakeCardData()
+    {
+        var repo = AutoBattleUnitManager.Instance.UnitStatRepository.Get(_stats.BaseStats.UnitId, _stats.BaseStats.StarLevel);
+
+        CardData cardData = new CardData(
+            repo.Data.UnitTier,
+            repo.Price,
+            repo.Data.UnitId,
+            repo.Stat.StarLevel
+            );
+        return cardData;
     }
 
     public void OnEnterWalk()               => _aStarAgent.StartFollowPath();

@@ -7,6 +7,7 @@ public class UnitSaleComponent
     private int _sellValue;
     CardDrawManager _cardDrawManager;
 
+    public event Func<CardData> RequestCardData;
     public event Action RequestReleaseAndPool;
 
     public UnitSaleComponent(int sellValue)
@@ -15,12 +16,11 @@ public class UnitSaleComponent
         _cardDrawManager = CardDrawManager.Instance;
     }
 
-    public void Sell(CardData cardData)
+    public void Sell()
     {
-        _cardDrawManager.ReturnCardToDeck(cardData);
-
-        AutoBattleDataManager.Instance.AutoBattlePlayerDataContext.AddSoulCoin(_sellValue);
-
+        CardData data = RequestCardData.Invoke();
+        _cardDrawManager.ReturnCardToDeck(data);
+        AutoBattleDataManager.Instance.AutoBattlePlayerDataContext.AddSoulCoin(data.price);
         RequestReleaseAndPool?.Invoke();
     }
 }

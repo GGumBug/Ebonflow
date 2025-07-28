@@ -1,5 +1,4 @@
 using AutoBattle;
-using AutoBattle.UI;
 using Cysharp.Threading.Tasks;
 using DeckSystem;
 using UnityEngine;
@@ -33,7 +32,7 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
         AutoBattleManager.Instance.Setup();
 
         AutoBattleUnitManager autoBattleUnitManager = AutoBattleUnitManager.Instance;
-        autoBattleUnitManager.Setup(aStarAlgorithmManager.Grid);
+        autoBattleUnitManager.Setup(aStarAlgorithmManager.Grid, _uiAutoBattle.SellZonePanel);
 
         aStarAlgorithmManager.RegisteBattleRoster(autoBattleUnitManager.Roster);
 

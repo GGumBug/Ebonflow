@@ -2,6 +2,7 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using System;
 using AutoBattle.Input;
+using AutoBattle.UI;
 
 namespace AutoBattle
 {
@@ -32,7 +33,7 @@ namespace AutoBattle
             }
         }
 
-        public void Setup(IGridManager battleGrid)
+        public void Setup(IGridManager battleGrid, SellZonePanel sellZonePanel)
         {
             AutoBattleManager autoBattleManager = AutoBattleManager.Instance;
             Roster = new BattleRoster();
@@ -51,7 +52,7 @@ namespace AutoBattle
             AStarAlgorithmManager.Instance.OnRequestAllyUnits += () => { return Roster.Allies; };
             AStarAlgorithmManager.Instance.OnRequestEnemyUnits += () => { return Roster.Enemies; };
 
-            DragController.Setup(_placementInputGate, _placementService);
+            DragController.Setup(_placementInputGate, _placementService, sellZonePanel);
         }
 
         public Unit SpawnAlly(int unitId, int starLevel, Vector2Int pos, IGridManager gridManager)

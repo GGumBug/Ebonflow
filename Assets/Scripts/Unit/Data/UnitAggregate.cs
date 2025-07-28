@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class UnitAggregate
 {
     public UnitData Data { get; }
@@ -12,7 +14,8 @@ public class UnitAggregate
         if (data != null && stat != null)
         {
             int unitPrice = (int)data.UnitTier;
-            int unitCount = (stat.StarLevel - 1) * 3;
+            int exponent = stat.StarLevel - 1;
+            int unitCount = (int)Mathf.Pow(3, exponent);
             Price = unitPrice * unitCount;
         }
     }

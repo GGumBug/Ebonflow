@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -5,14 +6,16 @@ namespace AutoBattle.UI
 {
     public class SellZonePanel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
+        public event Action<bool> OnHoverChanged;
+
         public void OnPointerEnter(PointerEventData eventData)
         {
-            Debug.Log("Enter SellZone");
+            OnHoverChanged?.Invoke(true);
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            Debug.Log("Exit SellZone");
+            OnHoverChanged?.Invoke(false);
         }
     }
 }

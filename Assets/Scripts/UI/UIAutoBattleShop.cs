@@ -58,10 +58,5 @@ namespace AutoBattle.UI
             btnLevelUp.CheckCanBuy();
             btnReroll.CheckCanBuy();
         }
-
-        private void OpenSellZone()
-        {
-
-        }
     }
 }

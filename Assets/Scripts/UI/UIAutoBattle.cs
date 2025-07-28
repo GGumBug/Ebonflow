@@ -5,13 +5,15 @@ using UnityEngine;
 
 public class UIAutoBattle : UIBase
 {
-    [SerializeField] private SellZonePanel sellZonePanel;
+    [SerializeField] private SoulCoinPanel soulCoinPanel;
 
     [field:SerializeField] public UIAutoBattleShop AutoBattleShopUI { get; private set; }
+    [field: SerializeField] public SellZonePanel SellZonePanel { get; private set; }
 
     public void SetUp(CardDrawManager cardDrawManager, AutoBattlePlayerDataContext autoBattlePlayerDataContext)
     {
         AutoBattleShopUI.SetUp(cardDrawManager, autoBattlePlayerDataContext);
+        soulCoinPanel.Setup();
 
         AutoBattleUnitManager.Instance.DragController.OnDragStartedAction += OpenSellPanel;
         AutoBattleUnitManager.Instance.DragController.OnDragEndedAction += CloseSellPanel;
@@ -20,12 +22,12 @@ public class UIAutoBattle : UIBase
     public void OpenSellPanel()
     {
         AutoBattleShopUI.gameObject.SetActive(false);
-        sellZonePanel.gameObject.SetActive(true);
+        SellZonePanel.gameObject.SetActive(true);
     }
 
     public void CloseSellPanel()
     {
         AutoBattleShopUI.gameObject.SetActive(true);
-        sellZonePanel.gameObject.SetActive(false);
+        SellZonePanel.gameObject.SetActive(false);
     }
 }
