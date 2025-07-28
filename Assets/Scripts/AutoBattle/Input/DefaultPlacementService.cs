@@ -55,14 +55,15 @@ namespace AutoBattle.Input
 
             if (draggable.CurrentGrid.Type != targetGrid.Type)
             {
-                draggable.CurrentGrid.RemoveUnit(draggable);
+                Vector2Int originPos = new Vector2Int(Mathf.RoundToInt(draggable.OriginalPosition.x), Mathf.RoundToInt(draggable.OriginalPosition.y));
+                draggable.CurrentGrid.RemoveUnit(originPos, draggable.Unit);
             }
 
             // 4) 배치 시도
             try
             {
                 targetGrid.PlaceUnit(draggable, targetCell);
-                draggable.SetCurrentGrid(targetGrid);
+                draggable.Unit.SetCurrentGrid(targetGrid);
                 return true;
             }
             catch (Exception e)

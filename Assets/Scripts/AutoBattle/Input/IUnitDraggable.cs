@@ -38,7 +38,5 @@ namespace AutoBattle.Input
         /// 예: 부드러운 트윈 백 애니메이션.
         /// </summary>
         void Revert();
-
-        void SetCurrentGrid(IGridManager grid);
     }
 }

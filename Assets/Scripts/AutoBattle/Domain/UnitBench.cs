@@ -279,13 +279,10 @@ public class UnitBench : MonoBehaviour, IGridManager
         Debug.LogWarning($"PlaceUnit: 슬롯 {index}에 유닛을 배치할 수 없습니다.");
     }
 
-    public void RemoveUnit(IUnitDraggable draggable)
+    public void RemoveUnit(Vector2Int pos, Unit unit)
     {
-        Vector3 originPos = draggable.OriginalPosition;
-        Vector2Int originPosInt = new Vector2Int(Mathf.RoundToInt(originPos.x), Mathf.RoundToInt(originPos.y));
-
         Unit outUnit = null;
-        TryRemove(originPosInt.x, out outUnit);
+        TryRemove(pos.x, out outUnit);
     }
     #endregion
 

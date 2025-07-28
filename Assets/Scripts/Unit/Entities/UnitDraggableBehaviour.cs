@@ -12,17 +12,15 @@ public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable
     private Transform _originalParent;
     // 애니메이션 코루틴 핸들
     private Coroutine _revertCoroutine;
-    private IGridManager _gridManager;
 
     public Vector3 OriginalPosition { get; private set; }
-    public IGridManager CurrentGrid => _gridManager;
+    public IGridManager CurrentGrid => Unit.CurrentGrid;
 
     public bool CanDrag => !Unit.IsBattleActive && !Unit.IsDead;
 
-    public void Setup(Unit unit, IGridManager gridManager)
+    public void Setup(Unit unit)
     {
         Unit = unit;
-        _gridManager = gridManager;
 
         _originalParent = transform.parent;
     }
@@ -73,10 +71,5 @@ public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable
         transform.SetParent(_originalParent, true);
         transform.position = OriginalPosition;
         _revertCoroutine = null;
-    }
-
-    public void SetCurrentGrid(IGridManager grid)
-    {
-        _gridManager = grid;
     }
 }

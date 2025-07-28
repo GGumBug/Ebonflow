@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.UI.Image;
 
 public class PoolManager : Singleton<PoolManager>
 {
@@ -83,7 +85,7 @@ public class PoolManager : Singleton<PoolManager>
 
     public void CreatePool(GameObject original, int count = 5)
     {
-        string key = original.GetInstanceID().ToString();
+        string key = original.gameObject.name;
 
         if (_pool.ContainsKey(key))
         {
@@ -112,7 +114,7 @@ public class PoolManager : Singleton<PoolManager>
 
     public T GetFromPool<T>(GameObject original, Transform parent = null, Vector3 position = default, Quaternion rotation = default) where T : Component
     {
-        string key = original.GetInstanceID().ToString();
+        string key = original.gameObject.name;
 
         if (!_pool.ContainsKey(key))
             CreatePool(original);

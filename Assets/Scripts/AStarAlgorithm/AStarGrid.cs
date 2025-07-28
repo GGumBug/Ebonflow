@@ -2,6 +2,7 @@ using AutoBattle;
 using AutoBattle.Input;
 using System;
 using UnityEngine;
+using UnityEngine.AdaptivePerformance.VisualScripting;
 
 public class AStarGrid : MonoBehaviour, IGridManager
 {
@@ -217,15 +218,12 @@ public class AStarGrid : MonoBehaviour, IGridManager
         SyncRosterOnPlace(draggable.Unit);
     }
 
-    public void RemoveUnit(IUnitDraggable draggable)
+    public void RemoveUnit(Vector2Int pos, Unit unit)
     {
-        Vector3 OriginPos = draggable.OriginalPosition;
-        Vector2Int OriginPosInt = new Vector2Int(Mathf.RoundToInt(OriginPos.x), Mathf.RoundToInt(OriginPos.y));
+        if (!IsOutOfBounds(pos))
+            SetNodeBlock(pos, false);
 
-        if (!IsOutOfBounds(OriginPosInt))
-            SetNodeBlock(OriginPosInt, false);
-
-        SyncRosterOnRemove(draggable.Unit);
+        SyncRosterOnRemove(unit);
     }
 
     private void SyncRosterOnPlace(Unit unit)

@@ -54,12 +54,6 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
         _grid.SetNodeBlock(PathPoint, true, this);
     }
 
-    public void UnreserveCurrentGridCell()
-    {
-        _grid ??= AStarAlgorithmManager.Instance.Grid;
-        _grid.RemoveNodeBlock(CurrentGridPosition);
-    }
-
     public void StartFollowPath()
     {
         if (_currentPath == null || _currentPath.Count <= 0)
