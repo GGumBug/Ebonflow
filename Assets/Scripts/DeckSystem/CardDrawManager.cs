@@ -2,19 +2,25 @@ using AutoBattle;
 using AutoBattle.UI;
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 
 namespace DeckSystem
 {
     public class CardDrawManager : Singleton<CardDrawManager>
     {
+        private readonly List<CardData> _currentHand = new List<CardData>();
+
         private AutoBattlePlayerDataContext _autoBattlePlayerDataContext;
         private LevelTierProbabilityConfig _levelTierProbabilityConfig;
         private Deck _deck;
         private TierBasedCardPicker _tierBasedCardPicker;
         private Action<int, CardData> requestSetCardView;
 
+        public IReadOnlyList<CardData> GetCurrentHand() => _currentHand;
+
         public async UniTask SetUp(AutoBattleUnitManager autoBattleUnitManager, UIAutoBattleShop uIAutoBattleShop)
         {
+            _currentHand.Clear();
             _autoBattlePlayerDataContext = AutoBattleDataManager.Instance.AutoBattlePlayerDataContext;
 
             _levelTierProbabilityConfig = await AddressableManager.Instance.Load<LevelTierProbabilityConfig>(AddressableKey.LevelTierProbabilityConfig);
@@ -30,20 +36,33 @@ namespace DeckSystem
 
         public void DrawFiveCard()
         {
-            // CurrentHand 가 null 이아니라면 CardPool로 되돌린다.
+            // 1. 이전 손에 든 카드들 덱으로 복귀
+            foreach (var card in _currentHand)
+                _deck.ReturnCard(card);
+            _currentHand.Clear();
 
-            // 임시 상수 1레벨
+            // 2. 카드 5장 뽑아서 저장 및 UI 갱신
             for (int i = 0; i < 5; i++)
             {
-                CardData newCardData = DrawCard();
-                requestSetCardView(i, newCardData);
+                var newCard = DrawCard();
+                _currentHand.Add(newCard);
+                requestSetCardView(i, newCard);
             }
         }
 
         public void ResetIndexCard(int cardIndex)
         {
-            CardData newCardData = DrawCard();
-            requestSetCardView(cardIndex, newCardData);
+            if (cardIndex < 0 || cardIndex >= _currentHand.Count)
+                throw new ArgumentOutOfRangeException(nameof(cardIndex));
+
+            // 1. 기존 카드 덱으로 복귀
+            var oldCard = _currentHand[cardIndex];
+            _deck.ReturnCard(oldCard);
+
+            // 2. 새 카드 뽑아 대체 및 UI 갱신
+            var newCard = DrawCard();
+            _currentHand[cardIndex] = newCard;
+            requestSetCardView(cardIndex, newCard);
         }
 
         public CardData DrawCard()
