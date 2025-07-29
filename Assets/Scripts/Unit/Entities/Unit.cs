@@ -24,6 +24,7 @@ public class Unit : MonoBehaviour
     public TeamType GetTeam() => _team;
     public UnitStats Stat => _stats;
     public AStarAgent Agent => _aStarAgent;
+    public Vector2Int CurrentGridPosition { get; private set; } // 현재 위치가 아닌, 그리드 시스템 상 위치
     public IGridManager CurrentGrid { get; private set; }
     public UnitSaleComponent SaleComponent { get; private set; }
 
@@ -73,6 +74,8 @@ public class Unit : MonoBehaviour
         _movementComponent.CancelMovementAction += _aStarAgent.ClearFllowing;
         _healthComponent.OnDied += _stateMachine.ChangeToDead;
         _combatComponent.OnAttackEnded += _stateMachine.ChangeToIdle;
+        _aStarAgent.GetCurrentGridPositionAction += () => CurrentGridPosition;
+        _aStarAgent.SetCurrentGridPositionAction += SetCurrentGridPosition;
         _aStarAgent.CrushOtherTeamAgent += _stateMachine.ChangeToIdle;
         _aStarAgent.OnPathCompleteAction += _stateMachine.ChangeToIdle;
         _aStarAgent.OnMove += _movementComponent.Move;
@@ -89,6 +92,8 @@ public class Unit : MonoBehaviour
         _movementComponent.CancelMovementAction -= _aStarAgent.ClearFllowing;
         _healthComponent.OnDied -= _stateMachine.ChangeToDead;
         _combatComponent.OnAttackEnded -= _stateMachine.ChangeToIdle;
+        _aStarAgent.GetCurrentGridPositionAction -= () => CurrentGridPosition;
+        _aStarAgent.SetCurrentGridPositionAction -= SetCurrentGridPosition;
         _aStarAgent.CrushOtherTeamAgent -= _stateMachine.ChangeToIdle;
         _aStarAgent.OnPathCompleteAction -= _stateMachine.ChangeToIdle;
         _aStarAgent.OnMove -= _movementComponent.Move;
@@ -96,10 +101,15 @@ public class Unit : MonoBehaviour
         SaleComponent.RequestCardData -= MakeCardData;
     }
 
+    public void SetCurrentGridPosition(Vector2Int positionInt)
+    {
+        CurrentGridPosition = positionInt;
+    }
+
     public void SetSnapTransform(Vector2Int positionInt)
     {
         transform.position = new Vector2(positionInt.x, positionInt.y);
-        Agent.SetCurrentGridPosition(positionInt);
+        SetCurrentGridPosition(positionInt);
     }
 
     private void Update()
@@ -131,7 +141,7 @@ public class Unit : MonoBehaviour
 
     private void ReleaseAndPool()
     {
-        CurrentGrid.RemoveUnit(Agent.CurrentGridPosition, this);
+        CurrentGrid.RemoveUnit(CurrentGridPosition, this);
 
         UnregisterEventHandlers();
 

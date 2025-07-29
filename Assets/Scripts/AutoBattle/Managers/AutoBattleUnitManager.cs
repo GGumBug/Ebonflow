@@ -90,6 +90,7 @@ namespace AutoBattle
                 );
 
             UnitBench.TryPlaceFirstEmpty(newUnit, out slotIndex);
+            newUnit.SetCurrentGridPosition(benchCell);
             return true;
         }
 

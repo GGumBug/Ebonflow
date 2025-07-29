@@ -26,7 +26,7 @@ public class UnitDragController : MonoBehaviour
 
     private LayerMask DraggableMask => 1 << draggableLayer;
 
-    private void OnSellZoneHoverChanged(bool isOver) => _isOverSellZone = isOver;
+    public void OnSellZoneHoverChanged(bool isOver) => _isOverSellZone = isOver;
 
     /// <summary>
     /// 초기 설정: InputGate, PlacementService 주입 및 이벤트 구독

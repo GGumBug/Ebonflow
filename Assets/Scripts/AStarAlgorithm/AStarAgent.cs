@@ -13,11 +13,12 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private AStarAlgorithmManager _aStarAlgorithmManager;
     private AStarGrid _grid;
 
-    public Vector2Int CurrentGridPosition { get; private set; }
     public event Action<Vector2Int> OnMove;
     public event Func<TeamType> OnRequestTeamType;
     public event Action CrushOtherTeamAgent;
     public event Action OnPathCompleteAction;
+    public event Func<Vector2Int> GetCurrentGridPositionAction;
+    public event Action<Vector2Int> SetCurrentGridPositionAction;
 
     /// <summary>
     /// 현재 경로에서 다음 노드가 존재하는지 여부
@@ -29,13 +30,14 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     /// </summary>
     private bool IsAtEndOfPath => _currentPathIndex == _currentPath.Count - 1;
 
+    public Vector2Int CurrentGridPosition => GetCurrentGridPositionAction.Invoke();
+
     public Vector2Int PathPoint => new Vector2Int(
         Mathf.RoundToInt(transform.position.x),
         Mathf.RoundToInt(transform.position.y)
     );
 
     public TeamType GetTeam() => OnRequestTeamType.Invoke();
-    public void SetCurrentGridPosition(Vector2Int NewGridPosition) => CurrentGridPosition = NewGridPosition;
 
     private void Awake() 
     {
@@ -45,7 +47,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     public void RegistPosition()
     {
         transform.position = (Vector3Int)PathPoint;
-        CurrentGridPosition = PathPoint;
+        SetCurrentGridPositionAction.Invoke(PathPoint);
     }
 
     public void ReserveCurrentGridCell()
@@ -115,7 +117,7 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     public void UpdateAgentGridPosition(Vector2Int destPos)
     {
         // 현재 그리드 위치를 업데이트
-        CurrentGridPosition = destPos;
+        SetCurrentGridPositionAction(destPos);
 
         // 그리드 시스템에 에이전트의 새로운 위치를 반영
         _grid.UpdateAgentGridPosition(this, destPos);
