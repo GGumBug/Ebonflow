@@ -45,7 +45,7 @@ namespace DeckSystem
                 var aggregate = _getUnitStatDataFunc(i, 1);
                 var card = new CardData(
                     aggregate.Data.UnitTier,
-                    /* price 로직 필요 시 대체 */ (int)aggregate.Data.UnitTier,
+                    aggregate.Price,
                     aggregate.Data.UnitId,
                     aggregate.Stat.StarLevel
                 );
@@ -75,6 +75,8 @@ namespace DeckSystem
         /// </summary>
         public CardData DrawCard(UnitTier tier)
         {
+            ShufflePools();
+
             if (!_deck.TryGetValue(tier, out var pool))
                 throw new KeyNotFoundException($"티어 '{tier}'에 대한 카드 풀이 없습니다.");
 

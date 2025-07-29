@@ -39,6 +39,7 @@ namespace DeckSystem
             // 1. 이전 손에 든 카드들 덱으로 복귀
             foreach (var card in _currentHand)
                 _deck.ReturnCard(card);
+
             _currentHand.Clear();
 
             // 2. 카드 5장 뽑아서 저장 및 UI 갱신
@@ -55,12 +56,10 @@ namespace DeckSystem
             if (cardIndex < 0 || cardIndex >= _currentHand.Count)
                 throw new ArgumentOutOfRangeException(nameof(cardIndex));
 
-            // 1. 기존 카드 덱으로 복귀
             var oldCard = _currentHand[cardIndex];
-            _deck.ReturnCard(oldCard);
 
-            // 2. 새 카드 뽑아 대체 및 UI 갱신
             var newCard = DrawCard();
+
             _currentHand[cardIndex] = newCard;
             requestSetCardView(cardIndex, newCard);
         }
