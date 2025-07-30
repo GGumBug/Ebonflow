@@ -6,6 +6,7 @@ using UnityEngine;
 public class AStarGrid : MonoBehaviour, IGridManager
 {
     private const float TILE_COLLIDER_RADIUS = 0.4f;
+    private const int FIRST_NOT_PLACEABLE_ROW_INDEX = 2;
 
     private Vector2Int _gridBottomLeft;
     private Vector2Int _gridTopRight;
@@ -42,6 +43,13 @@ public class AStarGrid : MonoBehaviour, IGridManager
     public void RegisteBattleRoster(IBattleRoster battleRoster)
     {
         _roster = battleRoster;
+    }
+
+    private bool IsNodePlaceable(Vector2Int worldCoordinate)
+    {
+        Vector2Int gridIndex = WorldToGridIndex(worldCoordinate);
+
+        return _grid[gridIndex.x, gridIndex.y].IsPlaceable;
     }
 
     /// <summary>
@@ -94,8 +102,8 @@ public class AStarGrid : MonoBehaviour, IGridManager
 
                 Collider2D[] colliders = Physics2D.OverlapCircleAll(tilePosition, TILE_COLLIDER_RADIUS, mask);
                 bool isBlock = colliders.Length > 0;
-
-                _grid[i, j] = new AStarNode(isBlock, i + _gridBottomLeft.x, j + _gridBottomLeft.y);
+                bool isPlaceable = !(j > FIRST_NOT_PLACEABLE_ROW_INDEX);
+                _grid[i, j] = new AStarNode(isBlock, isPlaceable, i + _gridBottomLeft.x, j + _gridBottomLeft.y);
             }
         }
     }
@@ -192,7 +200,8 @@ public class AStarGrid : MonoBehaviour, IGridManager
 
     public bool IsCellOccupied(Vector2Int cell)
     {
-        if (IsOutOfBounds(cell)) return false;
+        if (IsOutOfBounds(cell)) return true;
+        else if (!IsNodePlaceable(cell)) return true;
         return IsNodeBlocked(cell);
     }
 
@@ -255,6 +264,8 @@ public class AStarGrid : MonoBehaviour, IGridManager
                     Gizmos.color = Color.red;
                 else if (node.GetBlock)
                     Gizmos.color = Color.yellow;
+                else if (!node.IsPlaceable)
+                    Gizmos.color = Color.cyan;
                 else
                     Gizmos.color = Color.green;
 
