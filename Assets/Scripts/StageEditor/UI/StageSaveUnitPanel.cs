@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using StageEditor;
 using System;
 
 namespace StageEditor.UI
@@ -28,6 +27,7 @@ namespace StageEditor.UI
 
         private GameObject _stageSaveUnitPrefab;
         private Func<Vector2Int, bool> _requestIsOutOfBounds;
+        private Action<StageSaveUnit> _requestAddStageSaveUnitToList;
 
         private void Awake()
         {
@@ -37,10 +37,11 @@ namespace StageEditor.UI
             _inputStarLevel.SetTextWithoutNotify("1");
         }
 
-        public void Setup(GameObject stageSaveUnitPrefab, Func<Vector2Int, bool> requestIsOutOfBounds)
+        public void Setup(GameObject stageSaveUnitPrefab, StageEditorManager stageEditorManager, Func<Vector2Int, bool> requestIsOutOfBounds)
         {
             _stageSaveUnitPrefab = stageSaveUnitPrefab;
             _requestIsOutOfBounds = requestIsOutOfBounds;
+            _requestAddStageSaveUnitToList = stageEditorManager.AddStageSaveUnitToList;
         }
 
         private void OnCreateButtonClicked()
@@ -69,6 +70,7 @@ namespace StageEditor.UI
         {
             GameObject newGo = Instantiate(_stageSaveUnitPrefab, new Vector3(pos.x, pos.y, 0), Quaternion.identity);
             StageSaveUnit newUnit = newGo.GetComponent<StageSaveUnit>();
+            _requestAddStageSaveUnitToList.Invoke(newUnit);
         }
     }
 }

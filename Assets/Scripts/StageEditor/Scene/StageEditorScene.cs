@@ -26,7 +26,7 @@ namespace StageEditor
                 _stageSaveUnitPrefab
                 );
 
-            _uiStageEditor.Setup(_stageSaveUnitPrefab, (toGridIndex) => IsOutOfBounds(toGridIndex));
+            _uiStageEditor.Setup(_stageSaveUnitPrefab, _stageEditorManager, (toGridIndex) => IsOutOfBounds(toGridIndex));
         }
     }
 }

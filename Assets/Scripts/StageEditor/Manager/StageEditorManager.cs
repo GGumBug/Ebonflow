@@ -1,11 +1,30 @@
 using UnityEngine;
+using System.Collections.Generic;
 
-public class StageEditorManager
+namespace StageEditor
 {
-    private GameObject _stageSaveUnitPrefab;
-
-    public StageEditorManager(GameObject stageSaveUnitPrefab)
+    public class StageEditorManager
     {
-        _stageSaveUnitPrefab = stageSaveUnitPrefab;
+        private GameObject _stageSaveUnitPrefab;
+        private List<StageSaveUnit> _stageSaveUnits;
+
+        public StageEditorManager(GameObject stageSaveUnitPrefab)
+        {
+            _stageSaveUnitPrefab = stageSaveUnitPrefab;
+            _stageSaveUnits = new();
+        }
+
+        public void AddStageSaveUnitToList(StageSaveUnit stageSaveUnit)
+        {
+            _stageSaveUnits.Add(stageSaveUnit);
+        }
+
+        public void RemoveStageSaveUnitToList(StageSaveUnit stageSaveUnit)
+        {
+            if (_stageSaveUnits.Contains(stageSaveUnit))
+            {
+                _stageSaveUnits.Remove(stageSaveUnit);
+            }
+        }
     }
 }
