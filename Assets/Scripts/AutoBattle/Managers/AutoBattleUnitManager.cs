@@ -14,12 +14,12 @@ namespace AutoBattle
         private IPlacementInputGate     _placementInputGate;
         private IPlacementService       _placementService;
 
-        public event Action<TeamType> OnTeamEliminated;
+        public event Action<TeamType>   OnTeamEliminated;
 
-        public IUnitRepository UnitStatRepository => _statRepository;
-        public BattleRoster Roster { get; private set; }
-        public UnitBench UnitBench { get; private set; }
-        public UnitDragController DragController { get; private set; }
+        public IUnitRepository          UnitStatRepository => _statRepository;
+        public BattleRoster             Roster { get; private set; }
+        public UnitBench                UnitBench { get; private set; }
+        public UnitDragController       DragController { get; private set; }
 
         public async UniTask LoadAsset()
         {

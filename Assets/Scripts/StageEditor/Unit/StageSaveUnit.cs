@@ -60,7 +60,7 @@ namespace StageEditor
         public void Destroyed()
         {
             _requestRemoveStageSaveUnit.Invoke(this);
-            Destroy(this);
+            Destroy(gameObject);
         }
     }
 }

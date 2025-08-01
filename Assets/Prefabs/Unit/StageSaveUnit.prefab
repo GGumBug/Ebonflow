@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 38774423826401115}
   - component: {fileID: 6865175674529832242}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: UnitModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 1606617610782495662}
   - component: {fileID: 121876849200485396}
   - component: {fileID: 7810029913659529890}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: StageSaveUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
