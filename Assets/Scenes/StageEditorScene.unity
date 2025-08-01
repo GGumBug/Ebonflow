@@ -1755,6 +1755,7 @@ MonoBehaviour:
   _gridBottomLeft: {x: 0, y: 0}
   _gridTopRight: {x: 7, y: 5}
   _stageSaveUnitPrefab: {fileID: 7524674454521418849, guid: 6bdc5f1cf804e6b47ba0141f89a39da3, type: 3}
+  _uiStageEditor: {fileID: 1920669481}
 --- !u!4 &1226091724
 Transform:
   m_ObjectHideFlags: 0
@@ -9617,12 +9618,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a987fb9c806f0a94e9252fdd69e879b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputID: {fileID: 0}
-  _inputStarLevel: {fileID: 0}
-  _inputX: {fileID: 0}
-  _inputY: {fileID: 0}
-  _teamDropdown: {fileID: 0}
-  _btnCreate: {fileID: 0}
+  _inputID: {fileID: 2131261055}
+  _inputStarLevel: {fileID: 653444262}
+  _inputX: {fileID: 1100144074}
+  _inputY: {fileID: 1240617312}
+  _btnCreate: {fileID: 2089474475}
 --- !u!1 &1668105145
 GameObject:
   m_ObjectHideFlags: 0
@@ -10285,6 +10285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de4c06372c1cdac49a20b5406b5aed59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _stageSaveUnitPanel: {fileID: 1629616901}
 --- !u!1 &1928724583
 GameObject:
   m_ObjectHideFlags: 0
