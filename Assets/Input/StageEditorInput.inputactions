@@ -1,0 +1,54 @@
+{
+    "name": "StageEditorInput",
+    "maps": [
+        {
+            "name": "StageEditor",
+            "id": "c1c0e023-67b9-40d9-b139-be07590adccb",
+            "actions": [
+                {
+                    "name": "RightMouse",
+                    "type": "Button",
+                    "id": "d06c7f01-811d-4f01-8bb9-40873f166797",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MousePosition",
+                    "type": "Value",
+                    "id": "ed0985aa-4e9d-4467-8f3d-af15e183e298",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "0ad155e8-8ae6-4f87-9c1f-60ff0c25125a",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightMouse",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1f30a224-0817-4a84-b42c-54e1444de5bc",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MousePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

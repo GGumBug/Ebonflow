@@ -1,5 +1,6 @@
 using StageEditor.UI;
 using UnityEngine;
+using StageEditor.Input;
 
 namespace StageEditor
 {
@@ -16,17 +17,19 @@ namespace StageEditor
         [SerializeField] private UIStageEditor _uiStageEditor;
 
         private StageEditorManager _stageEditorManager;
+        private StageEditorInputReader _stageEditorInputReader;
+        private StageSaveUnitSpawner _stageSaveUnitSpawner;
+
         public bool IsOutOfBounds(Vector2Int toGridIndex) =>
         toGridIndex.x < 0 || toGridIndex.x > _gridTopRight.x ||
         toGridIndex.y < 0 || toGridIndex.y > _gridTopRight.y;
 
         private void Awake()
         {
-            _stageEditorManager = new StageEditorManager(
-                _stageSaveUnitPrefab
-                );
-
-            _uiStageEditor.Setup(_stageSaveUnitPrefab, _stageEditorManager, (toGridIndex) => IsOutOfBounds(toGridIndex));
+            _stageEditorManager = new StageEditorManager();
+            _stageEditorInputReader = gameObject.AddComponent<StageEditorInputReader>();
+            _stageSaveUnitSpawner = new StageSaveUnitSpawner(_stageSaveUnitPrefab, _stageEditorManager, _stageEditorInputReader);
+            _uiStageEditor.Setup((toGridIndex) => IsOutOfBounds(toGridIndex), _stageSaveUnitSpawner.SpawnStageSaveUnit);
         }
     }
 }

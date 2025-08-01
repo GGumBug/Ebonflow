@@ -5,12 +5,10 @@ namespace StageEditor
 {
     public class StageEditorManager
     {
-        private GameObject _stageSaveUnitPrefab;
         private List<StageSaveUnit> _stageSaveUnits;
 
-        public StageEditorManager(GameObject stageSaveUnitPrefab)
+        public StageEditorManager()
         {
-            _stageSaveUnitPrefab = stageSaveUnitPrefab;
             _stageSaveUnits = new();
         }
 

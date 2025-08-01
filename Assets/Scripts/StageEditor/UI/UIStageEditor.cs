@@ -7,9 +7,9 @@ namespace StageEditor.UI
     {
         [SerializeField] private StageSaveUnitPanel _stageSaveUnitPanel;
 
-        public void Setup(GameObject stageSaveUnitPrefab, StageEditorManager stageEditorManager, Func<Vector2Int, bool> requestIsOutOfBounds)
+        public void Setup(Func<Vector2Int, bool> requestIsOutOfBounds, Action<int, int, Vector2Int> requestStageSaveUnitSpawn)
         {
-            _stageSaveUnitPanel.Setup(stageSaveUnitPrefab, stageEditorManager, requestIsOutOfBounds);
+            _stageSaveUnitPanel.Setup(requestIsOutOfBounds, requestStageSaveUnitSpawn);
         }
     }
 }

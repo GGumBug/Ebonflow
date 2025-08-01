@@ -1,7 +1,6 @@
 using UnityEngine;
 using AutoBattle.Input;
 using System.Collections;
-using System;
 
 [RequireComponent(typeof(Unit))]
 public class UnitDraggableBehaviour : MonoBehaviour, IUnitDraggable

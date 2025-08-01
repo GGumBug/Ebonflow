@@ -1,7 +1,7 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 
 namespace StageEditor.UI
 {
@@ -25,9 +25,8 @@ namespace StageEditor.UI
         [Tooltip("클릭 시 입력한 위치·팀으로 유닛을 생성합니다.")]
         [SerializeField] private Button _btnCreate;
 
-        private GameObject _stageSaveUnitPrefab;
         private Func<Vector2Int, bool> _requestIsOutOfBounds;
-        private Action<StageSaveUnit> _requestAddStageSaveUnitToList;
+        private Action<int, int, Vector2Int> _requestStageSaveUnitSpawn;
 
         private void Awake()
         {
@@ -37,11 +36,10 @@ namespace StageEditor.UI
             _inputStarLevel.SetTextWithoutNotify("1");
         }
 
-        public void Setup(GameObject stageSaveUnitPrefab, StageEditorManager stageEditorManager, Func<Vector2Int, bool> requestIsOutOfBounds)
+        public void Setup(Func<Vector2Int, bool> requestIsOutOfBounds, Action<int, int, Vector2Int> requestStageSaveUnitSpawn)
         {
-            _stageSaveUnitPrefab = stageSaveUnitPrefab;
             _requestIsOutOfBounds = requestIsOutOfBounds;
-            _requestAddStageSaveUnitToList = stageEditorManager.AddStageSaveUnitToList;
+            _requestStageSaveUnitSpawn = requestStageSaveUnitSpawn;
         }
 
         private void OnCreateButtonClicked()
@@ -63,14 +61,7 @@ namespace StageEditor.UI
                 return;
             }
 
-            CreateSaveStageUnit(id, starLevel, spawnPos);
-        }
-
-        private void CreateSaveStageUnit(int unitID, int starLevel, Vector2Int pos)
-        {
-            GameObject newGo = Instantiate(_stageSaveUnitPrefab, new Vector3(pos.x, pos.y, 0), Quaternion.identity);
-            StageSaveUnit newUnit = newGo.GetComponent<StageSaveUnit>();
-            _requestAddStageSaveUnitToList.Invoke(newUnit);
+            _requestStageSaveUnitSpawn.Invoke(id, starLevel, spawnPos);
         }
     }
 }
