@@ -10,7 +10,7 @@ namespace StageEditor
         private StageEditorManager _stageEditorManager;
         private StageEditorInputReader _stageEditorInputReader;
 
-        public StageSaveUnitSpawner(GameObject stageSaveUnitPrefab, StageEditorManager stageEditorManager, StageEditorInputReader stageEditorInputReader)
+        public void Setup(GameObject stageSaveUnitPrefab, StageEditorManager stageEditorManager, StageEditorInputReader stageEditorInputReader)
         {
             _stageSaveUnitPrefab = stageSaveUnitPrefab;
             _stageEditorManager = stageEditorManager;

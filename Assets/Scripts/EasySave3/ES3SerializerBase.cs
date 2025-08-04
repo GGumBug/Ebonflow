@@ -7,7 +7,8 @@ using UnityEngine;
 /// </summary>
 public abstract class ES3SerializerBase<T>
 {
-    protected string _currentFileName;
+    protected string currentFileName;
+    protected readonly string basePath;
 
     /// <summary>
     /// 저장할 파일 이름(.es3 포함)
@@ -15,9 +16,9 @@ public abstract class ES3SerializerBase<T>
     protected string FileName {
         get
             {
-                if (string.IsNullOrEmpty(_currentFileName))
+                if (string.IsNullOrEmpty(currentFileName))
                     throw new InvalidOperationException("파일 이름이 설정되지 않았습니다.");
-                return _currentFileName + ".json";
+                return currentFileName + ".json";
             }
     } 
     
@@ -31,9 +32,8 @@ public abstract class ES3SerializerBase<T>
     /// (MapData 형식이 동일하더라도 서로 다른 파일을 구분하려면
     /// Key에도 파일명을 포함해도 무방합니다.)
     /// </summary>
-    protected string Key => $"{RelativePath}_{_currentFileName}";
+    protected string Key => $"{RelativePath}_{currentFileName}";
 
-    private readonly string _basePath;
     private readonly ES3Settings _settings;
     private readonly ILogger _logger;
 
@@ -45,7 +45,7 @@ public abstract class ES3SerializerBase<T>
         ES3Settings settings = null,
         ILogger logger = null)
     {
-        _basePath = basePath ?? Application.persistentDataPath;
+        this.basePath = basePath ?? Application.persistentDataPath;
         _settings = settings ?? new ES3Settings
         {
             location = ES3.Location.File,
@@ -58,7 +58,7 @@ public abstract class ES3SerializerBase<T>
     /// 영구 저장 경로 + 상대폴더 + 파일명
     /// </summary>
     private string FilePath =>
-        Path.Combine(_basePath, RelativePath, FileName);
+        Path.Combine(basePath, RelativePath, FileName);
 
     /// <summary>
     /// 파일 쓰기 전, 폴더가 없으면 생성
@@ -75,7 +75,7 @@ public abstract class ES3SerializerBase<T>
     /// </summary>
     public bool Save(T data, string fileName)
     {
-        _currentFileName = fileName;
+        currentFileName = fileName;
 
         EnsureDirectory();
         try
@@ -97,7 +97,7 @@ public abstract class ES3SerializerBase<T>
     /// </summary>
     public T Load(string fileName)
     {
-        _currentFileName = fileName;
+        currentFileName = fileName;
 
         EnsureDirectory();
         try

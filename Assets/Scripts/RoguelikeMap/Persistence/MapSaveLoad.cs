@@ -42,7 +42,7 @@ namespace RoguelikeMap
         ) : base(basePath, settings, logger)
         {
             _mapData = null;
-            _currentFileName = null;
+            currentFileName = null;
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace RoguelikeMap
             if (string.IsNullOrEmpty(fileName))
                 throw new ArgumentNullException(nameof(fileName));
 
-            _currentFileName = fileName;
+            currentFileName = fileName;
             bool deleted = base.Delete();
             if (deleted)
             {

@@ -27,9 +27,16 @@ namespace StageEditor
         private void Awake()
         {
             _stageEditorInputReader = gameObject.AddComponent<StageEditorInputReader>();
-            _stageEditorManager = new StageEditorManager(_stageEditorInputReader);
-            _stageSaveUnitSpawner = new StageSaveUnitSpawner(_stageSaveUnitPrefab, _stageEditorManager, _stageEditorInputReader);
-            _uiStageEditor.Setup((toGridIndex) => IsOutOfBounds(toGridIndex), _stageSaveUnitSpawner.SpawnStageSaveUnit);
+            _stageSaveUnitSpawner = new StageSaveUnitSpawner();
+            _stageEditorManager = new StageEditorManager(_stageEditorInputReader, _stageSaveUnitSpawner);
+
+            _stageSaveUnitSpawner.Setup(_stageSaveUnitPrefab, _stageEditorManager, _stageEditorInputReader);
+            _uiStageEditor.Setup(
+                (toGridIndex) => IsOutOfBounds(toGridIndex), 
+                _stageSaveUnitSpawner.SpawnStageSaveUnit, 
+                _stageEditorManager.SaveStageData,
+                _stageEditorManager.LoadStageData
+                );
 
             _stageEditorInputReader.OnRightMouseStarted += _stageEditorManager.CurrentMousePositionUnitDestroy;
         }
