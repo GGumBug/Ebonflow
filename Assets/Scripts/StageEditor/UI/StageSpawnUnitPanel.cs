@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace StageEditor.UI
 {
-    public class StageSaveUnitPanel : MonoBehaviour
+    public class StageSpawnUnitPanel : MonoBehaviour
     {
         [Header("Spawn 유닛 ID")]
         [Tooltip("스폰 할 유닛 ID를 입력하세요.")]

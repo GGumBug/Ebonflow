@@ -5,7 +5,7 @@ namespace StageEditor.UI
 {
     public class UIStageEditor : MonoBehaviour
     {
-        [SerializeField] private StageSaveUnitPanel _stageSaveUnitPanel;
+        [SerializeField] private StageSpawnUnitPanel _stageSaveUnitPanel;
 
         public void Setup(Func<Vector2Int, bool> requestIsOutOfBounds, Action<int, int, Vector2Int> requestStageSaveUnitSpawn)
         {
