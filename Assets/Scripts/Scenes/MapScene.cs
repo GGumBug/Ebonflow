@@ -39,9 +39,11 @@ public class MapScene : SceneBase, INodeClickHandler
     public async void OnNodeClicked(int stage, int floor, int locationTypeId)
     {
         AutoBattleDataManager.Instance.AutoBattleSceneDataContext.Reset(() => new AutoBattleStageData(
+            true,
             stage,
             floor,
-            locationTypeId
+            locationTypeId,
+            -1
         ));
 
         await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<AutoBattleScene>();

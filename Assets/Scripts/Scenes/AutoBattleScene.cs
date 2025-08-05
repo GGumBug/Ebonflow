@@ -22,6 +22,12 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
     {
         _autoBattleStagePicker = new AutoBattleStagePicker();
         _currentStageData = _autoBattleStagePicker.PickStage(AutoBattleDataManager.Instance.AutoBattleSceneDataContext.Data);
+
+        AutoBattleDataManager dataManager = AutoBattleDataManager.Instance;
+        dataManager.AutoBattleSceneDataContext.SetShouldResumeBattle(true);
+        dataManager.AutoBattleSceneDataContext.SetStageID(_currentStageData.stageID);
+        dataManager.AutoBattleSceneDataContext.Save();
+
         await AutoBattleUnitManager.Instance.LoadAsset();
         _uiAutoBattle = await UIManager.Instance.OpenUIAsync<UIAutoBattle>();
     }
@@ -31,9 +37,6 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
         AStarAlgorithmManager aStarAlgorithmManager = AStarAlgorithmManager.Instance;
         aStarAlgorithmManager.InitializeGrid(this);
 
-        AutoBattleDataManager autoBattleDataManager = AutoBattleDataManager.Instance;
-        autoBattleDataManager.Setup();
-
         AutoBattleManager.Instance.Setup();
 
         AutoBattleUnitManager autoBattleUnitManager = AutoBattleUnitManager.Instance;
@@ -41,6 +44,7 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
 
         aStarAlgorithmManager.RegisteBattleRoster(autoBattleUnitManager.Roster);
 
+        AutoBattleDataManager autoBattleDataManager = AutoBattleDataManager.Instance;
         _uiAutoBattle.SetUp(CardDrawManager.Instance, autoBattleDataManager.AutoBattlePlayerDataContext);
         autoBattleDataManager.AutoBattlePlayerDataContext.OnAddSoulCoin += _uiAutoBattle.AutoBattleShopUI.CheckCanBuyCards;
         autoBattleDataManager.AutoBattlePlayerDataContext.OnSpendSoulCoin += _uiAutoBattle.AutoBattleShopUI.CheckCanBuyCards;

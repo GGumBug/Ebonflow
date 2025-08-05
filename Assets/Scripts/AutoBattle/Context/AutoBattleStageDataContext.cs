@@ -6,10 +6,13 @@ namespace AutoBattle
             : base(
                 fileName: "StageData",
                 serializer: new AutoBattleStageDataSaveLoad(),
-                defaultFactory: () => new AutoBattleStageData(stageNumber: 0, floor: 0, locationTypeId: 0)
+                defaultFactory: () => new AutoBattleStageData(shouldResumeBattle: false, stageNumber: 1, floor: 0, locationTypeId: 0, stageID: -1)
             )
         { }
 
         public AutoBattleStageData Scene => Data;
+
+        public void SetShouldResumeBattle(bool shouldResumeBattle) { Data.shouldResumeBattle = shouldResumeBattle; }
+        public void SetStageID(int stageID) { Data.stageID = stageID; } 
     }
 }

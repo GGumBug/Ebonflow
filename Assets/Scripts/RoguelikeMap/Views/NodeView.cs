@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using AutoBattle;
 
 namespace RoguelikeMap.UI
 {
@@ -18,6 +19,7 @@ namespace RoguelikeMap.UI
 
         public event Action<Vector2Int> SelectNodeRequested;
         public event Action<int, int, int> NodeClickAction;
+        public event Func<int> GetStageNumber;
 
         private const int LabelCharCount = 1;
 
@@ -46,6 +48,7 @@ namespace RoguelikeMap.UI
 
             SelectNodeRequested += selectNodeRequested;
             NodeClickAction += nodeClickAction;
+            GetStageNumber += () => AutoBattleDataManager.Instance.AutoBattleSceneDataContext.Data.stageNumber;
         }
 
         private void CacheNodeData(MapNode mapNode, int xIndex)
@@ -87,7 +90,7 @@ namespace RoguelikeMap.UI
         public void OnClick()
         {
             SelectNodeRequested?.Invoke(_cellPosition);
-            NodeClickAction?.Invoke(_cellPosition.x, _cellPosition.y, (int)_locationType);
+            NodeClickAction?.Invoke(GetStageNumber.Invoke(), _cellPosition.y, (int)_locationType);
         }
     }
 }

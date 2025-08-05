@@ -1,20 +1,23 @@
 using System;
-using UnityEngine;
 
 namespace AutoBattle
 {
     [Serializable]
     public class AutoBattleStageData
     {
-        public int StageNumber { get; }
-        public int Floor { get; }
-        public int LocationTypeId { get; }
+        public bool shouldResumeBattle;
+        public int  stageNumber;
+        public int  floor;
+        public int  locationTypeId;
+        public int  stageID;
 
-        public AutoBattleStageData(int stageNumber, int floor, int locationTypeId)
+        public AutoBattleStageData(bool shouldResumeBattle, int stageNumber, int floor, int locationTypeId, int stageID)
         {
-            StageNumber = stageNumber;
-            Floor = floor;
-            LocationTypeId = locationTypeId;
+            this.shouldResumeBattle = shouldResumeBattle;
+            this.stageNumber = stageNumber;
+            this.floor = floor;
+            this.locationTypeId = locationTypeId;
+            this.stageID = stageID;
         }
     }
 }

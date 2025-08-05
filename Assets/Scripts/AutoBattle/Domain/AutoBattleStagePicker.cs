@@ -13,15 +13,15 @@ public class AutoBattleStagePicker
     {
         // 1) DB_Stages에서 Act와 Floor 조건에 맞는 메타 엔티티 조회
         var candidates = DB_Stages.FindEntities(s =>
-            s.f_StageAct == context.StageNumber
-            && context.Floor >= s.f_MinFloor
-            && context.Floor <= s.f_MaxFloor
+            s.f_StageAct == context.stageNumber
+            && context.floor >= s.f_MinFloor
+            && context.floor <= s.f_MaxFloor
         );
 
         if (candidates == null || candidates.Count == 0)
             throw new InvalidOperationException(
                 $"[{nameof(AutoBattleStagePicker)}] 조건에 맞는 스테이지를 찾을 수 없습니다. " +
-                $"Act={context.StageNumber}, Floor={context.Floor}");
+                $"Act={context.stageNumber}, Floor={context.floor}");
 
         // 2) 랜덤으로 하나 선택
         var selectedMeta = candidates[Random.Range(0, candidates.Count)];
