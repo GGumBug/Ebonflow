@@ -1,15 +1,17 @@
-using UnityEngine;
-using Cysharp.Threading.Tasks;
-using System;
 using AutoBattle.Input;
 using AutoBattle.UI;
+using Cysharp.Threading.Tasks;
+using StageEditor;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace AutoBattle
 {
     public class AutoBattleUnitManager : Singleton<AutoBattleUnitManager>
     {
         private GameObject              _unitPrefab;
-        private IUnitSpawner            _spawner;
+        private UnitSpawner             _spawner;
         private IUnitRepository         _statRepository;
         private IPlacementInputGate     _placementInputGate;
         private IPlacementService       _placementService;
@@ -33,7 +35,7 @@ namespace AutoBattle
             }
         }
 
-        public void Setup(IGridManager battleGrid, SellZonePanel sellZonePanel)
+        public void Setup(IGridManager battleGrid, SellZonePanel sellZonePanel, List<StageEditorUnitInfo> enemyList)
         {
             AutoBattleManager autoBattleManager = AutoBattleManager.Instance;
             Roster = new BattleRoster();
@@ -43,7 +45,9 @@ namespace AutoBattle
             _enemyContainer.SetParent(transform, false);
 
             _statRepository = new UnitRepository();
-            _spawner = new UnitSpawner(_unitPrefab, _allyContainer, _enemyContainer, UnitStatRepository.Get, HandleUnitDeath, Roster, battleGrid);
+            _spawner = new UnitSpawner(_unitPrefab, _allyContainer, _enemyContainer, UnitStatRepository.Get, HandleUnitDeath, Roster, battleGrid, enemyList);
+
+
             UnitBench = gameObject.AddComponent<UnitBench>();
             _placementInputGate = new PlacementInputGate(autoBattleManager.StateController);
             _placementService = new DefaultPlacementService(AStarAlgorithmManager.Instance.Grid, UnitBench);

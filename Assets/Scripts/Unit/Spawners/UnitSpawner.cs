@@ -1,13 +1,10 @@
 using AutoBattle;
+using StageEditor;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public interface IUnitSpawner
-{
-    Unit Spawn(int unitId, int starLevel, TeamType team, Vector2Int position, IGridManager gridManager);
-}
-
-public class UnitSpawner : IUnitSpawner
+public class UnitSpawner
 {
     private readonly GameObject _prefab;
     private readonly Transform _allyContainer;
@@ -25,7 +22,8 @@ public class UnitSpawner : IUnitSpawner
         Func<int, int, UnitAggregate> onRequestUnitStatData,
         Action<Unit> onUnitDied,
         IBattleRoster roster,
-        IGridManager battleGrid   // 또는 AStarGrid
+        IGridManager battleGrid,   // 또는 AStarGrid
+        List<StageEditorUnitInfo> enemyList
     )
     {
         _prefab = prefab;
@@ -35,6 +33,15 @@ public class UnitSpawner : IUnitSpawner
         OnUnitDied = onUnitDied;
         _roster = roster;
         _battleGrid = battleGrid;
+        SpawnEnemys(enemyList);
+    }
+
+    public void SpawnEnemys(List<StageEditorUnitInfo> enemyList)
+    {
+        foreach (var data in enemyList)
+        {
+            Spawn(data.unitID, data.starLevel, TeamType.Enemy, new Vector2Int(data.gridX, data.gridY), _battleGrid);
+        }
     }
 
     public Unit Spawn(int unitId, int starLevel, TeamType team, Vector2Int pos, IGridManager gridManager)

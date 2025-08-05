@@ -2,24 +2,24 @@ namespace AutoBattle
 {
     public class AutoBattleDataManager : Singleton<AutoBattleDataManager>, IDonDestroy
     {
-        private AutoBattleSceneContext _context;
-
+        public AutoBattleStageDataContext AutoBattleSceneDataContext { get; private set; }
         public AutoBattlePlayerDataContext AutoBattlePlayerDataContext { get; private set; }
-
-        public void SetContext(AutoBattleSceneContext ctx) 
-            => _context = ctx;
-
-        public AutoBattleSceneContext GetContext() 
-            => _context;
 
         public void Setup()
         {
+            AutoBattleSceneDataContext = new AutoBattleStageDataContext();
             AutoBattlePlayerDataContext = new AutoBattlePlayerDataContext();
         }
 
         public void Reset()
         {
-            _context = default;
+            AutoBattleSceneDataContext.Reset();
         }
-    }    
+
+        private void OnDestroy()
+        {
+            AutoBattlePlayerDataContext.Save();
+            AutoBattleSceneDataContext.Save();
+        }
+    }
 }

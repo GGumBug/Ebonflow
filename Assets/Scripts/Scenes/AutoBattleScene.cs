@@ -1,6 +1,7 @@
 using AutoBattle;
 using Cysharp.Threading.Tasks;
 using DeckSystem;
+using StageEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,6 +11,8 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
     [SerializeField] private Vector2Int _gridTopRight;
     [SerializeField] private Vector2Int _gridBottomLeft;
 
+    private AutoBattleStagePicker _autoBattleStagePicker;
+    private StageData _currentStageData;
     private UIAutoBattle _uiAutoBattle;
 
     public Vector2Int GridTopRight => _gridTopRight;
@@ -17,6 +20,8 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
 
     public override async UniTask LoadAssets()
     {
+        _autoBattleStagePicker = new AutoBattleStagePicker();
+        _currentStageData = _autoBattleStagePicker.PickStage(AutoBattleDataManager.Instance.AutoBattleSceneDataContext.Data);
         await AutoBattleUnitManager.Instance.LoadAsset();
         _uiAutoBattle = await UIManager.Instance.OpenUIAsync<UIAutoBattle>();
     }
@@ -32,7 +37,7 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
         AutoBattleManager.Instance.Setup();
 
         AutoBattleUnitManager autoBattleUnitManager = AutoBattleUnitManager.Instance;
-        autoBattleUnitManager.Setup(aStarAlgorithmManager.Grid, _uiAutoBattle.SellZonePanel);
+        autoBattleUnitManager.Setup(aStarAlgorithmManager.Grid, _uiAutoBattle.SellZonePanel, _currentStageData.unitList);
 
         aStarAlgorithmManager.RegisteBattleRoster(autoBattleUnitManager.Roster);
 

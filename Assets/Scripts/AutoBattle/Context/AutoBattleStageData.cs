@@ -1,12 +1,16 @@
+using System;
+using UnityEngine;
+
 namespace AutoBattle
 {
-    public struct AutoBattleSceneContext
+    [Serializable]
+    public class AutoBattleStageData
     {
         public int StageNumber { get; }
         public int Floor { get; }
         public int LocationTypeId { get; }
 
-        public AutoBattleSceneContext(int stageNumber, int floor, int locationTypeId)
+        public AutoBattleStageData(int stageNumber, int floor, int locationTypeId)
         {
             StageNumber = stageNumber;
             Floor = floor;

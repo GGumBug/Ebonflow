@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
 using RoguelikeMap;
 using RoguelikeMap.UI;
-using UnityEngine;
 using AutoBattle;
 
 public class MapScene : SceneBase, INodeClickHandler
@@ -39,7 +38,7 @@ public class MapScene : SceneBase, INodeClickHandler
 
     public async void OnNodeClicked(int stage, int floor, int locationTypeId)
     {
-        AutoBattleDataManager.Instance.SetContext(new AutoBattleSceneContext(
+        AutoBattleDataManager.Instance.AutoBattleSceneDataContext.Reset(() => new AutoBattleStageData(
             stage,
             floor,
             locationTypeId
