@@ -1,5 +1,4 @@
 using StageEditor.Input;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,10 +6,8 @@ namespace StageEditor
 {
     public class StageEditorManager
     {
-        private const string STAGE_FILE_NAME = "StageData";
         private const int UNIT_MASK = 1 << 7;
 
-        private Action<int, int, Vector2Int> requestSpawnStageSaveUnit;
         private StageEditorInputReader _stageEditorInputReader;
         private List<StageSaveUnit> _stageSaveUnits;
         private StageSaveLoad _stageSaveLoad;
@@ -21,7 +18,7 @@ namespace StageEditor
             _stageSaveUnits = new();
             _stageSaveLoad = new();
 
-            requestSpawnStageSaveUnit += stageSaveUnitSpawner.SpawnStageSaveUnit;
+            _stageSaveLoad.RequestSpawnStageSaveUnit += stageSaveUnitSpawner.SpawnStageSaveUnit;
         }
 
         public void AddStageSaveUnitToList(StageSaveUnit stageSaveUnit)
@@ -57,57 +54,7 @@ namespace StageEditor
             }
         }
 
-        public void SaveStageData(int id, int act, int min, int max)
-        {
-            if (_stageSaveUnits.Count <= 0)
-            {
-                Debug.LogWarning("저장 할 스테이지 데이터가 없습니다.");
-                return;
-            }
-
-            StageData stageData = new StageData();
-
-            if (id == -1)
-            {
-                id  = _stageSaveLoad.GetFileCount();
-                stageData.stageID = id;
-            }    
-            else
-                stageData.stageID = id;
-            
-            stageData.stageAct = act;
-            stageData.min = min;
-            stageData.max = max;
-
-            List<StageEditorUnitInfo> newUnitInfoList = new();
-
-            foreach (var unit in _stageSaveUnits)
-                newUnitInfoList.Add(unit.GetStageEditorUnitInfo());
-
-            stageData.unitList = newUnitInfoList;
-
-            _stageSaveLoad.Save(stageData, $"{STAGE_FILE_NAME}_{id}_{act}_{min}_{max}");
-        }
-
-        public void LoadStageData(int id, int act, int min, int max)
-        {
-            StageData loadData = _stageSaveLoad.Load($"{STAGE_FILE_NAME}_{id}_{act}_{min}_{max}");
-            if (loadData == null)
-            {
-                Debug.LogError("데이터 불러오기 실패.");
-                return;
-            }
-
-            int count = _stageSaveUnits.Count;
-            for (int i = count - 1; i > -1; --i)
-            {
-                _stageSaveUnits[i].Destroyed();
-            }
-
-            _stageSaveUnits.Clear();
-
-            foreach (var data in loadData.unitList)
-                requestSpawnStageSaveUnit.Invoke(data.unitID, data.starLevel, new Vector2Int(data.gridX, data.gridY));
-        }
+        public void SaveStageData(int id, int act, int min, int max) => _stageSaveLoad.SaveStageData(_stageSaveUnits, id, act, min, max);
+        public void LoadStageData(int id, int act, int min, int max) => _stageSaveLoad.LoadStageData(_stageSaveUnits, id, act, min, max);
     }
 }
