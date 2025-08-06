@@ -16,6 +16,9 @@ public class IntroScene : MonoBehaviour
 
         await UniTask.Delay(2000);
 
-        await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MapScene>();
+        if (autoBattleDataManager.AutoBattleSceneDataContext.Stage.shouldResumeBattle)
+            await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<AutoBattleScene>();
+        else
+            await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MapScene>();
     }
 }

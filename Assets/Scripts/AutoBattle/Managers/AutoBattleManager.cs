@@ -14,6 +14,8 @@ namespace AutoBattle
             _damageCalculator = new DamageCalculator();
             StateController = new AutoBattleStateController();
             AutoBattleUnitManager.Instance.OnTeamEliminated += HandleTeamEliminated;
+            StateController.VictoryEntered.Add(() => AutoBattleDataManager.Instance.AutoBattleSceneDataContext.Stage.shouldResumeBattle = false, 0);
+            StateController.VictoryEntered.Add(() => AutoBattleDataManager.Instance.AutoBattleSceneDataContext.Save(), 1);
         }
 
         public bool Attack(Unit attacker, Unit defender)
