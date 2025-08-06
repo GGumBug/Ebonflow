@@ -9,7 +9,7 @@ namespace AutoBattle.Input
         public PlacementInputGate(AutoBattleStateController state)
         {
             state.PreparationEntered.Add(() => IsEnabled = true, 1);
-            state.BattleEntered.Add(() => IsEnabled = true, 1);
+            state.BattleEntered.Add(() => IsEnabled = true, 2);
             state.SetupEntered.Add(() => IsEnabled = false, 1);
             state.StartingEntered.Add(() => IsEnabled = false, 1);
             state.ResolutionEntered.Add(() => IsEnabled = false, 1);

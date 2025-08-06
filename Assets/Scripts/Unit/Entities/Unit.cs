@@ -157,9 +157,9 @@ public class Unit : MonoBehaviour
     public void SubscribeBattleStateHandlers()
     {
         var ctrl = _autoBattleManager.StateController;
-        ctrl.BattleEntered.Add(() => Agent.RegistPosition(), priority: 2);
-        ctrl.BattleEntered.Add(() => IsBattleActive = true, priority: 1);
-        ctrl.BattleEntered.Add(() => _rangeDetector.FindEnemiesInRange(), priority: 0);
+        ctrl.BattleEntered.Add(() => Agent.RegistPosition(), priority: 3);
+        ctrl.BattleEntered.Add(() => IsBattleActive = true, priority: 2);
+        ctrl.BattleEntered.Add(() => _rangeDetector.FindEnemiesInRange(), priority: 1);
         ctrl.VictoryEntered.Add(() => IsBattleActive = false, priority: 1);
         ctrl.DefeatEntered.Add(() => IsBattleActive = false, priority: 1);
     }
@@ -169,7 +169,7 @@ public class Unit : MonoBehaviour
         var ctrl = _autoBattleManager.StateController;
         ctrl.BattleEntered.Remove(() => Agent.RegistPosition());
         ctrl.BattleEntered.Remove(() => IsBattleActive = true);
-        ctrl.BattleEntered.Add(() => _rangeDetector.FindEnemiesInRange());
+        ctrl.BattleEntered.Remove(() => _rangeDetector.FindEnemiesInRange());
         ctrl.VictoryEntered.Remove(() => IsBattleActive = false);
         ctrl.DefeatEntered.Remove(() => IsBattleActive = false);
     }

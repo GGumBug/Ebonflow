@@ -47,7 +47,6 @@ namespace AutoBattle
             _statRepository = new UnitRepository();
             _spawner = new UnitSpawner(_unitPrefab, _allyContainer, _enemyContainer, UnitStatRepository.Get, HandleUnitDeath, Roster, battleGrid, enemyList);
 
-
             UnitBench = gameObject.AddComponent<UnitBench>();
             _placementInputGate = new PlacementInputGate(autoBattleManager.StateController);
             _placementService = new DefaultPlacementService(AStarAlgorithmManager.Instance.Grid, UnitBench);
@@ -57,6 +56,8 @@ namespace AutoBattle
             AStarAlgorithmManager.Instance.OnRequestEnemyUnits += () => { return Roster.Enemies; };
 
             DragController.Setup(_placementInputGate, _placementService, sellZonePanel);
+
+            autoBattleManager.StateController.BattleEntered.Add(CheckInitialTeamStatus, 0);
         }
 
         public Unit SpawnAlly(int unitId, int starLevel, Vector2Int pos, IGridManager gridManager)
@@ -96,6 +97,19 @@ namespace AutoBattle
             UnitBench.TryPlaceFirstEmpty(newUnit, out slotIndex);
             newUnit.SetCurrentGridPosition(benchCell);
             return true;
+        }
+
+        private void CheckInitialTeamStatus()
+        {
+            int allyCount = Roster.Allies.Count;
+            int enemyCount = Roster.Enemies.Count;
+
+            if (allyCount == 0 || enemyCount == 0)
+            {
+                bool victory = enemyCount == 0;
+                var eliminatedTeam = victory ? TeamType.Enemy : TeamType.Ally;
+                OnTeamEliminated?.Invoke(eliminatedTeam);
+            }
         }
 
         private void HandleUnitDeath(Unit unit)

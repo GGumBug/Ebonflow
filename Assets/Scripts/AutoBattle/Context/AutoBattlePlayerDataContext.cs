@@ -6,6 +6,7 @@ public class AutoBattlePlayerDataContext : DataContext<AutoBattlePlayerData>
 {
     public event Action OnAddSoulCoin;
     public event Action OnSpendSoulCoin;
+    public event Action<int> OnStreakChanged;
 
     public AutoBattlePlayerDataContext()
         : base(
@@ -17,6 +18,7 @@ public class AutoBattlePlayerDataContext : DataContext<AutoBattlePlayerData>
 
     public int GetLevel() => Data.level;
     public int GetSoulCoin() => Data.soulCoin;
+    public int GetWinLossStreak() => Data.winLossStreak;
     public bool CanBuy(int price) => Data.soulCoin >= price;
 
     public int AddSoulCoin(int amount)
@@ -32,6 +34,21 @@ public class AutoBattlePlayerDataContext : DataContext<AutoBattlePlayerData>
         Data.soulCoin -= amount;
         OnSpendSoulCoin?.Invoke();
         return true;
+    }
+
+    public void UpdateStreak(bool victory)
+    {
+        if (victory)
+        {
+            if (Data.winLossStreak >= 0) Data.winLossStreak++;
+            else Data.winLossStreak = 1;
+        }
+        else
+        {
+            if (Data.winLossStreak <= 0) Data.winLossStreak--;
+            else Data.winLossStreak = -1;
+        }
+        OnStreakChanged?.Invoke(Data.winLossStreak);
     }
 }
 
