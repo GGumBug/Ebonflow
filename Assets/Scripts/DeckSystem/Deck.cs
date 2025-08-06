@@ -43,6 +43,10 @@ namespace DeckSystem
                     continue;
 
                 var aggregate = _getUnitStatDataFunc(i, 1);
+
+                if (aggregate.Data.UnitTier == UnitTier.Creep)
+                    continue;
+
                 var card = new CardData(
                     aggregate.Data.UnitTier,
                     aggregate.Price,

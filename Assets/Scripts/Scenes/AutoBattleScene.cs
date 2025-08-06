@@ -49,7 +49,9 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
         autoBattleDataManager.AutoBattlePlayerDataContext.OnAddSoulCoin += _uiAutoBattle.AutoBattleShopUI.CheckCanBuyCards;
         autoBattleDataManager.AutoBattlePlayerDataContext.OnSpendSoulCoin += _uiAutoBattle.AutoBattleShopUI.CheckCanBuyCards;
 
-        await CardDrawManager.Instance.SetUp(AutoBattleUnitManager.Instance, _uiAutoBattle.AutoBattleShopUI);
+        CardDrawManager.Instance.SetUp(AutoBattleUnitManager.Instance, _uiAutoBattle.AutoBattleShopUI);
+
+        await UniTask.Yield();
     }
 
     public override async UniTask SetupScene()

@@ -25,11 +25,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: e12649d8106f647e6b9e31e6db7a120d
-    m_Address: Assets/ScriptableObjects/Deck/LevelTierProbabilityConfig.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e2cd77fa1a43e2a4e9b1c83e9f5e722f
     m_Address: AutoBattle/UnitPrefab
     m_ReadOnly: 0

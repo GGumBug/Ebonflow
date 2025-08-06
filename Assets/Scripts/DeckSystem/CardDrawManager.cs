@@ -11,23 +11,21 @@ namespace DeckSystem
         private readonly List<CardData> _currentHand = new List<CardData>();
 
         private AutoBattlePlayerDataContext _autoBattlePlayerDataContext;
-        private LevelTierProbabilityConfig _levelTierProbabilityConfig;
         private Deck _deck;
         private TierBasedCardPicker _tierBasedCardPicker;
         private Action<int, CardData> requestSetCardView;
 
         public IReadOnlyList<CardData> GetCurrentHand() => _currentHand;
 
-        public async UniTask SetUp(AutoBattleUnitManager autoBattleUnitManager, UIAutoBattleShop uIAutoBattleShop)
+        public void SetUp(AutoBattleUnitManager autoBattleUnitManager, UIAutoBattleShop uIAutoBattleShop)
         {
             _currentHand.Clear();
             _autoBattlePlayerDataContext = AutoBattleDataManager.Instance.AutoBattlePlayerDataContext;
 
-            _levelTierProbabilityConfig = await AddressableManager.Instance.Load<LevelTierProbabilityConfig>(AddressableKey.LevelTierProbabilityConfig);
             var unitStatRepository = autoBattleUnitManager.UnitStatRepository;
 
             _deck = new Deck(unitStatRepository.GetMaxId(), unitStatRepository.Exists, unitStatRepository.Get);
-            _tierBasedCardPicker = new TierBasedCardPicker(_levelTierProbabilityConfig, _deck);
+            _tierBasedCardPicker = new TierBasedCardPicker(_deck);
 
             requestSetCardView = uIAutoBattleShop.SetNewCardData;
 

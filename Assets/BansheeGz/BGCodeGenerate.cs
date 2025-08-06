@@ -60,6 +60,7 @@ public partial class DB_Units : BGEntity
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
 	private static readonly DB_Stages.Factory _factory3_PFS = new DB_Stages.Factory();
 	private static readonly DB_StageEnemys.Factory _factory4_PFS = new DB_StageEnemys.Factory();
+	private static readonly DB_LevelTierProbability.Factory _factory5_PFS = new DB_LevelTierProbability.Factory();
 	private DB_Units() : base(MetaDefault)
 	{
 	}
@@ -137,6 +138,7 @@ public partial class DB_LocalizationEntries : BGEntity
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
 	private static readonly DB_Stages.Factory _factory3_PFS = new DB_Stages.Factory();
 	private static readonly DB_StageEnemys.Factory _factory4_PFS = new DB_StageEnemys.Factory();
+	private static readonly DB_LevelTierProbability.Factory _factory5_PFS = new DB_LevelTierProbability.Factory();
 	private DB_LocalizationEntries() : base(MetaDefault)
 	{
 	}
@@ -235,6 +237,7 @@ public partial class DB_UnitStats : BGEntity
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
 	private static readonly DB_Stages.Factory _factory3_PFS = new DB_Stages.Factory();
 	private static readonly DB_StageEnemys.Factory _factory4_PFS = new DB_StageEnemys.Factory();
+	private static readonly DB_LevelTierProbability.Factory _factory5_PFS = new DB_LevelTierProbability.Factory();
 	private DB_UnitStats() : base(MetaDefault)
 	{
 	}
@@ -319,6 +322,7 @@ public partial class DB_Stages : BGEntity
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
 	private static readonly DB_Stages.Factory _factory3_PFS = new DB_Stages.Factory();
 	private static readonly DB_StageEnemys.Factory _factory4_PFS = new DB_StageEnemys.Factory();
+	private static readonly DB_LevelTierProbability.Factory _factory5_PFS = new DB_LevelTierProbability.Factory();
 	private DB_Stages() : base(MetaDefault)
 	{
 	}
@@ -410,6 +414,7 @@ public partial class DB_StageEnemys : BGEntity
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
 	private static readonly DB_Stages.Factory _factory3_PFS = new DB_Stages.Factory();
 	private static readonly DB_StageEnemys.Factory _factory4_PFS = new DB_StageEnemys.Factory();
+	private static readonly DB_LevelTierProbability.Factory _factory5_PFS = new DB_LevelTierProbability.Factory();
 	private DB_StageEnemys() : base(MetaDefault)
 	{
 	}
@@ -439,6 +444,105 @@ public partial class DB_StageEnemys : BGEntity
 	public static DB_StageEnemys NewEntity(Action<DB_StageEnemys> callback)
 	{
 		return (DB_StageEnemys) MetaDefault.NewEntity(new BGMetaEntity.NewEntityContext(entity => callback((DB_StageEnemys)entity)));
+	}
+}
+
+public partial class DB_LevelTierProbability : BGEntity
+{
+
+	public class Factory : BGEntity.EntityFactory
+	{
+		public BGEntity NewEntity(BGMetaEntity meta) => new DB_LevelTierProbability(meta);
+		public BGEntity NewEntity(BGMetaEntity meta, BGId id) => new DB_LevelTierProbability(meta, id);
+	}
+	private static BansheeGz.BGDatabase.BGMetaRow _metaDefault;
+	public static BansheeGz.BGDatabase.BGMetaRow MetaDefault => _metaDefault ?? (_metaDefault = BGCodeGenUtils.GetMeta<BansheeGz.BGDatabase.BGMetaRow>(new BGId(4803751782165080563UL,2624845744731850114UL), () => _metaDefault = null));
+	public static BansheeGz.BGDatabase.BGRepoEvents Events => BGRepo.I.Events;
+	public static int CountEntities => MetaDefault.CountEntities;
+	public System.String f_name
+	{
+		get => _f_name[Index];
+		set => _f_name[Index] = value;
+	}
+	public System.Int32 f_Level
+	{
+		get => _f_Level[Index];
+		set => _f_Level[Index] = value;
+	}
+	public System.Single f_SoulWisp
+	{
+		get => _f_SoulWisp[Index];
+		set => _f_SoulWisp[Index] = value;
+	}
+	public System.Single f_LostSoul
+	{
+		get => _f_LostSoul[Index];
+		set => _f_LostSoul[Index] = value;
+	}
+	public System.Single f_DeathEnvoy
+	{
+		get => _f_DeathEnvoy[Index];
+		set => _f_DeathEnvoy[Index] = value;
+	}
+	public System.Single f_GhostGeneral
+	{
+		get => _f_GhostGeneral[Index];
+		set => _f_GhostGeneral[Index] = value;
+	}
+	public System.Single f_UnderworldKing
+	{
+		get => _f_UnderworldKing[Index];
+		set => _f_UnderworldKing[Index] = value;
+	}
+	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
+	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(5284859880298778843UL, 2822703506822473141UL), () => _ufle12jhs77_f_name = null));
+	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_Level;
+	public static BansheeGz.BGDatabase.BGFieldInt _f_Level => _ufle12jhs77_f_Level ?? (_ufle12jhs77_f_Level = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4823598535303189873UL, 7251482953484049323UL), () => _ufle12jhs77_f_Level = null));
+	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_SoulWisp;
+	public static BansheeGz.BGDatabase.BGFieldFloat _f_SoulWisp => _ufle12jhs77_f_SoulWisp ?? (_ufle12jhs77_f_SoulWisp = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(5674889052740056780UL, 2540075050274955702UL), () => _ufle12jhs77_f_SoulWisp = null));
+	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_LostSoul;
+	public static BansheeGz.BGDatabase.BGFieldFloat _f_LostSoul => _ufle12jhs77_f_LostSoul ?? (_ufle12jhs77_f_LostSoul = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(4803917372522758237UL, 4236970344919335067UL), () => _ufle12jhs77_f_LostSoul = null));
+	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_DeathEnvoy;
+	public static BansheeGz.BGDatabase.BGFieldFloat _f_DeathEnvoy => _ufle12jhs77_f_DeathEnvoy ?? (_ufle12jhs77_f_DeathEnvoy = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(5440457839051477010UL, 18209420850359577497UL), () => _ufle12jhs77_f_DeathEnvoy = null));
+	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_GhostGeneral;
+	public static BansheeGz.BGDatabase.BGFieldFloat _f_GhostGeneral => _ufle12jhs77_f_GhostGeneral ?? (_ufle12jhs77_f_GhostGeneral = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(5297209507611593569UL, 8499087578667484332UL), () => _ufle12jhs77_f_GhostGeneral = null));
+	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_UnderworldKing;
+	public static BansheeGz.BGDatabase.BGFieldFloat _f_UnderworldKing => _ufle12jhs77_f_UnderworldKing ?? (_ufle12jhs77_f_UnderworldKing = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(5746697014148211249UL, 4720420294621579690UL), () => _ufle12jhs77_f_UnderworldKing = null));
+	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
+	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
+	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
+	private static readonly DB_Stages.Factory _factory3_PFS = new DB_Stages.Factory();
+	private static readonly DB_StageEnemys.Factory _factory4_PFS = new DB_StageEnemys.Factory();
+	private static readonly DB_LevelTierProbability.Factory _factory5_PFS = new DB_LevelTierProbability.Factory();
+	private DB_LevelTierProbability() : base(MetaDefault)
+	{
+	}
+	private DB_LevelTierProbability(BGId id) : base(MetaDefault, id)
+	{
+	}
+	private DB_LevelTierProbability(BGMetaEntity meta) : base(meta)
+	{
+	}
+	private DB_LevelTierProbability(BGMetaEntity meta, BGId id) : base(meta, id)
+	{
+	}
+	public static DB_LevelTierProbability FindEntity(Predicate<DB_LevelTierProbability> filter)
+	{
+		return MetaDefault.FindEntity(entity => filter==null || filter((DB_LevelTierProbability) entity)) as DB_LevelTierProbability;
+	}
+	public static List<DB_LevelTierProbability> FindEntities(Predicate<DB_LevelTierProbability> filter, List<DB_LevelTierProbability> result=null, Comparison<DB_LevelTierProbability> sort=null) => BGCodeGenUtils.FindEntities(MetaDefault, filter, result, sort);
+	public static void ForEachEntity(Action<DB_LevelTierProbability> action, Predicate<DB_LevelTierProbability> filter=null, Comparison<DB_LevelTierProbability> sort=null)
+	{
+		MetaDefault.ForEachEntity(entity => action((DB_LevelTierProbability) entity), filter == null ? null : (Predicate<BGEntity>) (entity => filter((DB_LevelTierProbability) entity)), sort==null?(Comparison<BGEntity>) null:(e1,e2) => sort((DB_LevelTierProbability)e1,(DB_LevelTierProbability)e2));
+	}
+	public static DB_LevelTierProbability GetEntity(BGId entityId) => (DB_LevelTierProbability) MetaDefault.GetEntity(entityId);
+	public static DB_LevelTierProbability GetEntity(int index) => (DB_LevelTierProbability) MetaDefault[index];
+	public static DB_LevelTierProbability GetEntity(string entityName) => (DB_LevelTierProbability) MetaDefault.GetEntity(entityName);
+	public static DB_LevelTierProbability NewEntity() => (DB_LevelTierProbability) MetaDefault.NewEntity();
+	public static DB_LevelTierProbability NewEntity(BGId entityId) => (DB_LevelTierProbability) MetaDefault.NewEntity(entityId);
+	public static DB_LevelTierProbability NewEntity(Action<DB_LevelTierProbability> callback)
+	{
+		return (DB_LevelTierProbability) MetaDefault.NewEntity(new BGMetaEntity.NewEntityContext(entity => callback((DB_LevelTierProbability)entity)));
 	}
 }
 #pragma warning restore 414
