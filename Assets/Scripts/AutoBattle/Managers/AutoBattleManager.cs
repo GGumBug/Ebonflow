@@ -1,3 +1,4 @@
+using RoguelikeMap;
 using System;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ namespace AutoBattle
             _damageCalculator = new DamageCalculator();
             StateController = new AutoBattleStateController();
             AutoBattleUnitManager.Instance.OnTeamEliminated += HandleTeamEliminated;
+            StateController.VictoryEntered.Add(() => MapSaveLoadManager.Instance.SaveMap(), 0);
             StateController.VictoryEntered.Add(() => AutoBattleDataManager.Instance.AutoBattleSceneDataContext.Stage.shouldResumeBattle = false, 0);
             StateController.VictoryEntered.Add(() => AutoBattleDataManager.Instance.AutoBattleSceneDataContext.Save(), 1);
         }
