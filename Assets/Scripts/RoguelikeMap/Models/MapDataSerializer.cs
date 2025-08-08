@@ -48,7 +48,7 @@ namespace RoguelikeMap
         /// ES3에서 MapData를 로드한 뒤, out 파라미터로 반환합니다.
         /// 성공 여부는 bool 리턴값으로 알 수 있습니다.
         /// </summary>
-        public MapData TryLoadData(string fileName)
+        private MapData TryLoadData(string fileName)
         {
             if (string.IsNullOrEmpty(fileName))
             {

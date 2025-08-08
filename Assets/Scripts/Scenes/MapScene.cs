@@ -46,6 +46,7 @@ public class MapScene : SceneBase, INodeClickHandler
             -1
         ));
 
+        MapSaveLoadManager.Instance.SaveMap();
         await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<AutoBattleScene>();
     }
 }

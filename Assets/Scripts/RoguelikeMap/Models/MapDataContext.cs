@@ -35,19 +35,6 @@ namespace RoguelikeMap
                                      && Data.currentIndex >= 0;
 
         /// <summary>
-        /// MapLayout과 Settings로 내부 데이터 갱신 후 저장
-        /// </summary>
-        public void InitializeFromLayout(MapLayout layout, MapGenerationSettings settings)
-        {
-            if (layout == null) throw new ArgumentNullException(nameof(layout));
-            if (settings == null) throw new ArgumentNullException(nameof(settings));
-
-            data = _serializer.FromLayout(layout, settings, data);
-            Save();
-            Debug.Log($"맵이 저장되었습니다 (ES3) → {Application.persistentDataPath}/Map/{fileName}.json");
-        }
-
-        /// <summary>
         /// 현재 선택 좌표 갱신 후 저장
         /// </summary>
         public void UpdateSelection(Vector2Int newPosition, bool saveImmediately = true)
@@ -81,7 +68,6 @@ namespace RoguelikeMap
         }
 
         public void Save(MapLayout mapLayout, MapGenerationSettings settings) => _serializer.Save(fileName, mapLayout, settings);
-        public MapData TryLoadData() => _serializer.TryLoadData(fileName);
         public MapData TryLoadLayout(MapGenerationSettings settings) => _serializer.TryLoadLayout(fileName, settings);
     }
 }
