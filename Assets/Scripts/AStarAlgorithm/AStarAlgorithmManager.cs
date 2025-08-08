@@ -214,5 +214,5 @@ public class AStarAlgorithmManager : Singleton<AStarAlgorithmManager>
         return finalPathNodes;
     }
 
-    public void RegisteBattleRoster(IBattleRoster battleRoster) => Grid.RegisteBattleRoster(battleRoster);
+    public void RegisteBattleRoster(IBattleRoster battleRoster) => Grid.RegisterBattleRoster(battleRoster);
 }
