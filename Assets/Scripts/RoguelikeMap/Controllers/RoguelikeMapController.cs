@@ -14,7 +14,7 @@ namespace RoguelikeMap
         private Func<int, int, MapNode> _getNode;
 
         // 외부 구독용 이벤트
-        public event Action<Vector2Int> OnCellSelected;
+        public event Action<Vector2Int, bool> OnCellSelected;
         public event Func<Vector2Int> GetCurrentNodePosition;
         public event Func<bool> HasSelection;
 
@@ -55,7 +55,7 @@ namespace RoguelikeMap
 
             ActivateEdges(selectedNode.Edges);
 
-            OnCellSelected?.Invoke(selectedCellPosition);
+            OnCellSelected?.Invoke(selectedCellPosition, true);
         }
 
         private void DeactivateRow(List<MapNode> prevRow, List<MapNode> currentRow, MapNode currentNode, MapNode selectedNode)

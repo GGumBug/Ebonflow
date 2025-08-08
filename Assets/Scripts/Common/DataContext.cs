@@ -5,7 +5,7 @@ public class DataContext<T>
     protected readonly string fileName;
     protected T data;
     protected readonly ES3SerializerBase<T> dataSaveLoad;
-    private readonly Func<T> defaultFactory;
+    protected readonly Func<T> defaultFactory;
 
     public DataContext(string fileName, ES3SerializerBase<T> serializer, Func<T> defaultFactory)
     {

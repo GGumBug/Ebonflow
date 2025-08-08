@@ -4,9 +4,7 @@ namespace RoguelikeMap
 {
     public class MapSaveLoadManager : Singleton<MapSaveLoadManager>, IDonDestroy
     {
-        private const string MapDataFileName = "MapData";
-
-        private MapSaveLoad _mapSaveLoad;
+        private MapDataContext _mapDataContext;
         private RoguelikeMapGenerator _mapGenerator;
 
         public MapGenerationSettings Settings { get; private set; }
@@ -19,11 +17,11 @@ namespace RoguelikeMap
 
         public void Setup(RoguelikeMapDirector roguelikeMapManager)
         {
-            _mapSaveLoad = new MapSaveLoad();
+            _mapDataContext = new MapDataContext();
 
-            roguelikeMapManager.MapController.OnCellSelected += _mapSaveLoad.UpdateSelection;
-            roguelikeMapManager.MapController.GetCurrentNodePosition += _mapSaveLoad.GetCurrentNodePosition;
-            roguelikeMapManager.MapController.HasSelection += _mapSaveLoad.HasSelection;
+            roguelikeMapManager.MapController.OnCellSelected += _mapDataContext.UpdateSelection;
+            roguelikeMapManager.MapController.GetCurrentNodePosition += _mapDataContext.GetCurrentNodePosition;
+            roguelikeMapManager.MapController.HasSelection += _mapDataContext.HasSelection;
 
             MapLayout = LoadOrGenerateMap();
         }
@@ -35,7 +33,7 @@ namespace RoguelikeMap
         {
             _mapGenerator = new RoguelikeMapGenerator(Settings);
 
-            var data = _mapSaveLoad.TryLoadLayout(MapDataFileName, Settings);
+            var data = _mapDataContext.TryLoadLayout(Settings);
 
             if (data != null)
             {
@@ -46,14 +44,14 @@ namespace RoguelikeMap
             {
                 Debug.Log("저장된 맵 레이아웃이 없어 새로 생성합니다.");
                 var newLayout = _mapGenerator.CreateMap();
-                _mapSaveLoad.Save(MapDataFileName, newLayout, Settings);
+                _mapDataContext.Save(newLayout, Settings);
                 return newLayout;
             }
         }
 
         public void SaveMap()
         {
-            _mapSaveLoad.Save(MapDataFileName, MapLayout, Settings);
+            _mapDataContext.Save(MapLayout, Settings);
         }
     }
 }
