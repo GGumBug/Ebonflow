@@ -78,6 +78,7 @@ public class UnitSpawner
             return;
 
         var bench = _benchGrid as UnitBench;
+        var battle = _battleGrid as AStarGrid;
 
         foreach (var rec in ctx.OwnedUnits) // IReadOnlyList<PlayerUnitRecord>
         {
@@ -128,10 +129,15 @@ public class UnitSpawner
             unit.SetInstanceId(rec.instanceId);
 
             // 5) 실제 그리드에 반영
-            if (targetGrid == _battleGrid && _battleGrid is AStarGrid battle)
+            if (targetGrid == _battleGrid && _battleGrid is AStarGrid)
             {
                 var draggable = unit.GetComponent<IUnitDraggable>();
-                if (draggable != null) battle.PlaceUnit(draggable, pos);
+                if (draggable != null)
+                {
+                    unit.Agent.ReserveCurrentGridCell();
+                    unit.RegisterPlacement(grid);
+                    battle.SyncRosterOnPlace(unit);
+                }
             }
             else if (targetGrid == _benchGrid)
             {

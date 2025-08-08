@@ -235,7 +235,7 @@ public class AStarGrid : MonoBehaviour, IGridManager
         SyncRosterOnRemove(unit);
     }
 
-    private void SyncRosterOnPlace(Unit unit)
+    public void SyncRosterOnPlace(Unit unit)
     {
         _roster ??= AutoBattleUnitManager.Instance.Roster;
 
