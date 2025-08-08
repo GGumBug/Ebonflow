@@ -101,6 +101,17 @@ public class AStarGrid : MonoBehaviour, IGridManager
         return new Vector2Int(xIndex, yIndex);
     }
 
+    public bool TryGetNodeAtWorld(Vector2Int world, out AStarNode node)
+    {
+        node = null;
+        if (_grid == null) return false;
+        var gi = WorldToGridIndex(world);
+        if (IsOutOfBounds(gi)) return false;
+        node = _grid[gi.x, gi.y];
+        return true;
+    }
+
+
     private void CreateGridFromTilemap(int sizeX, int sizeY)
     {
         for (int i = 0; i < sizeX; i++)
