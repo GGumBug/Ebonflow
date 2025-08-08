@@ -222,6 +222,7 @@ public class AStarGrid : MonoBehaviour, IGridManager
 
         SetNodeBlock(cell, true, agent);
         draggable.Unit.SetSnapTransform(cell);
+        draggable.Unit.RegisterPlacement(Type);
 
         SyncRosterOnPlace(draggable.Unit);
     }
@@ -236,6 +237,8 @@ public class AStarGrid : MonoBehaviour, IGridManager
 
     private void SyncRosterOnPlace(Unit unit)
     {
+        _roster ??= AutoBattleUnitManager.Instance.Roster;
+
         if (!_roster.Contains(unit))
             _roster.Register(unit);
     }

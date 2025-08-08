@@ -10,13 +10,13 @@ public class DataContext<T>
     public DataContext(string fileName, ES3SerializerBase<T> serializer, Func<T> defaultFactory)
     {
         this.fileName = fileName;
-        this.dataSaveLoad = serializer;
+        dataSaveLoad = serializer;
         this.defaultFactory = defaultFactory;
         Load();
     }
 
     /// <summary>파일에서 로드, 없으면 팩토리로 기본값 생성</summary>
-    public void Load()
+    public virtual void Load()
     {
         data = dataSaveLoad.Load(fileName);
         if (data == null)

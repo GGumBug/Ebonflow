@@ -267,6 +267,7 @@ public class UnitBench : MonoBehaviour, IGridManager
         if (success)
         {
             draggable.Unit.SetSnapTransform(cell);
+            draggable.Unit.RegisterPlacement(Type);
             return;
         }
 

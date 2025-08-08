@@ -23,12 +23,14 @@ namespace AutoBattle
             StateController.VictoryEntered.Add(() => MapSaveLoadManager.Instance.SaveMap(), 0);
             StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Stage.shouldResumeBattle = false, 0);
             StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.UpdateStreak(true), 0);
+            StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.Save(), 0);
             StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Save(), 1);
             StateController.VictoryEntered.Add(() => _rewardService.ApplyInterest(), 2);
             StateController.VictoryEntered.Add(async () => await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MapScene>(), 2);
 
             StateController.DefeatEntered.Add(() => MapSaveLoadManager.Instance.SaveMap(), 0);
             StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Stage.shouldResumeBattle = false, 0);
+            StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.Save(), 0);
             StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Save(), 1);
             StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.UpdateStreak(false), 0);
             StateController.DefeatEntered.Add(() => _rewardService.ApplyInterest(), 1);

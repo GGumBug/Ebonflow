@@ -7,16 +7,19 @@ public class Unit : MonoBehaviour
 {
     [SerializeField] private TeamType _team;
 
+    private int _instanceId = -1;
     private AStarAgent _aStarAgent;
     private RangeDetector _rangeDetector;
     private CombatComponent _combatComponent;
     private MovementComponent _movementComponent;
     private HealthComponent _healthComponent;
     private UnitStateMachine _stateMachine;
+    private UnitStatData _statData;
     private UnitStats _stats;
     private CircleCollider2D _circleCollider2D;
     private UnitDraggableBehaviour _draggableBehaviour;
     private AutoBattleManager _autoBattleManager;
+    private AutoBattleDataManager _autoBattleDataManager;
 
     public event Action<Unit> OnDied;
     public bool IsBattleActive { get; private set; }
@@ -28,17 +31,20 @@ public class Unit : MonoBehaviour
     public IGridManager CurrentGrid { get; private set; }
     public UnitSaleComponent SaleComponent { get; private set; }
 
+    public void SetInstanceId(int id) => _instanceId = id;
+
     private void Awake()
     {
         _autoBattleManager = AutoBattleManager.Instance;
+        _autoBattleDataManager = AutoBattleDataManager.Instance;
     }
 
     public void Setup(TeamType team, UnitStatData statData, IGridManager gridManager)
     {
         _team = team;
-
+        _statData = statData;
         CacheComponents();
-        InitializeComponents(statData, gridManager);
+        InitializeComponents(gridManager);
         RegisterEventHandlers();
     }
 
@@ -50,9 +56,9 @@ public class Unit : MonoBehaviour
         _draggableBehaviour = gameObject.AddComponent<UnitDraggableBehaviour>();
     }
 
-    private void InitializeComponents(UnitStatData statData, IGridManager gridManager)
+    private void InitializeComponents(IGridManager gridManager)
     {
-        _stats = new UnitStats(statData);
+        _stats = new UnitStats(_statData);
         _circleCollider2D.enabled = true;
         _rangeDetector.Setup(Stat.Range);
         _stateMachine = new UnitStateMachine(this);
@@ -61,8 +67,19 @@ public class Unit : MonoBehaviour
         _healthComponent = new HealthComponent(_stats);
         SetCurrentGrid(gridManager);
         _draggableBehaviour.Setup(this);
-        int price = AutoBattleUnitManager.Instance.UnitStatRepository.Get(statData.UnitId, statData.StarLevel).Price;
-        SaleComponent = new UnitSaleComponent(price);
+        int price = AutoBattleUnitManager.Instance.UnitStatRepository.Get(_statData.UnitId, _statData.StarLevel).Price;
+        SaleComponent = new UnitSaleComponent(price, () => _instanceId);
+    }
+
+    public void RegisterUnit()
+    {
+        int instanceId = _autoBattleDataManager.AutoBattlePlayerDataContext.CreateUnit(_statData.UnitId, _statData.StarLevel);
+        _instanceId = instanceId;
+    }
+
+    public void RegisterPlacement(GridType gridType)
+    {
+        _autoBattleDataManager.AutoBattlePlayerDataContext.UpsertPlacement(_instanceId, gridType, Agent.PathPoint.x, Agent.PathPoint.y);
     }
 
     private void RegisterEventHandlers()

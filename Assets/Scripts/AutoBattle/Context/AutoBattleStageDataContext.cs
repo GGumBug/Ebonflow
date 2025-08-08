@@ -13,6 +13,6 @@ namespace AutoBattle
         public AutoBattleStageData Stage => Data;
 
         public void SetShouldResumeBattle(bool shouldResumeBattle) { Data.shouldResumeBattle = shouldResumeBattle; }
-        public void SetStageID(int stageID) { Data.stageID = stageID; } 
+        public void SetStageID(int stageID) { Data.stageID = stageID; }
     }
 }

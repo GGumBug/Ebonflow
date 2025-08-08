@@ -15,6 +15,7 @@ namespace AutoBattle
         private IUnitRepository         _statRepository;
         private IPlacementInputGate     _placementInputGate;
         private IPlacementService       _placementService;
+        private AutoBattleDataManager   _autoBattleDataManager;
 
         public event Action<TeamType>   OnTeamEliminated;
 
@@ -37,6 +38,7 @@ namespace AutoBattle
 
         public void Setup(IGridManager battleGrid, SellZonePanel sellZonePanel, List<StageEditorUnitInfo> enemyList)
         {
+            _autoBattleDataManager = AutoBattleDataManager.Instance;
             AutoBattleManager autoBattleManager = AutoBattleManager.Instance;
             Roster = new BattleRoster();
             Transform _allyContainer = new GameObject("AllyUnits").transform;
@@ -45,9 +47,9 @@ namespace AutoBattle
             _enemyContainer.SetParent(transform, false);
 
             _statRepository = new UnitRepository();
-            _spawner = new UnitSpawner(_unitPrefab, _allyContainer, _enemyContainer, UnitStatRepository.Get, HandleUnitDeath, Roster, battleGrid, enemyList);
-
             UnitBench = gameObject.AddComponent<UnitBench>();
+
+            _spawner = new UnitSpawner(_unitPrefab, _allyContainer, _enemyContainer, UnitStatRepository.Get, HandleUnitDeath, Roster, battleGrid, UnitBench, enemyList);
             _placementInputGate = new PlacementInputGate(autoBattleManager.StateController);
             _placementService = new DefaultPlacementService(AStarAlgorithmManager.Instance.Grid, UnitBench);
             DragController = gameObject.AddComponent<UnitDragController>();
@@ -58,6 +60,7 @@ namespace AutoBattle
             DragController.Setup(_placementInputGate, _placementService, sellZonePanel);
 
             autoBattleManager.StateController.BattleEntered.Add(CheckInitialTeamStatus, 0);
+            _spawner.SpawnAlliesFromSave();
         }
 
         public Unit SpawnAlly(int unitId, int starLevel, Vector2Int pos, IGridManager gridManager)
@@ -94,8 +97,10 @@ namespace AutoBattle
                 UnitBench
                 );
 
+            newUnit.RegisterUnit();
             UnitBench.TryPlaceFirstEmpty(newUnit, out slotIndex);
             newUnit.SetCurrentGridPosition(benchCell);
+            newUnit.RegisterPlacement(GridType.Bench);
             return true;
         }
 
