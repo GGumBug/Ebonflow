@@ -138,7 +138,7 @@ public class AStarGrid : MonoBehaviour, IGridManager
         Vector2Int gridIndex = WorldToGridIndex(new Vector2Int(x, y));
 
         if (IsOutOfBounds(gridIndex))
-            throw new Exception("GetNodeAt: 주어진 좌표가 그리드 범위를 벗어났습니다.");
+            throw new Exception($"x: {x} y: {y} GetNodeAt: 주어진 좌표가 그리드 범위를 벗어났습니다.");
 
         return _grid[gridIndex.x, gridIndex.y];
     }

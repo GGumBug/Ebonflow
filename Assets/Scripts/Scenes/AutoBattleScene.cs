@@ -21,12 +21,22 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
     public override async UniTask LoadAssets()
     {
         _autoBattleStagePicker = new AutoBattleStagePicker();
-        _currentStageData = _autoBattleStagePicker.PickStage(AutoBattleDataManager.Instance.AutoBattleSceneDataContext.Data);
 
         AutoBattleDataManager dataManager = AutoBattleDataManager.Instance;
-        dataManager.AutoBattleSceneDataContext.SetShouldResumeBattle(true);
-        dataManager.AutoBattleSceneDataContext.SetStageID(_currentStageData.stageID);
-        dataManager.AutoBattleSceneDataContext.Save();
+        if (isDebugMode)
+        {
+            Debug.LogWarning("autobattleSceneDataContext가 null 입니다. 더미데이터 생성");
+            dataManager.Setup();
+            AutoBattleStageData dummy = new AutoBattleStageData(true, 1, 0, 2, 0);
+            _currentStageData = _autoBattleStagePicker.PickStage(dummy);
+        }
+        else
+        {
+            _currentStageData = _autoBattleStagePicker.PickStage(dataManager.AutoBattleSceneDataContext.Data);
+            dataManager.AutoBattleSceneDataContext.SetShouldResumeBattle(true);
+            dataManager.AutoBattleSceneDataContext.SetStageID(_currentStageData.stageID);
+            dataManager.AutoBattleSceneDataContext.Save();
+        }
 
         await AutoBattleUnitManager.Instance.LoadAsset();
         _uiAutoBattle = await UIManager.Instance.OpenUIAsync<UIAutoBattle>();

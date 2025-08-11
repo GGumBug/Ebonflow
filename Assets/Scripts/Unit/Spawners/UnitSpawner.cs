@@ -74,6 +74,9 @@ public class UnitSpawner
     public void SpawnAlliesFromSave()
     {
         var ctx = _autoBattleDataManager.AutoBattlePlayerDataContext;
+        if (ctx == null)
+            return;
+
         if (ctx.OwnedUnits == null)
             return;
 
