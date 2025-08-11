@@ -21,6 +21,8 @@ public class Unit : MonoBehaviour
     private AutoBattleManager _autoBattleManager;
     private AutoBattleDataManager _autoBattleDataManager;
 
+    private bool _battleHandlersSubscribed; // 중복 구독/해제 방지
+
     public event Action<Unit> OnDied;
     public bool IsBattleActive { get; private set; }
     public bool IsDead { get; private set; }
@@ -84,18 +86,23 @@ public class Unit : MonoBehaviour
 
     private void RegisterEventHandlers()
     {
+        // 메서드 그룹/이름 있는 핸들러만 사용 (람다 X)
         _aStarAgent.OnRequestTeamType += GetTeam;
         _rangeDetector.OnRequestTeamType += GetTeam;
+
         _movementComponent.OnEndMove += _aStarAgent.EndMove;
         _movementComponent.OnEndMove += _stateMachine.ChangeToIdle;
         _movementComponent.CancelMovementAction += _aStarAgent.ClearFllowing;
+
         _healthComponent.OnDied += _stateMachine.ChangeToDead;
         _combatComponent.OnAttackEnded += _stateMachine.ChangeToIdle;
-        _aStarAgent.GetCurrentGridPositionAction += () => CurrentGridPosition;
+
+        _aStarAgent.GetCurrentGridPositionAction += OnRequestCurrentGridPos;
         _aStarAgent.SetCurrentGridPositionAction += SetCurrentGridPosition;
         _aStarAgent.CrushOtherTeamAgent += _stateMachine.ChangeToIdle;
         _aStarAgent.OnPathCompleteAction += _stateMachine.ChangeToIdle;
         _aStarAgent.OnMove += _movementComponent.Move;
+
         SaleComponent.RequestReleaseAndPool += ReleaseAndPool;
         SaleComponent.RequestCardData += MakeCardData;
     }
@@ -104,16 +111,20 @@ public class Unit : MonoBehaviour
     {
         _aStarAgent.OnRequestTeamType -= GetTeam;
         _rangeDetector.OnRequestTeamType -= GetTeam;
+
         _movementComponent.OnEndMove -= _aStarAgent.EndMove;
         _movementComponent.OnEndMove -= _stateMachine.ChangeToIdle;
         _movementComponent.CancelMovementAction -= _aStarAgent.ClearFllowing;
+
         _healthComponent.OnDied -= _stateMachine.ChangeToDead;
         _combatComponent.OnAttackEnded -= _stateMachine.ChangeToIdle;
-        _aStarAgent.GetCurrentGridPositionAction -= () => CurrentGridPosition;
+
+        _aStarAgent.GetCurrentGridPositionAction -= OnRequestCurrentGridPos;
         _aStarAgent.SetCurrentGridPositionAction -= SetCurrentGridPosition;
         _aStarAgent.CrushOtherTeamAgent -= _stateMachine.ChangeToIdle;
         _aStarAgent.OnPathCompleteAction -= _stateMachine.ChangeToIdle;
         _aStarAgent.OnMove -= _movementComponent.Move;
+
         SaleComponent.RequestReleaseAndPool -= ReleaseAndPool;
         SaleComponent.RequestCardData -= MakeCardData;
     }
@@ -158,10 +169,11 @@ public class Unit : MonoBehaviour
 
     private void ReleaseAndPool()
     {
+        // 배틀 상태 핸들러 해제(중복 호출 안전)
+        UnsubscribeBattleStateHandlers();
+
         CurrentGrid.RemoveUnit(CurrentGridPosition, this);
-
         UnregisterEventHandlers();
-
         PoolManager.Instance.Push(GetComponent<Poolable>());
     }
 
@@ -173,22 +185,30 @@ public class Unit : MonoBehaviour
 
     public void SubscribeBattleStateHandlers()
     {
+        if (_battleHandlersSubscribed) return;
+
         var ctrl = _autoBattleManager.StateController;
-        ctrl.BattleEntered.Add(() => Agent.RegistPosition(), priority: 3);
-        ctrl.BattleEntered.Add(() => IsBattleActive = true, priority: 2);
-        ctrl.BattleEntered.Add(() => _rangeDetector.FindEnemiesInRange(), priority: 1);
-        ctrl.VictoryEntered.Add(() => IsBattleActive = false, priority: 1);
-        ctrl.DefeatEntered.Add(() => IsBattleActive = false, priority: 1);
+        ctrl.BattleEntered.Add(OnBattleEntered_RegistPosition, priority: 3);
+        ctrl.BattleEntered.Add(OnBattleEntered_Activate, priority: 2);
+        ctrl.BattleEntered.Add(OnBattleEntered_ScanRange, priority: 1);
+        ctrl.VictoryEntered.Add(OnBattleExited_Deactivate, priority: 1);
+        ctrl.DefeatEntered.Add(OnBattleExited_Deactivate, priority: 1);
+
+        _battleHandlersSubscribed = true;
     }
 
     public void UnsubscribeBattleStateHandlers()
     {
+        if (!_battleHandlersSubscribed) return;
+
         var ctrl = _autoBattleManager.StateController;
-        ctrl.BattleEntered.Remove(() => Agent.RegistPosition());
-        ctrl.BattleEntered.Remove(() => IsBattleActive = true);
-        ctrl.BattleEntered.Remove(() => _rangeDetector.FindEnemiesInRange());
-        ctrl.VictoryEntered.Remove(() => IsBattleActive = false);
-        ctrl.DefeatEntered.Remove(() => IsBattleActive = false);
+        ctrl.BattleEntered.Remove(OnBattleEntered_RegistPosition);
+        ctrl.BattleEntered.Remove(OnBattleEntered_Activate);
+        ctrl.BattleEntered.Remove(OnBattleEntered_ScanRange);
+        ctrl.VictoryEntered.Remove(OnBattleExited_Deactivate);
+        ctrl.DefeatEntered.Remove(OnBattleExited_Deactivate);
+
+        _battleHandlersSubscribed = false;
     }
 
     private CardData MakeCardData()
@@ -200,11 +220,30 @@ public class Unit : MonoBehaviour
             repo.Price,
             repo.Data.UnitId,
             repo.Stat.StarLevel
-            );
+        );
         return cardData;
     }
 
-    public void OnEnterWalk()               => _aStarAgent.StartFollowPath();
-    public bool ApplyDamage(int damage)     => _healthComponent.ApplyDamage(damage);
+    public void OnEnterWalk() => _aStarAgent.StartFollowPath();
+    public bool ApplyDamage(int damage) => _healthComponent.ApplyDamage(damage);
     public void SetCurrentGrid(IGridManager grid) => CurrentGrid = grid;
+
+    // =========================
+    // Named Handlers (람다 금지)
+    // =========================
+
+    /// <summary>배틀 진입 시: 현재 경로상 위치 등록</summary>
+    private void OnBattleEntered_RegistPosition() => Agent.RegistPosition();
+
+    /// <summary>배틀 진입 시: 전투 활성화</summary>
+    private void OnBattleEntered_Activate() => IsBattleActive = true;
+
+    /// <summary>배틀 진입 시: 사거리 내 적 탐색</summary>
+    private void OnBattleEntered_ScanRange() => _rangeDetector.FindEnemiesInRange();
+
+    /// <summary>승리/패배 시: 전투 비활성화</summary>
+    private void OnBattleExited_Deactivate() => IsBattleActive = false;
+
+    /// <summary>A*가 현재 그리드 좌표를 요청할 때 반환</summary>
+    private Vector2Int OnRequestCurrentGridPos() => CurrentGridPosition;
 }
