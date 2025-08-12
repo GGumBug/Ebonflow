@@ -10,6 +10,8 @@ namespace RoguelikeMap
         public MapGenerationSettings Settings { get; private set; }
         public MapLayout MapLayout { get; private set; }
 
+        public int GetCurrentRow => _mapDataContext.Data.currentRow;
+
         public void Init(MapGenerationSettings settings)
         {
             Settings = settings;

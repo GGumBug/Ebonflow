@@ -1,3 +1,4 @@
+using AutoBattle;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -74,8 +75,12 @@ namespace RoguelikeMap.UI
             }
 
             // 강제 레이아웃 리빌드
-            LayoutRebuilder.ForceRebuildLayoutImmediate(_mapContentRect);
-            _scrollbarVertical.value = 0;
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_mapContentRect);   
+        }
+
+        public void ResetScrollbarVertical()
+        {
+            _scrollbarVertical.value = MapSaveLoadManager.Instance.GetCurrentRow * 0.1f;
         }
 
         Vector2 Convert(Vector2 oldPos)

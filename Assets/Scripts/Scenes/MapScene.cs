@@ -34,6 +34,8 @@ public class MapScene : SceneBase, INodeClickHandler
     public override async UniTask FinalizeLoading()
     {
         await UniTask.Yield();
+
+        _mapView.ResetScrollbarVertical();
     }
 
     public async void OnNodeClicked(int stage, int floor, int locationTypeId)
