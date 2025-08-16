@@ -45,6 +45,16 @@ public partial class DB_Units : BGEntity
 		get => (UnitTier) _f_UnitTier[Index];
 		set => _f_UnitTier[Index] = value;
 	}
+	public UnitClass f_Class
+	{
+		get => (UnitClass) _f_Class[Index];
+		set => _f_Class[Index] = value;
+	}
+	public UnitOrigin f_Origin
+	{
+		get => (UnitOrigin) _f_Origin[Index];
+		set => _f_Origin[Index] = value;
+	}
 	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
 	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(4762821637793240553UL, 2073662938292457094UL), () => _ufle12jhs77_f_name = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_UnitId;
@@ -55,6 +65,10 @@ public partial class DB_Units : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldInt _f_NameKey => _ufle12jhs77_f_NameKey ?? (_ufle12jhs77_f_NameKey = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4865234553763274604UL, 17058006971073422733UL), () => _ufle12jhs77_f_NameKey = null));
 	private static BansheeGz.BGDatabase.BGFieldEnum _ufle12jhs77_f_UnitTier;
 	public static BansheeGz.BGDatabase.BGFieldEnum _f_UnitTier => _ufle12jhs77_f_UnitTier ?? (_ufle12jhs77_f_UnitTier = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEnum>(MetaDefault, new BGId(4815675110958628569UL, 13834618053216661660UL), () => _ufle12jhs77_f_UnitTier = null));
+	private static BansheeGz.BGDatabase.BGFieldEnum _ufle12jhs77_f_Class;
+	public static BansheeGz.BGDatabase.BGFieldEnum _f_Class => _ufle12jhs77_f_Class ?? (_ufle12jhs77_f_Class = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEnum>(MetaDefault, new BGId(5260016658475170456UL, 13978289584749089467UL), () => _ufle12jhs77_f_Class = null));
+	private static BansheeGz.BGDatabase.BGFieldEnum _ufle12jhs77_f_Origin;
+	public static BansheeGz.BGDatabase.BGFieldEnum _f_Origin => _ufle12jhs77_f_Origin ?? (_ufle12jhs77_f_Origin = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEnum>(MetaDefault, new BGId(5020361988821157231UL, 7834484382979121070UL), () => _ufle12jhs77_f_Origin = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
@@ -218,6 +232,11 @@ public partial class DB_UnitStats : BGEntity
 		get => _f_Range[Index];
 		set => _f_Range[Index] = value;
 	}
+	public System.Int32 f_Mana
+	{
+		get => _f_Mana[Index];
+		set => _f_Mana[Index] = value;
+	}
 	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
 	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(5507304839897652857UL, 4685881140701435545UL), () => _ufle12jhs77_f_name = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_UnitId;
@@ -232,6 +251,8 @@ public partial class DB_UnitStats : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldFloat _f_AttackDelay => _ufle12jhs77_f_AttackDelay ?? (_ufle12jhs77_f_AttackDelay = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(5672935980609939227UL, 10652493035511744932UL), () => _ufle12jhs77_f_AttackDelay = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_Range;
 	public static BansheeGz.BGDatabase.BGFieldInt _f_Range => _ufle12jhs77_f_Range ?? (_ufle12jhs77_f_Range = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(5759245139096195051UL, 3789395744533961906UL), () => _ufle12jhs77_f_Range = null));
+	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_Mana;
+	public static BansheeGz.BGDatabase.BGFieldInt _f_Mana => _ufle12jhs77_f_Mana ?? (_ufle12jhs77_f_Mana = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(5762520283391830254UL, 7941986863915011512UL), () => _ufle12jhs77_f_Mana = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();

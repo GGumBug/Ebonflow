@@ -12,7 +12,6 @@ public class Unit : MonoBehaviour
     private RangeDetector _rangeDetector;
     private CombatComponent _combatComponent;
     private MovementComponent _movementComponent;
-    private HealthComponent _healthComponent;
     private UnitStateMachine _stateMachine;
     private UnitStatData _statData;
     private UnitStats _stats;
@@ -23,6 +22,8 @@ public class Unit : MonoBehaviour
 
     private bool _battleHandlersSubscribed; // 중복 구독/해제 방지
 
+    public UnitClass Class { get; private set; }
+    public UnitOrigin Origin { get; private set; }
     public event Action<Unit> OnDied;
     public bool IsBattleActive { get; private set; }
     public bool IsDead { get; private set; }
@@ -32,6 +33,8 @@ public class Unit : MonoBehaviour
     public Vector2Int CurrentGridPosition { get; private set; } // 현재 위치가 아닌, 그리드 시스템 상 위치
     public IGridManager CurrentGrid { get; private set; }
     public UnitSaleComponent SaleComponent { get; private set; }
+    public HealthComponent Health { get; private set; }
+    public ManaComponent Mana { get; private set; }
 
     public void SetInstanceId(int id) => _instanceId = id;
 
@@ -41,10 +44,12 @@ public class Unit : MonoBehaviour
         _autoBattleDataManager = AutoBattleDataManager.Instance;
     }
 
-    public void Setup(TeamType team, UnitStatData statData, IGridManager gridManager)
+    public void Setup(TeamType team, UnitAggregate aggregate, IGridManager gridManager)
     {
+        Class = aggregate.Data.Class;
+        Origin = aggregate.Data.Origin;
         _team = team;
-        _statData = statData;
+        _statData = aggregate.Stat;
         CacheComponents();
         InitializeComponents(gridManager);
         RegisterEventHandlers();
@@ -66,7 +71,8 @@ public class Unit : MonoBehaviour
         _stateMachine = new UnitStateMachine(this);
         _combatComponent = new CombatComponent(this, _rangeDetector, _autoBattleManager.Attack);
         _movementComponent = new MovementComponent(transform);
-        _healthComponent = new HealthComponent(_stats);
+        Health = new HealthComponent(_stats);
+        Mana = new ManaComponent(_stats.MaxMana, 0);
         SetCurrentGrid(gridManager);
         _draggableBehaviour.Setup(this);
         int price = AutoBattleUnitManager.Instance.UnitStatRepository.Get(_statData.UnitId, _statData.StarLevel).Price;
@@ -94,7 +100,7 @@ public class Unit : MonoBehaviour
         _movementComponent.OnEndMove += _stateMachine.ChangeToIdle;
         _movementComponent.CancelMovementAction += _aStarAgent.ClearFllowing;
 
-        _healthComponent.OnDied += _stateMachine.ChangeToDead;
+        Health.OnDied += _stateMachine.ChangeToDead;
         _combatComponent.OnAttackEnded += _stateMachine.ChangeToIdle;
 
         _aStarAgent.GetCurrentGridPositionAction += OnRequestCurrentGridPos;
@@ -116,7 +122,7 @@ public class Unit : MonoBehaviour
         _movementComponent.OnEndMove -= _stateMachine.ChangeToIdle;
         _movementComponent.CancelMovementAction -= _aStarAgent.ClearFllowing;
 
-        _healthComponent.OnDied -= _stateMachine.ChangeToDead;
+        Health.OnDied -= _stateMachine.ChangeToDead;
         _combatComponent.OnAttackEnded -= _stateMachine.ChangeToIdle;
 
         _aStarAgent.GetCurrentGridPositionAction -= OnRequestCurrentGridPos;
@@ -225,7 +231,6 @@ public class Unit : MonoBehaviour
     }
 
     public void OnEnterWalk() => _aStarAgent.StartFollowPath();
-    public bool ApplyDamage(int damage) => _healthComponent.ApplyDamage(damage);
     public void SetCurrentGrid(IGridManager grid) => CurrentGrid = grid;
 
     // =========================

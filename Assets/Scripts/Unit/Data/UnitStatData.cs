@@ -9,6 +9,7 @@ public class UnitStatData
     public int BaseAtk { get; }
     public int BaseRange { get; }
     public float BaseAttackDelay { get; }
+    public int BaseMana { get; }
 
     public UnitStatData(DB_UnitStats e)
     {
@@ -19,5 +20,6 @@ public class UnitStatData
         BaseAtk = e.f_Attack;
         BaseRange = e.f_Range;
         BaseAttackDelay = e.f_AttackDelay;
+        BaseMana = e.f_Mana;
     }
 }

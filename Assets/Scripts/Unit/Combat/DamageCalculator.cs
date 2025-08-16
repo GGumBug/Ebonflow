@@ -4,8 +4,9 @@ public class DamageCalculator
 {
     public int CalculateDamage(UnitStats attacker, UnitStats defender)
     {
-        // 복잡한 데미지 연산 있을 시 추가
-
-        return attacker.Attack;
+        if (attacker == null) return 0;
+        // TODO: 방어/저항/관통/치명/난수 등 확장
+        int dmg = Mathf.Max(0, attacker.Attack);
+        return dmg;
     }
 }

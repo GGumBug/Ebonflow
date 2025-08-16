@@ -3,24 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 유닛의 기본 스탯(최대치)과 버프/디버프, 그리고 현재 체력을 관리합니다.
+/// 유닛의 기본 스탯(최대치)과 버프/디버프, HP/마나를 관리합니다.
 /// </summary>
 public class UnitStats
 {
-    // StatType 열거형 값을 한 번만 구해서 재사용
     private static readonly StatType[] AllStatTypes =
         (StatType[])Enum.GetValues(typeof(StatType));
 
     private readonly StatModifierBucket[] _buckets;
 
     public UnitStatData BaseStats { get; private set; }
-    public int MaxHP => _buckets[(int)StatType.Hp].Apply(BaseStats.BaseHp);
-    public int Attack => _buckets[(int)StatType.Attack].Apply(BaseStats.BaseAtk);
-    public int Range => _buckets[(int)StatType.Range].Apply(BaseStats.BaseRange);
-    public float AttackDelay => _buckets[(int)StatType.AttackDelay].Apply(BaseStats.BaseAttackDelay);
 
-    /// <summary>현재 남아 있는 HP. 데미지를 받거나 회복하면 이 값을 변경합니다.</summary>
-    public int CurrentHP { get; private set; }
+    public int MaxHP   => _buckets[(int)StatType.Hp].Apply(BaseStats.BaseHp);
+    public int Attack  => _buckets[(int)StatType.Attack].Apply(BaseStats.BaseAtk);
+    public int Range   => _buckets[(int)StatType.Range].Apply(BaseStats.BaseRange);
+    public float AttackDelay => _buckets[(int)StatType.AttackDelay].Apply(BaseStats.BaseAttackDelay);
+    public int MaxMana => _buckets[(int)StatType.Mana].Apply(BaseStats.BaseMana);  // ★ 추가
+
+    public int CurrentHP   { get; private set; }
+    public int CurrentMana { get; private set; } // ★ 추가
 
     public UnitStats(UnitStatData unitStatData)
     {
@@ -29,56 +30,69 @@ public class UnitStats
         foreach (var statType in AllStatTypes)
             _buckets[(int)statType] = new StatModifierBucket();
 
-        // 생성 시 현재 HP를 최대 HP로 초기화
-        CurrentHP = MaxHP;
+        // 초기화
+        CurrentHP   = MaxHP;
+        CurrentMana = 0; // 시작은 0 or Max, 게임 규칙에 맞게 설정
 
-        Debug.Log($"[UnitStats] ★{BaseStats.StarLevel} 생성 → MaxHP={MaxHP}, CurrentHP={CurrentHP}, MaxAtk={Attack}");
+        Debug.Log($"[UnitStats] ★{BaseStats.StarLevel} 생성 → MaxHP={MaxHP}, MaxMana={MaxMana}, CurrentHP={CurrentHP}, CurrentMana={CurrentMana}, Atk={Attack}");
     }
 
-    /// <summary>
-    /// 유닛이 데미지를 받습니다.
-    /// </summary>
-    /// <param name="damage">받을 데미지</param>
+    // --- HP ---
     public void TakeDamage(int damage)
     {
         CurrentHP = Mathf.Max(0, CurrentHP - damage);
-        Debug.Log($"[UnitStats] 데미지 {damage} 적용 → CurrentHP={CurrentHP}/{MaxHP}");
-        if (CurrentHP == 0)
-        {
-            // 예: OnDied 이벤트 호출
-        }
+        Debug.Log($"[UnitStats] 데미지 {damage} → CurrentHP={CurrentHP}/{MaxHP}");
     }
 
-    /// <summary>
-    /// 유닛이 회복합니다.
-    /// </summary>
-    /// <param name="heal">회복량</param>
     public void Heal(int heal)
     {
         CurrentHP = Mathf.Min(MaxHP, CurrentHP + heal);
-        Debug.Log($"[UnitStats] 회복 {heal} 적용 → CurrentHP={CurrentHP}/{MaxHP}");
+        Debug.Log($"[UnitStats] 회복 {heal} → CurrentHP={CurrentHP}/{MaxHP}");
     }
 
+    // --- Mana ---
+    public bool UseMana(int amount)
+    {
+        if (CurrentMana < amount) return false;
+        CurrentMana -= amount;
+        Debug.Log($"[UnitStats] 마나 {amount} 사용 → CurrentMana={CurrentMana}/{MaxMana}");
+        return true;
+    }
+
+    public void RecoverMana(int amount)
+    {
+        CurrentMana = Mathf.Min(MaxMana, CurrentMana + amount);
+        Debug.Log($"[UnitStats] 마나 {amount} 회복 → CurrentMana={CurrentMana}/{MaxMana}");
+    }
+
+    public void FillMana()
+    {
+        CurrentMana = MaxMana;
+        Debug.Log($"[UnitStats] 마나 풀충전 → CurrentMana={CurrentMana}/{MaxMana}");
+    }
+
+    public bool IsManaFull()  => CurrentMana >= MaxMana;
+    public bool IsManaEmpty() => CurrentMana <= 0;
+
+    // --- Buff/Level ---
     public void AddModifier(StatModifier modifier)
         => _buckets[(int)modifier.StatType].Add(modifier);
 
     public void RemoveModifier(StatModifier modifier)
         => _buckets[(int)modifier.StatType].Remove(modifier);
 
-    /// <summary>
-    /// 별 레벨이 변경될 때, 새로운 baseStats를 받아와 MaxHP/MaxAtk를 갱신합니다.
-    /// CurrentHP는 그대로 유지하거나, 최대치 비율에 맞춰 조정할 수 있습니다.
-    /// </summary>
     public void ChangeLevel(UnitStatData newBaseStats)
     {
-        float hpRatio = (float)CurrentHP / MaxHP;
+        float hpRatio   = (float)CurrentHP   / MaxHP;
+        float manaRatio = (float)CurrentMana / MaxMana;
 
         BaseStats = newBaseStats;
-        Debug.Log($"[UnitStats] 레벨 변경 ★{BaseStats.StarLevel} → MaxHP={MaxHP}, MaxAtk={Attack}");
+        Debug.Log($"[UnitStats] 레벨 변경 ★{BaseStats.StarLevel} → MaxHP={MaxHP}, MaxMana={MaxMana}, Atk={Attack}");
 
-        // 기존 남은 체력 비율 유지
-        CurrentHP = Mathf.Clamp(Mathf.RoundToInt(MaxHP * hpRatio), 0, MaxHP);
-        Debug.Log($"[UnitStats] 레벨업 후 CurrentHP 비율 유지 → CurrentHP={CurrentHP}/{MaxHP}");
+        CurrentHP   = Mathf.Clamp(Mathf.RoundToInt(MaxHP * hpRatio), 0, MaxHP);
+        CurrentMana = Mathf.Clamp(Mathf.RoundToInt(MaxMana * manaRatio), 0, MaxMana);
+
+        Debug.Log($"[UnitStats] 레벨업 후 HP={CurrentHP}/{MaxHP}, Mana={CurrentMana}/{MaxMana}");
     }
 
     // --- 내부용 modifier 버킷 ---

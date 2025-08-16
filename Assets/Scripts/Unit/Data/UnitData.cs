@@ -7,6 +7,8 @@ public class UnitData
     public string UnitCode { get; }
     public int NameKey { get; }
     public UnitTier UnitTier { get; }
+    public UnitClass Class { get; }
+    public UnitOrigin Origin { get; }
 
     public UnitData(DB_Units e)
     {
@@ -17,5 +19,7 @@ public class UnitData
         UnitCode = e.f_UnitCode;
         NameKey = e.f_NameKey;
         UnitTier = e.f_UnitTier;
+        Class = e.f_Class;
+        Origin = e.f_Origin;
     }
 }

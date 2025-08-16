@@ -17,6 +17,7 @@ public enum StatType
     Attack,
     AttackDelay,
     Range,
+    Mana,
 }
 
 public enum ModifierMode
@@ -56,4 +57,25 @@ public enum UnitTier
     /// Korean: 대왕 (大王)
     /// </summary>
     UnderworldKing = 5
+}
+
+public enum UnitClass
+{
+    None,
+    Mage,
+    Warlock,
+    Shaman
+}
+
+
+public enum UnitOrigin
+{
+    None = 0,
+    Human,
+    Elf,
+    Orc,
+    Undead,
+    Demon,
+    Dragon,
+    Spirit,
 }

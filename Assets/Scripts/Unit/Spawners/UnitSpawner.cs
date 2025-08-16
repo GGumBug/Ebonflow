@@ -56,7 +56,7 @@ public class UnitSpawner
         Vector3 spawnPos = new Vector3(pos.x, pos.y, 0);
         Transform container = team == TeamType.Ally ? _allyContainer : _enemyContainer;
         var unit = PoolManager.Instance.GetFromPool<Unit>(_prefab, container, spawnPos, Quaternion.identity);
-        unit.Setup(team, OnRequestUnitStatData.Invoke(unitId, starLevel).Stat, gridManager);
+        unit.Setup(team, OnRequestUnitStatData.Invoke(unitId, starLevel), gridManager);
         unit.OnDied += OnUnitDied;
 
         // BattleGrid라면 등록
