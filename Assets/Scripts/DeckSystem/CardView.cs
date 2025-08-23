@@ -13,13 +13,15 @@ public class CardView : BuyButtonBase
 
     private AutoBattleUnitManager _autoBattleUnitManager;
 
+    public event Func<CardData> RequestDrawCardData;
+
     public int Index { get; private set; }
     public CardData Data { get; private set; }
 
-    public event Action<int> RequestNewCardData;
-
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         btnBuy.onClick.AddListener(Buy);
         _autoBattleUnitManager = AutoBattleUnitManager.Instance;
     }
@@ -37,7 +39,6 @@ public class CardView : BuyButtonBase
     public void SetCardView(int index, CardDrawManager cardDrawManager)
     {
         Index = index;
-        RequestNewCardData += cardDrawManager.ResetIndexCard;
     }
 
     protected void Buy()
@@ -46,7 +47,9 @@ public class CardView : BuyButtonBase
         {
             _autoBattleUnitManager.SpawnToBench(Data.unitID, Data.starLevel);
             requestSpendSoulCoin.Invoke(price);
-            RequestNewCardData?.Invoke(Index);
+
+            CardData newData = RequestDrawCardData.Invoke();
+            SetData(newData);
         }
         else
         {

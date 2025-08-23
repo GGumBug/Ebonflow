@@ -22,7 +22,10 @@ namespace AutoBattle.UI
         {
             cardViews = cardsPanelRect.GetComponentsInChildren<CardView>();
             for (int i = 0; i < cardViews.Length; i++)
+            {
                 cardViews[i].SetCardView(i, cardDrawManager);
+                cardViews[i].RequestDrawCardData += cardDrawManager.DrawCard;
+            }
         }
 
         private void SetBuyButtons(AutoBattlePlayerDataContext autoBattlePlayerDataContext)

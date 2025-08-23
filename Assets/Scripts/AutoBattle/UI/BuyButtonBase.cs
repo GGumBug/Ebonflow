@@ -4,11 +4,15 @@ using UnityEngine.UI;
 
 public class BuyButtonBase : MonoBehaviour
 {
-    [SerializeField] protected Button btnBuy;
-
+    protected Button btnBuy;
     protected int price;
     protected Func<int, bool> requestSpendSoulCoin;
     protected Func<int, bool> requestCanBuy;
+
+    protected virtual void Awake()
+    {
+        btnBuy = GetComponent<Button>();
+    }
 
     public virtual void SetBuyButton(AutoBattlePlayerDataContext autoBattlePlayerDataContext)
     {

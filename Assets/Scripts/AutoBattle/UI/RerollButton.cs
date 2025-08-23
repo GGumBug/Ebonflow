@@ -4,6 +4,12 @@ public class RerollButton : BuyButtonBase
 {
     private const int REROLL_PRICE = 2;
 
+    protected override void Awake()
+    {
+        base.Awake();
+
+    }
+
     public override void SetBuyButton(AutoBattlePlayerDataContext autoBattlePlayerDataContext)
     {
         base.SetBuyButton(autoBattlePlayerDataContext);

@@ -58,19 +58,6 @@ namespace DeckSystem
             _currentHand.Clear();
         }
 
-        public void ResetIndexCard(int cardIndex)
-        {
-            if (cardIndex < 0 || cardIndex >= _currentHand.Count)
-                throw new ArgumentOutOfRangeException(nameof(cardIndex));
-
-            var oldCard = _currentHand[cardIndex];
-
-            var newCard = DrawCard();
-
-            _currentHand[cardIndex] = newCard;
-            requestSetCardView(cardIndex, newCard);
-        }
-
         public CardData DrawCard()
         {
             if (_tierBasedCardPicker == null)
