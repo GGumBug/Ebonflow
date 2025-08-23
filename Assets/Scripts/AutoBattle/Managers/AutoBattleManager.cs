@@ -21,19 +21,19 @@ namespace AutoBattle
 
             AutoBattleUnitManager.Instance.OnTeamEliminated += HandleTeamEliminated;
 
-            StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.UpdateStreak(true), 1);
-            StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Stage.shouldResumeBattle = false, 2);
+            StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.UpdateStreak(true), 0);
+            StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Stage.shouldResumeBattle = false, 0);
+            StateController.VictoryEntered.Add(() => _rewardService.ApplyInterest(), 0);
             StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.Save(), 1);
-            StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Save(), 2);
-            StateController.VictoryEntered.Add(() => _rewardService.ApplyInterest(), 3);
-            StateController.VictoryEntered.Add(async () => await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MapScene>(), 0);
-            
+            StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Save(), 1);
+            StateController.VictoryEntered.Add(async () => await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MapScene>(), 2);
+
+            StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Stage.shouldResumeBattle = false, 0);
+            StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.UpdateStreak(false), 0);
+            StateController.DefeatEntered.Add(() => _rewardService.ApplyInterest(), 0);
+            StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Save(), 1);
             StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.Save(), 1);
-            StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Stage.shouldResumeBattle = false, 3);
-            StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Save(), 2);
-            StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.UpdateStreak(false), 1);
-            StateController.DefeatEntered.Add(() => _rewardService.ApplyInterest(), 2);
-            StateController.DefeatEntered.Add(async () => await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MapScene>(), 0);
+            StateController.DefeatEntered.Add(async () => await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MapScene>(), 2);
         }
 
         public bool Attack(Unit attacker, Unit defender)

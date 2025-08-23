@@ -13,6 +13,7 @@ namespace AutoBattle
 
         public List<PlayerUnitRecord> ownedUnits;
         public List<UnitPlacementRecord> placements;
+        public List<DeckTierEntry> deckInventory;
 
         public AutoBattlePlayerData(int level, int soulCoin)
         {
@@ -22,6 +23,27 @@ namespace AutoBattle
             nextInstanceId = 1;
             ownedUnits = new();
             placements = new();
+            deckInventory = new();
         }
+    }
+
+    [Serializable]
+    public class DeckTierEntry
+    {
+        public UnitTier tier;
+        public List<DeckUnitRemain> units; // unitId별 남은 장수
+
+        public DeckTierEntry(UnitTier tier)
+        {
+            this.tier = tier;
+            units = new();
+        }
+    }
+
+    [Serializable]
+    public class DeckUnitRemain
+    {
+        public int unitId;
+        public int remaining; // 남은 장수
     }
 }

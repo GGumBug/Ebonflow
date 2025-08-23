@@ -375,9 +375,17 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2896356781727695828, guid: 826ce99d839c64761a1b0e07e02d3b77, type: 3}
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5640856618098056061, guid: 826ce99d839c64761a1b0e07e02d3b77, type: 3}
       propertyPath: m_Name
       value: UIUnitStatBars
+      objectReference: {fileID: 0}
+    - target: {fileID: 7889470765149627241, guid: 826ce99d839c64761a1b0e07e02d3b77, type: 3}
+      propertyPath: m_Value
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8997974679746037907, guid: 826ce99d839c64761a1b0e07e02d3b77, type: 3}
       propertyPath: m_PresetInfoIsWorld

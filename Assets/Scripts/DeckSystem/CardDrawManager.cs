@@ -1,6 +1,5 @@
 using AutoBattle;
 using AutoBattle.UI;
-using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 
@@ -24,12 +23,14 @@ namespace DeckSystem
 
             var unitStatRepository = autoBattleUnitManager.UnitStatRepository;
 
-            _deck = new Deck(unitStatRepository.GetMaxId(), unitStatRepository.Exists, unitStatRepository.Get);
+            _deck = new Deck(unitStatRepository.GetMaxId(), unitStatRepository.Exists, unitStatRepository.Get, _autoBattlePlayerDataContext);
             _tierBasedCardPicker = new TierBasedCardPicker(_deck);
 
             requestSetCardView = uIAutoBattleShop.SetNewCardData;
 
             AutoBattleManager.Instance.StateController.PreparationEntered.Add(DrawFiveCard);
+            AutoBattleManager.Instance.StateController.VictoryEntered.Add(() => ReturnHandToDeck(), 0);
+            AutoBattleManager.Instance.StateController.DefeatEntered.Add(() => ReturnHandToDeck(), 0);
         }
 
         public void DrawFiveCard()
@@ -47,6 +48,14 @@ namespace DeckSystem
                 _currentHand.Add(newCard);
                 requestSetCardView(i, newCard);
             }
+        }
+
+        private void ReturnHandToDeck()
+        {
+            foreach (var card in _currentHand)
+                _deck.ReturnCard(card);
+
+            _currentHand.Clear();
         }
 
         public void ResetIndexCard(int cardIndex)

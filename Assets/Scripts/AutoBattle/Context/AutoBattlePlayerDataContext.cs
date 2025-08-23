@@ -30,6 +30,7 @@ public class AutoBattlePlayerDataContext : DataContext<AutoBattlePlayerData>
         {
             Data.ownedUnits = new();
             Data.placements = new();
+            Data.deckInventory = new();
         }
     }
 
@@ -119,5 +120,52 @@ public class AutoBattlePlayerDataContext : DataContext<AutoBattlePlayerData>
         rec = default;
         return false;
     }
-}
 
+    // 남은 장수 조회
+    public int GetDeckRemaining(UnitTier tier, int unitId)
+    {
+        var entry = Data.deckInventory.FirstOrDefault(e => e.tier == tier);
+        var unit = entry?.units?.FirstOrDefault(u => u.unitId == unitId);
+        return unit?.remaining ?? 0;
+    }
+
+    // 카드 1장 추가 (없으면 생성)
+    public void AddCard(UnitTier tier, int unitId)
+    {
+        var entry = Data.deckInventory.FirstOrDefault(e => e.tier == tier);
+        if (entry == null)
+        {
+            entry = new DeckTierEntry(tier);
+            Data.deckInventory.Add(entry);
+        }
+
+        var unit = entry.units.FirstOrDefault(u => u.unitId == unitId);
+        if (unit == null)
+        {
+            unit = new DeckUnitRemain { unitId = unitId, remaining = 0 };
+            entry.units.Add(unit);
+        }
+
+        unit.remaining += 1;
+    }
+
+    // 카드 1장 소비 (성공 시 true, 재고 없으면 false)
+    public bool TryConsumeCard(UnitTier tier, int unitId)
+    {
+        var entry = Data.deckInventory.FirstOrDefault(e => e.tier == tier);
+        if (entry == null) return false;
+
+        var unit = entry.units.FirstOrDefault(u => u.unitId == unitId);
+        if (unit == null || unit.remaining <= 0) return false;
+
+        unit.remaining -= 1;
+
+        // 남은 장수가 0이면 정리(선택)
+        if (unit.remaining <= 0)
+            entry.units.RemoveAll(u => u.unitId == unitId);
+        if (entry.units.Count == 0)
+            Data.deckInventory.Remove(entry);
+
+        return true;
+    }
+}

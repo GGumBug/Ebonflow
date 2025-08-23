@@ -8,7 +8,8 @@ public sealed class PriorityEvent
     public void Add(Action handler, int priority = 0)
     {
         _handlers.Add((priority, handler));
-        _handlers.Sort((a, b) => b.priority.CompareTo(a.priority)); // 높은 숫자 먼저
+        // 낮은 숫자가 먼저 실행되도록 정렬
+        _handlers.Sort((a, b) => a.priority.CompareTo(b.priority));
     }
 
     public void Remove(Action handler)
@@ -16,6 +17,7 @@ public sealed class PriorityEvent
 
     public void Invoke()
     {
-        foreach (var h in _handlers) h.handler?.Invoke();
+        foreach (var h in _handlers)
+            h.handler?.Invoke();
     }
 }

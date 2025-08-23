@@ -47,6 +47,8 @@ public class Unit : MonoBehaviour
 
     public void Setup(TeamType team, UnitAggregate aggregate, IGridManager gridManager)
     {
+        CurrentGridPosition = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+
         Class = aggregate.Data.Class;
         Origin = aggregate.Data.Origin;
         _team = team;
@@ -77,6 +79,7 @@ public class Unit : MonoBehaviour
         _uIUnitStatBars.Bind(Health, Mana);
 
         SetCurrentGrid(gridManager);
+
         _draggableBehaviour.Setup(this);
         int price = AutoBattleUnitManager.Instance.UnitStatRepository.Get(_statData.UnitId, _statData.StarLevel).Price;
         SaleComponent = new UnitSaleComponent(price, () => _instanceId);
@@ -197,11 +200,11 @@ public class Unit : MonoBehaviour
         if (_battleHandlersSubscribed) return;
 
         var ctrl = _autoBattleManager.StateController;
-        ctrl.BattleEntered.Add(OnBattleEntered_RegistPosition, priority: 3);
-        ctrl.BattleEntered.Add(OnBattleEntered_Activate, priority: 2);
-        ctrl.BattleEntered.Add(OnBattleEntered_ScanRange, priority: 1);
-        ctrl.VictoryEntered.Add(OnBattleExited_Deactivate, priority: 1);
-        ctrl.DefeatEntered.Add(OnBattleExited_Deactivate, priority: 1);
+        ctrl.BattleEntered.Add(OnBattleEntered_RegistPosition, priority: 0);
+        ctrl.BattleEntered.Add(OnBattleEntered_Activate, priority: 1);
+        ctrl.BattleEntered.Add(OnBattleEntered_ScanRange, priority: 2);
+        ctrl.VictoryEntered.Add(OnBattleExited_Deactivate, priority: 0);
+        ctrl.DefeatEntered.Add(OnBattleExited_Deactivate, priority: 0);
 
         _battleHandlersSubscribed = true;
     }
@@ -234,6 +237,7 @@ public class Unit : MonoBehaviour
     }
 
     public void OnEnterWalk() => _aStarAgent.StartFollowPath();
+
     public void SetCurrentGrid(IGridManager grid) => CurrentGrid = grid;
 
     // =========================
