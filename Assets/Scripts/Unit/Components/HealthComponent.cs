@@ -44,6 +44,7 @@ public class HealthComponent
 
         appliedDamage = before - after; // 실제로 깎인 양(쉴드/저항 고려 시 여기에 반영)
         _stats.TakeDamage(appliedDamage);
+        OnChanged?.Invoke(Current, Max);
 
         if (_stats.CurrentHP <= 0)
         {

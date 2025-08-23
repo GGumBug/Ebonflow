@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
+    [SerializeField] private UIUnitStatBars _uIUnitStatBars;
     [SerializeField] private TeamType _team;
 
     private int _instanceId = -1;
@@ -73,6 +74,8 @@ public class Unit : MonoBehaviour
         _movementComponent = new MovementComponent(transform);
         Health = new HealthComponent(_stats);
         Mana = new ManaComponent(_stats.MaxMana, 0);
+        _uIUnitStatBars.Bind(Health, Mana);
+
         SetCurrentGrid(gridManager);
         _draggableBehaviour.Setup(this);
         int price = AutoBattleUnitManager.Instance.UnitStatRepository.Get(_statData.UnitId, _statData.StarLevel).Price;

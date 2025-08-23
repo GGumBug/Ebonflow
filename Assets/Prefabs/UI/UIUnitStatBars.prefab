@@ -406,10 +406,10 @@ RectTransform:
   - {fileID: 301906378910677087}
   m_Father: {fileID: 1428476440001118966}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -8}
-  m_SizeDelta: {x: 160, y: 15}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7889470765149627241
 MonoBehaviour:
@@ -489,6 +489,7 @@ GameObject:
   - component: {fileID: 8997974679746037907}
   - component: {fileID: 1966764183974992072}
   - component: {fileID: 2367496887024563065}
+  - component: {fileID: 5811664658154245072}
   m_Layer: 5
   m_Name: UIUnitStatBars
   m_TagString: Untagged
@@ -594,6 +595,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hpBar: {fileID: 6824650954122535905}
   _manaBar: {fileID: 8582410780276164390}
+--- !u!114 &5811664658154245072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5640856618098056061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: -13
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!1 &5817977512588870484
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,8 +655,8 @@ RectTransform:
   - {fileID: 9124998026999661517}
   m_Father: {fileID: 1428476440001118966}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 160, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -680,7 +707,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0.555
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
