@@ -3,6 +3,7 @@ using System;
 public class UnitStateMachine
 {
     private readonly Unit _host;
+    private readonly IUnitState _waitState = WaitState.Instance;
     private readonly IUnitState _idleState  = IdleState.Instance;
     private readonly IUnitState _walkState  = WalkState.Instance;
     private readonly IUnitState _attackState = AttackState.Instance;
@@ -17,6 +18,7 @@ public class UnitStateMachine
         CurrentState.Enter(_host);
     }
 
+    public void ChangeToWait() => ChangeState(_waitState);
     public void ChangeToIdle()   => ChangeState(_idleState);
     public void ChangeToWalk()   => ChangeState(_walkState);
     public void ChangeToAttack() => ChangeState(_attackState);

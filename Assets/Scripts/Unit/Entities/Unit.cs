@@ -114,6 +114,8 @@ public class Unit : MonoBehaviour
         _aStarAgent.CrushOtherTeamAgent += _stateMachine.ChangeToIdle;
         _aStarAgent.OnPathCompleteAction += _stateMachine.ChangeToIdle;
         _aStarAgent.OnMove += _movementComponent.Move;
+        _aStarAgent.RequestEnterWaitState += _stateMachine.ChangeToWait;
+        _aStarAgent.RequestExitWaitState += _stateMachine.ChangeToIdle;
 
         SaleComponent.RequestReleaseAndPool += ReleaseAndPool;
         SaleComponent.RequestCardData += MakeCardData;
@@ -136,6 +138,8 @@ public class Unit : MonoBehaviour
         _aStarAgent.CrushOtherTeamAgent -= _stateMachine.ChangeToIdle;
         _aStarAgent.OnPathCompleteAction -= _stateMachine.ChangeToIdle;
         _aStarAgent.OnMove -= _movementComponent.Move;
+        _aStarAgent.RequestEnterWaitState -= _stateMachine.ChangeToWait;
+        _aStarAgent.RequestExitWaitState -= _stateMachine.ChangeToIdle;
 
         SaleComponent.RequestReleaseAndPool -= ReleaseAndPool;
         SaleComponent.RequestCardData -= MakeCardData;

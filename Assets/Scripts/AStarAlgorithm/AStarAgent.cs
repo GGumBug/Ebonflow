@@ -19,6 +19,8 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     public event Action OnPathCompleteAction;
     public event Func<Vector2Int> GetCurrentGridPositionAction;
     public event Action<Vector2Int> SetCurrentGridPositionAction;
+    public event Action RequestEnterWaitState;
+    public event Action RequestExitWaitState;
 
     /// <summary>
     /// 현재 경로에서 다음 노드가 존재하는지 여부
@@ -81,6 +83,16 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     private void ExecuteGridMove()
     {
         _grid ??= AStarAlgorithmManager.Instance.Grid;
+
+        if (_currentPath == null)
+        {
+            RequestEnterWaitState?.Invoke();
+
+            _grid.OnCellOccupied += ExitWaitState;
+            _grid.OnCellFreed += ExitWaitState;
+            return;
+        }
+
         AStarNode currentNode = _currentPath[_currentPathIndex];
         Vector2Int destPos = new Vector2Int(currentNode.X, currentNode.Y);
 
@@ -175,6 +187,14 @@ public class AStarAgent : MonoBehaviour, IAStarPathPoint, IAStarPathFollower
     {
         _currentPath = null;
         _currentPathIndex = 1;
+    }
+
+    private void ExitWaitState(AStarGrid aStarGrid)
+    {
+        RequestExitWaitState?.Invoke();
+
+        aStarGrid.OnCellOccupied -= ExitWaitState;
+        aStarGrid.OnCellFreed -= ExitWaitState;
     }
 
     private void OnDrawGizmos()

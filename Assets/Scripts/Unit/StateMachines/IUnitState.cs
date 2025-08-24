@@ -7,6 +7,25 @@ public interface IUnitState
     void Exit(Unit unit);     // 상태 이탈 시 1회 호출
 }
 
+public class WaitState : IUnitState
+{
+    public static readonly WaitState Instance = new WaitState();
+    private WaitState() { }
+
+    public void Enter(Unit unit)
+    {
+    }
+
+    public void Execute(Unit unit)
+    {
+        
+    }
+
+    public void Exit(Unit unit)
+    {
+    }
+}
+
 public class IdleState : IUnitState
 {
     public static readonly IdleState Instance = new IdleState();

@@ -16,11 +16,13 @@ public class AStarGrid : MonoBehaviour, IGridManager
     private AStarNode[,] _grid;
     private IBattleRoster _roster;
 
-    // 물리 쿼리 성능 최적화(NonAlloc)
-    private int _blockMask;
     private readonly Collider2D[] _hitBuffer = new Collider2D[4];
 
+    private int _blockMask;
     private Func<bool> requestCanDrop;
+
+    public event Action<AStarGrid> OnCellOccupied;
+    public event Action<AStarGrid> OnCellFreed;
 
     public GridType Type => GridType.Battle;
     public bool CanDrop => requestCanDrop?.Invoke() ?? false;
@@ -147,31 +149,33 @@ public class AStarGrid : MonoBehaviour, IGridManager
     public void SetNodeBlock(Vector2Int worldCoordinate, bool isBlock, AStarAgent agent = null)
     {
         Vector2Int gridIndex = WorldToGridIndex(worldCoordinate);
+        if (IsOutOfBounds(gridIndex)) { Debug.LogError("SetNodeBlock: 주어진 좌표가 그리드 범위를 벗어났습니다."); return; }
 
-        if (IsOutOfBounds(gridIndex))
+        var node = _grid[gridIndex.x, gridIndex.y];
+        bool prev = node.GetBlock;
+
+        node.SetBlock = isBlock;
+        node.Agent = agent;
+
+        if (prev != isBlock)
         {
-            Debug.LogError("SetNodeBlock: 주어진 좌표가 그리드 범위를 벗어났습니다.");
-            return;
+            if (isBlock) OnCellOccupied?.Invoke(this);
+            else OnCellFreed?.Invoke(this);
         }
-
-        var targetNode = _grid[gridIndex.x, gridIndex.y];
-        targetNode.SetBlock = isBlock;
-        targetNode.Agent = agent;
     }
 
     public void RemoveNodeBlock(Vector2Int worldCoordinate)
     {
         Vector2Int gridIndex = WorldToGridIndex(worldCoordinate);
+        if (IsOutOfBounds(gridIndex)) { Debug.LogError("RemoveNodeBlock: 주어진 좌표가 그리드 범위를 벗어났습니다."); return; }
 
-        if (IsOutOfBounds(gridIndex))
+        var node = _grid[gridIndex.x, gridIndex.y];
+        if (node.GetBlock)
         {
-            Debug.LogError("RemoveNodeBlock: 주어진 좌표가 그리드 범위를 벗어났습니다.");
-            return;
+            node.SetBlock = false;
+            node.Agent = null;
+            OnCellFreed?.Invoke(this);
         }
-
-        var targetNode = _grid[gridIndex.x, gridIndex.y];
-        targetNode.SetBlock = false;
-        targetNode.Agent = null;
     }
 
     /// <summary>
