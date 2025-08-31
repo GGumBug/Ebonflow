@@ -55,7 +55,7 @@ namespace AutoBattle
             if (appliedDamage > 0)
             {
                 _manaGainService?.OnDealDamage(attacker, appliedDamage);
-                _manaGainService?.OnTakeDamage(defender, appliedDamage);
+                // _manaGainService?.OnTakeDamage(defender, appliedDamage); 피해 받을 때 마나회복
             }
 
             return killed;

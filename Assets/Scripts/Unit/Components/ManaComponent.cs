@@ -13,7 +13,7 @@ public class ManaComponent
 
     public ManaComponent(int max, int initial = 0)
     {
-        Max = Mathf.Max(1, max);
+        Max = max;
         Current = Mathf.Clamp(initial, 0, Max);
     }
 
@@ -41,7 +41,7 @@ public class ManaComponent
 
     public void Add(int amount)
     {
-        if (amount == 0) return;
+        if (amount == 0 || Max == -1) return;
         int prev = Current;
         Current = Mathf.Clamp(Current + amount, 0, Max);
         if (Current != prev)
