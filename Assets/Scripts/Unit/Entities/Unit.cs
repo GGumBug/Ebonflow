@@ -72,10 +72,10 @@ public class Unit : MonoBehaviour
         _circleCollider2D.enabled = true;
         _rangeDetector.Setup(Stat.Range);
         _stateMachine = new UnitStateMachine(this);
-        _combatComponent = new CombatComponent(this, _rangeDetector, _autoBattleManager.Attack);
+        Mana = new ManaComponent(_stats.MaxMana, 0);
+        _combatComponent = new CombatComponent(this, _rangeDetector, _autoBattleManager.Attack, Mana);
         _movementComponent = new MovementComponent(transform);
         Health = new HealthComponent(_stats);
-        Mana = new ManaComponent(_stats.MaxMana, 0);
         _uIUnitStatBars.Bind(Health, Mana);
 
         SetCurrentGrid(gridManager);

@@ -1,27 +1,32 @@
 using System;
 using DG.Tweening;
+using UnityEngine;
 
 public class CombatComponent
 {
-    public event Action OnAttackStarted;
-    public event Action OnAttackEnded;
-
     private RangeDetector _detector;
     private event Func<Unit, Unit, bool> OnAttack;
     private Unit _unit;
     private Unit _currentTarget;
     private Sequence _attackSequence;
 
+    public event Action OnAttackStarted;
+    public event Action OnAttackEnded;
+    public event Action<int> ResetToMana;
+    public event Func<bool> CheckManaFull;
+
     private bool HasValidTarget =>
     _currentTarget != null
     && !_currentTarget.IsDead
     && _detector.IsTargetInRange(_currentTarget);
 
-    public CombatComponent(Unit host, RangeDetector detector, Func<Unit, Unit, bool> onAttack)
+    public CombatComponent(Unit host, RangeDetector detector, Func<Unit, Unit, bool> onAttack, ManaComponent manaComponent)
     {
         _unit = host;
         _detector = detector;
         OnAttack += onAttack;
+        CheckManaFull += manaComponent.IsFull;
+        ResetToMana += manaComponent.ResetTo;
     }
 
     public bool CanAttack()
@@ -66,12 +71,20 @@ public class CombatComponent
                     return;
                 }
 
-                bool targetDied = OnAttack(attacker, target);
+                if (CheckManaFull.Invoke())
+                {
+                    ResetToMana.Invoke(0);
+                    Debug.Log("스킬 발동!");
+                }
+                else
+                {
+                    bool targetDied = OnAttack(attacker, target);
+                }
+
                 OnAttackEnded?.Invoke();
             })
             .SetAutoKill(true);  // 시퀀스 완료 후 자동 해제
     }
-
 
     public void CancelAttack()
     {

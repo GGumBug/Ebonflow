@@ -4,7 +4,9 @@ using UnityEngine;
 /// <summary>유닛의 마나를 관리하는 순수 로직 컴포넌트입니다.</summary>
 public class ManaComponent
 {
-    public event Action<int, int> OnChanged;   // (current, max)
+    private bool _isEnabled = true;
+
+    public event Action<int, int> OnChanged;
     public event Action OnEmptied;
     public event Action OnFilled;
 
@@ -13,12 +15,15 @@ public class ManaComponent
 
     public ManaComponent(int max, int initial = 0)
     {
+        if (max == -1)
+            _isEnabled = false;
+
         Max = max;
         Current = Mathf.Clamp(initial, 0, Max);
     }
 
-    public bool IsFull() => Current >= Max;
-    public bool IsEmpty() => Current <= 0;
+    public bool IsFull() => Current >= Max && _isEnabled;
+    public bool IsEmpty() => Current <= 0 && _isEnabled;
 
     public void SetMax(int max, bool clampCurrent = true)
     {
@@ -41,7 +46,7 @@ public class ManaComponent
 
     public void Add(int amount)
     {
-        if (amount == 0 || Max == -1) return;
+        if (amount == 0 || !_isEnabled) return;
         int prev = Current;
         Current = Mathf.Clamp(Current + amount, 0, Max);
         if (Current != prev)
