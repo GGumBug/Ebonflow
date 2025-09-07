@@ -1,11 +1,12 @@
 using System;
+using CombatSystem;
 using DG.Tweening;
 using UnityEngine;
 
 public class CombatComponent
 {
     private RangeDetector _detector;
-    private event Func<Unit, Unit, bool> OnAttack;
+    private event Func<IAttacker, IVictim, bool> OnAttack;
     private Unit _unit;
     private Unit _currentTarget;
     private Sequence _attackSequence;
@@ -20,7 +21,7 @@ public class CombatComponent
     && !_currentTarget.IsDead
     && _detector.IsTargetInRange(_currentTarget);
 
-    public CombatComponent(Unit host, RangeDetector detector, Func<Unit, Unit, bool> onAttack, ManaComponent manaComponent)
+    public CombatComponent(Unit host, RangeDetector detector, Func<IAttacker, IVictim, bool> onAttack, ManaComponent manaComponent)
     {
         _unit = host;
         _detector = detector;

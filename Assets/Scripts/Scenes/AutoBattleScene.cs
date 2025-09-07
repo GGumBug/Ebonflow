@@ -1,4 +1,5 @@
 using AutoBattle;
+using CombatSystem;
 using Cysharp.Threading.Tasks;
 using DeckSystem;
 using StageEditor;
@@ -48,6 +49,7 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
         aStarAlgorithmManager.InitializeGrid(this);
 
         AutoBattleManager.Instance.Setup();
+        CombatManager.Instance.Setup();
 
         AutoBattleUnitManager autoBattleUnitManager = AutoBattleUnitManager.Instance;
         autoBattleUnitManager.Setup(aStarAlgorithmManager.Grid, _uiAutoBattle.SellZonePanel, _currentStageData.unitList);

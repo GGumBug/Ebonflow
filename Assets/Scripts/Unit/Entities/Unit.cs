@@ -1,9 +1,10 @@
 using AutoBattle;
+using CombatSystem;
 using DeckSystem;
 using System;
 using UnityEngine;
 
-public class Unit : MonoBehaviour
+public class Unit : MonoBehaviour, IAttacker, IVictim
 {
     [SerializeField] private UIUnitStatBars _uIUnitStatBars;
     [SerializeField] private TeamType _team;
@@ -19,6 +20,7 @@ public class Unit : MonoBehaviour
     private CircleCollider2D _circleCollider2D;
     private UnitDraggableBehaviour _draggableBehaviour;
     private AutoBattleManager _autoBattleManager;
+    private CombatManager _combatManager;
     private AutoBattleDataManager _autoBattleDataManager;
 
     private bool _battleHandlersSubscribed; // 중복 구독/해제 방지
@@ -73,7 +75,7 @@ public class Unit : MonoBehaviour
         _rangeDetector.Setup(Stat.Range);
         _stateMachine = new UnitStateMachine(this);
         Mana = new ManaComponent(_stats.MaxMana, 0);
-        _combatComponent = new CombatComponent(this, _rangeDetector, _autoBattleManager.Attack, Mana);
+        _combatComponent = new CombatComponent(this, _rangeDetector, _combatManager.Attack, Mana);
         _movementComponent = new MovementComponent(transform);
         Health = new HealthComponent(_stats);
         _uIUnitStatBars.Bind(Health, Mana);

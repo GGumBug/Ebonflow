@@ -1,9 +1,10 @@
+using CombatSystem;
 using UnityEngine;
 
 public class ManaGainService
 {
     // 공격 시 충전: 기본 20% (최대 10), 메이지/워록/샤먼 40% (최대 20)
-    public void OnDealDamage(Unit attacker, int dealtDamage)
+    public void OnDealDamage(IAttacker attacker, int dealtDamage)
     {
         if (attacker == null || attacker.Mana == null || dealtDamage <= 0) return;
 
@@ -31,7 +32,7 @@ public class ManaGainService
         // Debug.Log($"[Mana] Taken +{gain} (dmg={takenDamage})");
     }
 
-    private bool IsCaster(Unit u)
+    private bool IsCaster(IAttacker u)
     {
         var cls = u.Class;
         return cls == UnitClass.Mage || cls == UnitClass.Warlock || cls == UnitClass.Shaman;
