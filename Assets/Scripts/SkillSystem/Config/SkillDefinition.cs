@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace SkillSystem
 {
     public class SkillDefinition
@@ -9,7 +7,7 @@ namespace SkillSystem
         public TargetingType Targeting { get; private set; }
         public DeliveryType Delivery { get; private set; }
         public int HitLimit { get; private set; }
-        public CastValidationPolicy Validation { get; private set; }
+        public TargetPriorityType TargetPriorityType { get; private set; }
         public float Coef { get; private set; }
 
         public SkillDefinition(
@@ -18,7 +16,7 @@ namespace SkillSystem
         TargetingType targeting,
         DeliveryType delivery,
         int hitLimit,
-        CastValidationPolicy validation,
+        TargetPriorityType targetPriorityType,
         float coef)
         {
             SkillId = skillId;
@@ -26,7 +24,7 @@ namespace SkillSystem
             Targeting = targeting;
             Delivery = delivery;
             HitLimit = hitLimit;
-            Validation = validation;
+            TargetPriorityType = targetPriorityType;
             Coef = coef;
         }
     }

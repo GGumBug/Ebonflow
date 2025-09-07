@@ -605,15 +605,15 @@ public partial class DB_SkillDefinitions : BGEntity
 		get => (DeliveryType) _f_DeliveryType[Index];
 		set => _f_DeliveryType[Index] = value;
 	}
+	public TargetPriorityType f_TargetPriorityType
+	{
+		get => (TargetPriorityType) _f_TargetPriorityType[Index];
+		set => _f_TargetPriorityType[Index] = value;
+	}
 	public System.Int32 f_HitLimit
 	{
 		get => _f_HitLimit[Index];
 		set => _f_HitLimit[Index] = value;
-	}
-	public CastValidationPolicy f_CastValidationPolicy
-	{
-		get => (CastValidationPolicy) _f_CastValidationPolicy[Index];
-		set => _f_CastValidationPolicy[Index] = value;
 	}
 	public System.Single f_Coef
 	{
@@ -628,10 +628,10 @@ public partial class DB_SkillDefinitions : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldEnum _f_TargetingType => _ufle12jhs77_f_TargetingType ?? (_ufle12jhs77_f_TargetingType = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEnum>(MetaDefault, new BGId(4666075402812042926UL, 5809233559407506320UL), () => _ufle12jhs77_f_TargetingType = null));
 	private static BansheeGz.BGDatabase.BGFieldEnum _ufle12jhs77_f_DeliveryType;
 	public static BansheeGz.BGDatabase.BGFieldEnum _f_DeliveryType => _ufle12jhs77_f_DeliveryType ?? (_ufle12jhs77_f_DeliveryType = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEnum>(MetaDefault, new BGId(5300192288556874040UL, 10008222721175716493UL), () => _ufle12jhs77_f_DeliveryType = null));
+	private static BansheeGz.BGDatabase.BGFieldEnum _ufle12jhs77_f_TargetPriorityType;
+	public static BansheeGz.BGDatabase.BGFieldEnum _f_TargetPriorityType => _ufle12jhs77_f_TargetPriorityType ?? (_ufle12jhs77_f_TargetPriorityType = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEnum>(MetaDefault, new BGId(5181400509335723958UL, 15964585602627402395UL), () => _ufle12jhs77_f_TargetPriorityType = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_HitLimit;
 	public static BansheeGz.BGDatabase.BGFieldInt _f_HitLimit => _ufle12jhs77_f_HitLimit ?? (_ufle12jhs77_f_HitLimit = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4791642517642103022UL, 18013108878088374427UL), () => _ufle12jhs77_f_HitLimit = null));
-	private static BansheeGz.BGDatabase.BGFieldEnum _ufle12jhs77_f_CastValidationPolicy;
-	public static BansheeGz.BGDatabase.BGFieldEnum _f_CastValidationPolicy => _ufle12jhs77_f_CastValidationPolicy ?? (_ufle12jhs77_f_CastValidationPolicy = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEnum>(MetaDefault, new BGId(5542697539477816115UL, 2275319710315869073UL), () => _ufle12jhs77_f_CastValidationPolicy = null));
 	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_Coef;
 	public static BansheeGz.BGDatabase.BGFieldFloat _f_Coef => _ufle12jhs77_f_Coef ?? (_ufle12jhs77_f_Coef = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(5720104085545835281UL, 3299285901855127UL), () => _ufle12jhs77_f_Coef = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();

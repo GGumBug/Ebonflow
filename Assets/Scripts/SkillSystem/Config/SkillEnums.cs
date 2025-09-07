@@ -1,15 +1,15 @@
-public enum CastValidationPolicy
-{
-    RequireEnemyInRange,
-    RequireValidAimOnly,
-    FreeCast
-}
-
 public enum TargetingType
 {
     Targeted,
     Skillshot,
     Area
+}
+
+public enum TargetPriorityType
+{
+    ClosestEnemy,
+    LowestHealth,
+    HighestDps
 }
 
 public enum DeliveryType

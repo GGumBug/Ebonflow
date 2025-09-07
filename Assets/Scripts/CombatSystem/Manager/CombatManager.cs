@@ -1,3 +1,4 @@
+using NUnit.Framework.Constraints;
 using SkillSystem;
 using UnityEngine;
 
@@ -8,12 +9,14 @@ namespace CombatSystem
         private DamageCalculator _damageCalculator;
         private ManaGainService _manaGainService;
         private SkillRepository _skillRepository;
+        private CastValidatorFactory _castValidatorFactory;
 
         public void Setup()
         {
             _skillRepository = new SkillRepository();
             _damageCalculator = new DamageCalculator();
             _manaGainService = new ManaGainService();
+            _castValidatorFactory = new CastValidatorFactory();
         }
 
         public bool Trigger(int skillId, IAttacker attacker, IRangeDetector detector)
@@ -27,6 +30,9 @@ namespace CombatSystem
                 Debug.LogError("스킬 데이터 가져오기 실패.");
                 return false;
             }
+            
+            // 타겟 적 혹은 방향 값 위치값 담은 결과
+            ValidationResult validationResult = _castValidatorFactory.Get(currentSkill.Targeting).Validate(currentSkill, attacker, detector);
 
             return true;
         }

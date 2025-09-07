@@ -32,7 +32,7 @@ namespace SkillSystem
                     targeting: e.f_TargetingType,
                     delivery: e.f_DeliveryType,
                     hitLimit: e.f_HitLimit,
-                    validation: e.f_CastValidationPolicy,
+                    targetPriorityType: e.f_TargetPriorityType,
                     coef: e.f_Coef
                     );
 
