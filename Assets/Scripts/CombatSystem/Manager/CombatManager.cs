@@ -34,6 +34,8 @@ namespace CombatSystem
             // 타겟 적 혹은 방향 값 위치값 담은 결과
             ValidationResult validationResult = _castValidatorFactory.Get(currentSkill.Targeting).Validate(currentSkill, attacker, detector);
 
+            // 타겟 논타겟 에리어에 따라 또 전략이 나눠져야 될 거 같아.
+
             return true;
         }
     }
