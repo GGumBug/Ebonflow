@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class CombatComponent
 {
-    private RangeDetector _detector;
-    private event Func<IAttacker, IVictim, bool> OnAttack;
+    private IRangeDetector _detector;
+    private event Func<int, IAttacker, IRangeDetector, bool> OnTrigger;
     private IAttacker _host;
     private IVictim _currentTarget;
     private Sequence _attackSequence;
@@ -21,18 +21,18 @@ public class CombatComponent
     && !_currentTarget.IsDead
     && _detector.IsTargetInRange(_currentTarget);
 
-    public CombatComponent(Unit host, RangeDetector detector, Func<IAttacker, IVictim, bool> onAttack, ManaComponent manaComponent)
+    public CombatComponent(Unit host, RangeDetector detector, Func<int, IAttacker, IRangeDetector, bool> onTrigger, ManaComponent manaComponent)
     {
         _host = host;
         _detector = detector;
-        OnAttack += onAttack;
+        OnTrigger += onTrigger;
         CheckManaFull += manaComponent.IsFull;
         ResetToMana += manaComponent.ResetTo;
     }
 
     public bool CanAttack()
     {
-        if (_detector.HasEnemies())
+        if (_detector.HasEnemies)
             return true;
 
         return false;
@@ -79,7 +79,7 @@ public class CombatComponent
                 }
                 else
                 {
-                    bool targetDied = OnAttack(attacker, target);
+                    bool targetDied = OnTrigger(0, attacker, _detector); // 디버그용 스킬 0번
                 }
 
                 OnAttackEnded?.Invoke();

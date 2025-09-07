@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CombatSystem
 {
-    public class RangeDetector : MonoBehaviour
+    public class RangeDetector : MonoBehaviour, IRangeDetector
     {
         [Header("Detection Settings")]
         [Tooltip("월드 단위의 감지 반지름입니다.")]
@@ -24,7 +24,12 @@ namespace CombatSystem
         public event Action OnEnemyListEmpty;
 
         private float _detectionRadius => col.radius * Mathf.Max(transform.localScale.x, transform.localScale.y);
-        public bool HasEnemies() => _inRangeEnemies != null && _inRangeEnemies.Count > 0;
+
+        public float DetectionRadius => _detectionRadius;
+
+        public IReadOnlyCollection<IVictim> EnemiesInRange => _inRangeEnemies;
+
+        bool IRangeDetector.HasEnemies => _inRangeEnemies != null && _inRangeEnemies.Count > 0;
 
         public void Setup(int range)
         {

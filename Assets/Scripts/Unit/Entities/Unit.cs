@@ -79,7 +79,7 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
         _rangeDetector.Setup(Stat.Range);
         _stateMachine = new UnitStateMachine(this);
         Mana = new ManaComponent(_stats.MaxMana, 0);
-        _combatComponent = new CombatComponent(this, _rangeDetector, _combatManager.Attack, Mana);
+        _combatComponent = new CombatComponent(this, _rangeDetector, _combatManager.Trigger, Mana);
         _movementComponent = new MovementComponent(transform);
         Health = new HealthComponent(_stats);
         _uIUnitStatBars.Bind(Health, Mana);

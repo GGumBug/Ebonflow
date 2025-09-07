@@ -1,23 +1,33 @@
-using CombatSystem;
 using UnityEngine;
 
 namespace SkillSystem
 {
-    [CreateAssetMenu(menuName = "Combat/SkillDefinition")]
-    public class SkillDefinition : ScriptableObject
+    public class SkillDefinition
     {
-        public string SkillId = "BasicAttack";
-        public TargetingType Targeting = TargetingType.Targeted;
-        public DeliveryType Delivery = DeliveryType.Instant;
+        public int SkillId { get; private set; }
+        public string SkillName { get; private set; }
+        public TargetingType Targeting { get; private set; }
+        public DeliveryType Delivery { get; private set; }
+        public int HitLimit { get; private set; }
+        public CastValidationPolicy Validation { get; private set; }
+        public float Coef { get; private set; }
 
-        [Header("Range & Limits")]
-        public float Range = 1.8f;       // 근접 사거리
-        public int HitLimit = 1;         // 기본공격은 1명
-
-        [Header("Validation")]
-        public CastValidationPolicy Validation = CastValidationPolicy.RequireEnemyInRange;
-
-        [Header("Damage Coef")]
-        public float Coef = 1.0f;        // 공격력 계수
+        public SkillDefinition(
+        int skillId,
+        string skillName,
+        TargetingType targeting,
+        DeliveryType delivery,
+        int hitLimit,
+        CastValidationPolicy validation,
+        float coef)
+        {
+            SkillId = skillId;
+            SkillName = skillName;
+            Targeting = targeting;
+            Delivery = delivery;
+            HitLimit = hitLimit;
+            Validation = validation;
+            Coef = coef;
+        }
     }
 }

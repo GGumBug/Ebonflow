@@ -1,4 +1,4 @@
-using System;
+using SkillSystem;
 using UnityEngine;
 
 namespace CombatSystem
@@ -7,36 +7,28 @@ namespace CombatSystem
     {
         private DamageCalculator _damageCalculator;
         private ManaGainService _manaGainService;
+        private SkillRepository _skillRepository;
 
         public void Setup()
         {
+            _skillRepository = new SkillRepository();
             _damageCalculator = new DamageCalculator();
             _manaGainService = new ManaGainService();
         }
 
-        public bool Attack(IAttacker attacker, IVictim defender)
+        public bool Trigger(int skillId, IAttacker attacker, IRangeDetector detector)
         {
-            if (attacker == null) throw new ArgumentNullException(nameof(attacker));
-            if (defender == null || defender.IsDead)
-                throw new Exception("defender was null or dead.");
+            SkillDefinition currentSkill = null;
 
-            // 1) 최종 데미지 계산
-            var atkStats = attacker.Stat;
-            var defStats = defender.Stat;
-            int rawDamage = Mathf.Max(0, _damageCalculator.CalculateDamage(atkStats, defStats));
+            bool getSkillDefinitionResult = _skillRepository.TryGet(skillId, out currentSkill);
 
-            // 2) HP 적용(실제 적용량 확보)
-            int appliedDamage;
-            bool killed = defender.Health.ApplyDamageAndGetApplied(rawDamage, out appliedDamage);
-
-            // 3) 마나 충전(실제 적용량 기준)
-            if (appliedDamage > 0)
+            if (!getSkillDefinitionResult || currentSkill == null)
             {
-                _manaGainService?.OnDealDamage(attacker, appliedDamage);
-                // _manaGainService?.OnTakeDamage(defender, appliedDamage); 피해 받을 때 마나회복
+                Debug.LogError("스킬 데이터 가져오기 실패.");
+                return false;
             }
 
-            return killed;
+            return true;
         }
     }
 }
