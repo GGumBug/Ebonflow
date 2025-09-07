@@ -10,6 +10,7 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
     [SerializeField] private TeamType _team;
 
     private int _instanceId = -1;
+    private bool _battleHandlersSubscribed; // 중복 구독/해제 방지
     private AStarAgent _aStarAgent;
     private RangeDetector _rangeDetector;
     private CombatComponent _combatComponent;
@@ -23,28 +24,31 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
     private CombatManager _combatManager;
     private AutoBattleDataManager _autoBattleDataManager;
 
-    private bool _battleHandlersSubscribed; // 중복 구독/해제 방지
+    public event Action<IVictim> OnDied;
 
     public UnitClass Class { get; private set; }
     public UnitOrigin Origin { get; private set; }
-    public event Action<Unit> OnDied;
     public bool IsBattleActive { get; private set; }
     public bool IsDead { get; private set; }
-    public TeamType GetTeam() => _team;
+    public int TeamId => (int)_team;    
     public UnitStats Stat => _stats;
     public AStarAgent Agent => _aStarAgent;
+    public Vector3 Position => transform.position; // 현재 오브젝트 위치
     public Vector2Int CurrentGridPosition { get; private set; } // 현재 위치가 아닌, 그리드 시스템 상 위치
     public IGridManager CurrentGrid { get; private set; }
     public UnitSaleComponent SaleComponent { get; private set; }
     public HealthComponent Health { get; private set; }
     public ManaComponent Mana { get; private set; }
 
+    public TeamType GetTeam() => _team;
+    public int GetTeamID() => TeamId;
     public void SetInstanceId(int id) => _instanceId = id;
 
     private void Awake()
     {
         _autoBattleManager = AutoBattleManager.Instance;
         _autoBattleDataManager = AutoBattleDataManager.Instance;
+        _combatManager = CombatManager.Instance;
     }
 
     public void Setup(TeamType team, UnitAggregate aggregate, IGridManager gridManager)
@@ -102,7 +106,7 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
     {
         // 메서드 그룹/이름 있는 핸들러만 사용 (람다 X)
         _aStarAgent.OnRequestTeamType += GetTeam;
-        _rangeDetector.OnRequestTeamType += GetTeam;
+        _rangeDetector.OnRequestTeamId += GetTeamID;
 
         _movementComponent.OnEndMove += _aStarAgent.EndMove;
         _movementComponent.OnEndMove += _stateMachine.ChangeToIdle;
@@ -126,7 +130,7 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
     public void UnregisterEventHandlers()
     {
         _aStarAgent.OnRequestTeamType -= GetTeam;
-        _rangeDetector.OnRequestTeamType -= GetTeam;
+        _rangeDetector.OnRequestTeamId -= GetTeamID;
 
         _movementComponent.OnEndMove -= _aStarAgent.EndMove;
         _movementComponent.OnEndMove -= _stateMachine.ChangeToIdle;

@@ -1,5 +1,6 @@
 using AutoBattle.Input;
 using AutoBattle.UI;
+using CombatSystem;
 using Cysharp.Threading.Tasks;
 using StageEditor;
 using System;
@@ -117,8 +118,14 @@ namespace AutoBattle
             }
         }
 
-        private void HandleUnitDeath(Unit unit)
+        private void HandleUnitDeath(IVictim victim)
         {
+            if (victim is not Unit unit)
+            {
+                Debug.LogError("HandleUnitDeath: victim is not a Unit instance!");
+                return;
+            }
+
             var set = unit.GetTeam() == TeamType.Ally ? Roster.Allies : Roster.Enemies;
             Roster.Unregister(unit);
 

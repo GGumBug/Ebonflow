@@ -1,5 +1,6 @@
 using AutoBattle;
 using AutoBattle.Input;
+using CombatSystem;
 using StageEditor;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ public class UnitSpawner
     private readonly IGridManager _benchGrid;              // (선택) BattleGrid 캐시
     private readonly AutoBattleDataManager _autoBattleDataManager;
 
-    private event Action<Unit> OnUnitDied;
+    private event Action<IVictim> OnUnitDied;
     private event Func<int, int, UnitAggregate> OnRequestUnitStatData;
 
     public UnitSpawner(
@@ -23,7 +24,7 @@ public class UnitSpawner
         Transform allyContainer,
         Transform enemyContainer,
         Func<int, int, UnitAggregate> onRequestUnitStatData,
-        Action<Unit> onUnitDied,
+        Action<IVictim> onUnitDied,
         IBattleRoster roster,
         IGridManager battleGrid,   // 또는 AStarGrid
         IGridManager benchGrid,

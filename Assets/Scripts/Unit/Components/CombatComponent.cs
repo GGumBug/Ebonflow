@@ -7,8 +7,8 @@ public class CombatComponent
 {
     private RangeDetector _detector;
     private event Func<IAttacker, IVictim, bool> OnAttack;
-    private Unit _unit;
-    private Unit _currentTarget;
+    private IAttacker _host;
+    private IVictim _currentTarget;
     private Sequence _attackSequence;
 
     public event Action OnAttackStarted;
@@ -23,7 +23,7 @@ public class CombatComponent
 
     public CombatComponent(Unit host, RangeDetector detector, Func<IAttacker, IVictim, bool> onAttack, ManaComponent manaComponent)
     {
-        _unit = host;
+        _host = host;
         _detector = detector;
         OnAttack += onAttack;
         CheckManaFull += manaComponent.IsFull;
@@ -58,7 +58,7 @@ public class CombatComponent
         OnAttackStarted?.Invoke();
 
         // 클로저 안전성 확보를 위해 로컬 변수에 복사
-        var attacker = _unit;
+        var attacker = _host;
         var target = _currentTarget;
 
         _attackSequence = DOTween.Sequence()
