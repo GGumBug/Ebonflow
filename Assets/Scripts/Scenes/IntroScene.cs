@@ -1,5 +1,6 @@
 using AutoBattle;
 using Cysharp.Threading.Tasks;
+using RoguelikeMap;
 using UnityEngine;
 
 public class IntroScene : MonoBehaviour
@@ -14,11 +15,11 @@ public class IntroScene : MonoBehaviour
         AutoBattleDataManager autoBattleDataManager = AutoBattleDataManager.Instance;
         autoBattleDataManager.Setup();
 
+        var _mapGenerationSettings = await AddressableManager.Instance.Load<MapGenerationSettings>(AddressableKey.MapGenerationSettings);
+        MapSaveLoadManager.Instance.Init(_mapGenerationSettings);
+
         await UniTask.Delay(2000);
 
-        if (autoBattleDataManager.AutoBattleSceneDataContext.Stage.shouldResumeBattle)
-            await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<AutoBattleScene>();
-        else
-            await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MapScene>();
+        await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MenuScene>();
     }
 }

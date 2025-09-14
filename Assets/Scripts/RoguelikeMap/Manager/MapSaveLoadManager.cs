@@ -15,12 +15,12 @@ namespace RoguelikeMap
         public void Init(MapGenerationSettings settings)
         {
             Settings = settings;
+
+            _mapDataContext = new MapDataContext();
         }
 
         public void Setup(RoguelikeMapDirector roguelikeMapManager)
         {
-            _mapDataContext = new MapDataContext();
-
             roguelikeMapManager.MapController.OnCellSelected += _mapDataContext.UpdateSelection;
             roguelikeMapManager.MapController.GetCurrentNodePosition += _mapDataContext.GetCurrentNodePosition;
             roguelikeMapManager.MapController.HasSelection += _mapDataContext.HasSelection;
@@ -54,6 +54,11 @@ namespace RoguelikeMap
         public void SaveMap()
         {
             _mapDataContext.Save(MapLayout, Settings);
+        }
+
+        public void DeleteMap()
+        {
+            _mapDataContext.Delete();
         }
     }
 }

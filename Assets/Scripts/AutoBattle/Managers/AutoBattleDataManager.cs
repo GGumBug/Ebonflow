@@ -10,5 +10,11 @@ namespace AutoBattle
             AutoBattleSceneDataContext = new AutoBattleStageDataContext();
             AutoBattlePlayerDataContext = new AutoBattlePlayerDataContext();
         }
+
+        public void DeleteData()
+        {
+            AutoBattleSceneDataContext.Delete();
+            AutoBattlePlayerDataContext.Delete();
+        }
     }
 }

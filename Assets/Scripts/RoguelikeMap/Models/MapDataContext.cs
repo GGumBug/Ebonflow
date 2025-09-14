@@ -60,10 +60,10 @@ namespace RoguelikeMap
         /// <summary>
         /// 저장 파일 삭제(직렬화기 편의 API 필요)
         /// </summary>
-        public bool Delete()
+        public override bool Delete()
         {
             var deleted = _serializer.Delete();
-            if (deleted) data = null;
+            if (deleted) data = defaultFactory();
             return deleted;
         }
 

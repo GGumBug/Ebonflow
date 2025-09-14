@@ -5,19 +5,16 @@ using AutoBattle;
 
 public class MapScene : SceneBase, INodeClickHandler
 {
-    private MapGenerationSettings _mapGenerationSettings;
     private UIMapView _mapView;
     private RoguelikeMapDirector _roguelikeMapManager;
 
     public override async UniTask LoadAssets()
     {
-        _mapGenerationSettings = await AddressableManager.Instance.Load<MapGenerationSettings>(AddressableKey.MapGenerationSettings);
         _mapView = await UIManager.Instance.OpenUIAsync<UIMapView>(); 
     }
 
     public override async UniTask InitializeData()
     {
-        MapSaveLoadManager.Instance.Init(_mapGenerationSettings);
         _roguelikeMapManager = gameObject.AddComponent<RoguelikeMapDirector>();
         await UniTask.Yield();
     }

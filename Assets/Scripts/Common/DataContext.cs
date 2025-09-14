@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting.FullSerializer;
 
 public class DataContext<T>
 {
@@ -34,6 +35,16 @@ public class DataContext<T>
     {
         data = (factory ?? defaultFactory)();
         Save();
+    }
+
+    public virtual bool Delete()
+    {
+        var deleted = dataSaveLoad.Delete();
+        if (deleted)
+        {
+            Reset();
+        }
+        return deleted;
     }
 
     /// <summary>내부 데이터 직접 접근</summary>
