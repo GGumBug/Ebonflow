@@ -28,9 +28,10 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
 
     public UnitClass Class { get; private set; }
     public UnitOrigin Origin { get; private set; }
+    public int AttackSkillID { get; private set; }
     public bool IsBattleActive { get; private set; }
     public bool IsDead { get; private set; }
-    public int TeamId => (int)_team;    
+    public int TeamId => (int)_team;
     public UnitStats Stat => _stats;
     public AStarAgent Agent => _aStarAgent;
     public Vector3 Position => transform.position; // 현재 오브젝트 위치
@@ -57,6 +58,8 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
 
         Class = aggregate.Data.Class;
         Origin = aggregate.Data.Origin;
+        AttackSkillID = aggregate.Data.AttackSkillID;
+
         _team = team;
         _statData = aggregate.Stat;
         CacheComponents();

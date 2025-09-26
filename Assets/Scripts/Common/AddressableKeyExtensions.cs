@@ -5,22 +5,22 @@ public enum AddressableKey
     AutoBattleUnitPrefab,
     MapGenerationSettings,
     UIMapView,
-    NodeTile,
-    EdgeView,
     UIAutoBattle,
     CardView,
+    BasicProjectile,
 }
 
 public static class AddressableKeyExtensions
 {
     private static readonly Dictionary<AddressableKey,string> _lookup =
-        new Dictionary<AddressableKey,string>
+        new Dictionary<AddressableKey, string>
     {
         { AddressableKey.AutoBattleUnitPrefab, "AutoBattle/UnitPrefab" },
         { AddressableKey.MapGenerationSettings, "Config/MapGenSettings" },
         { AddressableKey.UIMapView, "RoguelikeMap/UIMapView" },
         { AddressableKey.UIAutoBattle, "Assets/Prefabs/UI/UIAutoBattle.prefab" },
         { AddressableKey.CardView, "Assets/Prefabs/UI/CardView.prefab" },
+        { AddressableKey.BasicProjectile, "Assets/Prefabs/Projectile/BasicProjectile.prefab" },
     };
 
     public static string ToKey(this AddressableKey key)

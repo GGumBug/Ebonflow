@@ -9,5 +9,6 @@ namespace CombatSystem
         public Vector3 Position { get; }
         public UnitStats Stat { get; }
         public ManaComponent Mana { get; }
+        public int AttackSkillID { get; }
     }
 }

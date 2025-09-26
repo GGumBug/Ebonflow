@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: AutoBattle
   m_GUID: ea21c7a6b2e2949f6839691fa067a365
   m_SerializeEntries:
+  - m_GUID: 1b19138531627486c907c92e3efe892e
+    m_Address: Assets/Prefabs/Projectile/BasicProjectile.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3f78bc18a4270f74b82f5043b03f1c72
     m_Address: Assets/Prefabs/UI/UIAutoBattle.prefab
     m_ReadOnly: 0

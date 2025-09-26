@@ -2,6 +2,7 @@ using AutoBattle;
 using CombatSystem;
 using Cysharp.Threading.Tasks;
 using DeckSystem;
+using ProjectileSystem;
 using StageEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -63,7 +64,7 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
 
         CardDrawManager.Instance.SetUp(AutoBattleUnitManager.Instance, _uiAutoBattle.AutoBattleShopUI);
 
-        await UniTask.Yield();
+        await ProjectileManager.Instance.Setup();
     }
 
     public override async UniTask SetupScene()

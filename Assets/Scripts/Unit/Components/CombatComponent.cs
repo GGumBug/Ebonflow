@@ -6,7 +6,7 @@ using UnityEngine;
 public class CombatComponent
 {
     private IRangeDetector _detector;
-    private event Action<int, IAttacker, IRangeDetector> OnTrigger;
+    private event Action<IAttacker, IRangeDetector> OnTrigger;
     private IAttacker _host;
     private IVictim _currentTarget;
     private Sequence _attackSequence;
@@ -21,7 +21,7 @@ public class CombatComponent
     && !_currentTarget.IsDead
     && _detector.IsTargetInRange(_currentTarget);
 
-    public CombatComponent(Unit host, RangeDetector detector, Action<int, IAttacker, IRangeDetector> onTrigger, ManaComponent manaComponent)
+    public CombatComponent(Unit host, RangeDetector detector, Action<IAttacker, IRangeDetector> onTrigger, ManaComponent manaComponent)
     {
         _host = host;
         _detector = detector;
@@ -79,7 +79,7 @@ public class CombatComponent
                 }
                 else
                 {
-                    OnTrigger(0, attacker, _detector); // 디버그용 스킬 0번
+                    OnTrigger(attacker, _detector); // 디버그용 스킬 0번
                 }
 
                 OnAttackEnded?.Invoke();

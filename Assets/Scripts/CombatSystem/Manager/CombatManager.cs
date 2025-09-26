@@ -20,11 +20,11 @@ namespace CombatSystem
             _skillExecutorFactory = new SkillExecutorFactory();
         }
 
-        public void Trigger(int skillId, IAttacker attacker, IRangeDetector detector)
+        public void Trigger(IAttacker attacker, IRangeDetector detector)
         {
             SkillDefinition currentSkill = null;
 
-            bool getSkillDefinitionResult = _skillRepository.TryGet(skillId, out currentSkill);
+            bool getSkillDefinitionResult = _skillRepository.TryGet(attacker.AttackSkillID, out currentSkill);
 
             if (!getSkillDefinitionResult || currentSkill == null)
             {

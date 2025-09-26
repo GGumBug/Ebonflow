@@ -9,6 +9,8 @@ public class UnitData
     public UnitTier UnitTier { get; }
     public UnitClass Class { get; }
     public UnitOrigin Origin { get; }
+    public int AttackSkillID { get; }
+    public int ActiveSkillID { get; }
 
     public UnitData(DB_Units e)
     {
@@ -21,5 +23,7 @@ public class UnitData
         UnitTier = e.f_UnitTier;
         Class = e.f_Class;
         Origin = e.f_Origin;
+        AttackSkillID = e.f_AttackSkillId;
+        ActiveSkillID = e.f_ActiveSkillId;
     }
 }

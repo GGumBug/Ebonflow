@@ -9,6 +9,7 @@ public class SkillExecutorFactory
     {
         _executorsByTargetingType = new Dictionary<TargetingType, ISkillExecutor>{
             { TargetingType.Targeted, new TargetedSkillExecutor() },
+            { TargetingType.Skillshot, new ProjectileSkillExecutor() },
         };
     }
 

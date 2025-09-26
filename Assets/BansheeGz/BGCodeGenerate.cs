@@ -55,6 +55,16 @@ public partial class DB_Units : BGEntity
 		get => (UnitOrigin) _f_Origin[Index];
 		set => _f_Origin[Index] = value;
 	}
+	public System.Int32 f_AttackSkillId
+	{
+		get => _f_AttackSkillId[Index];
+		set => _f_AttackSkillId[Index] = value;
+	}
+	public System.Int32 f_ActiveSkillId
+	{
+		get => _f_ActiveSkillId[Index];
+		set => _f_ActiveSkillId[Index] = value;
+	}
 	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
 	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(4762821637793240553UL, 2073662938292457094UL), () => _ufle12jhs77_f_name = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_UnitId;
@@ -69,6 +79,10 @@ public partial class DB_Units : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldEnum _f_Class => _ufle12jhs77_f_Class ?? (_ufle12jhs77_f_Class = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEnum>(MetaDefault, new BGId(5260016658475170456UL, 13978289584749089467UL), () => _ufle12jhs77_f_Class = null));
 	private static BansheeGz.BGDatabase.BGFieldEnum _ufle12jhs77_f_Origin;
 	public static BansheeGz.BGDatabase.BGFieldEnum _f_Origin => _ufle12jhs77_f_Origin ?? (_ufle12jhs77_f_Origin = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEnum>(MetaDefault, new BGId(5020361988821157231UL, 7834484382979121070UL), () => _ufle12jhs77_f_Origin = null));
+	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_AttackSkillId;
+	public static BansheeGz.BGDatabase.BGFieldInt _f_AttackSkillId => _ufle12jhs77_f_AttackSkillId ?? (_ufle12jhs77_f_AttackSkillId = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(5102688652777171817UL, 646664592436642998UL), () => _ufle12jhs77_f_AttackSkillId = null));
+	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_ActiveSkillId;
+	public static BansheeGz.BGDatabase.BGFieldInt _f_ActiveSkillId => _ufle12jhs77_f_ActiveSkillId ?? (_ufle12jhs77_f_ActiveSkillId = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(5359149282576833668UL, 64933892537012670UL), () => _ufle12jhs77_f_ActiveSkillId = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
