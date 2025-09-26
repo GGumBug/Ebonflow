@@ -13,9 +13,12 @@ namespace CombatSystem
                 return;
             }
 
-            int damage = damageCalculator.CalculateDamage(attacker.Stat, validationResult.Target.Stat);
-            int appliedDamage = 0;
-            validationResult.Target.Health.ApplyDamageAndGetApplied(damage, out appliedDamage);
+            foreach (var target in validationResult.Targets)
+            {
+                int damage = damageCalculator.CalculateDamage(attacker.Stat, target.Stat);
+                int appliedDamage = 0;
+                target.Health.ApplyDamageAndGetApplied(damage, out appliedDamage);
+            }
         }
     }
 }
