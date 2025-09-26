@@ -43,7 +43,12 @@ public class MenuScene : SceneBase
 
     private void ResetGameData()
     {
-        _autoBattleDataManager.DeleteData();
-        _mapSaveLoadManager.DeleteMap();
+        bool autobattleDataResult = _autoBattleDataManager.DeleteData();
+        bool mapDataResult = _mapSaveLoadManager.DeleteMap();
+
+        if (autobattleDataResult && mapDataResult)
+            Debug.Log("데이터가 초기화 됐습니다.");
+        else
+            Debug.LogWarning("데이터가 초기화 실패.");
     }
 }

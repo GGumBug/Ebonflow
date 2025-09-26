@@ -56,9 +56,11 @@ namespace RoguelikeMap
             _mapDataContext.Save(MapLayout, Settings);
         }
 
-        public void DeleteMap()
+        public bool DeleteMap()
         {
-            _mapDataContext.Delete();
+            bool mapDataResult = _mapDataContext.Delete();
+
+            return mapDataResult;
         }
     }
 }

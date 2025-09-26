@@ -11,10 +11,15 @@ namespace AutoBattle
             AutoBattlePlayerDataContext = new AutoBattlePlayerDataContext();
         }
 
-        public void DeleteData()
+        public bool DeleteData()
         {
-            AutoBattleSceneDataContext.Delete();
-            AutoBattlePlayerDataContext.Delete();
+            bool sceneDataResult = AutoBattleSceneDataContext.Delete();
+            bool battleDataResult = AutoBattlePlayerDataContext.Delete();
+
+            if (sceneDataResult && battleDataResult)
+                return true;
+
+            return false;
         }
     }
 }
