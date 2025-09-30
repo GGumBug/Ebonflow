@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace CombatSystem
 {
-    public class TargetedSkillExecutor : ISkillExecutor
+    public class TargetedSkillExecutor : SkillExecutor
     {
-        public void Execute(IAttacker attacker, SkillDefinition skillDefinition, ValidationResult validationResult, DamageCalculator damageCalculator)
+        public override void Execute(IAttacker attacker, SkillDefinition skillDefinition, ValidationResult validationResult, DamageCalculator damageCalculator)
         {
             if (!validationResult.Accepted)
             {
@@ -14,11 +14,8 @@ namespace CombatSystem
             }
 
             foreach (var target in validationResult.Targets)
-            {
-                int damage = damageCalculator.CalculateDamage(attacker.Stat, target.Stat);
-                int appliedDamage = 0;
-                target.Health.ApplyDamageAndGetApplied(damage, out appliedDamage);
-            }
+                ApplyDamage(attacker, target, damageCalculator);
         }
+
     }
 }

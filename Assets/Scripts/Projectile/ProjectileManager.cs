@@ -1,6 +1,8 @@
 using Cysharp.Threading.Tasks;
-using System.Threading.Tasks;
 using UnityEngine;
+using CombatSystem;
+using SkillSystem;
+using System;
 
 namespace ProjectileSystem
 {
@@ -17,10 +19,11 @@ namespace ProjectileSystem
             _projectileOrigin = await _addressableManager.Load<GameObject>(AddressableKey.BasicProjectile);
         }
 
-        public void LaunchProjectile(Vector2 startPos, Vector2 targetPos, int damage)
+        public void LaunchProjectile(IAttacker attacker, IVictim victim, SkillDefinition skillDefinition, ValidationResult validationResult, DamageCalculator damageCalculator, Action<IAttacker, IVictim, DamageCalculator> onApplyDamage)
         {
-            Projectile projectile = _poolManager.GetFromPool<Projectile>(_projectileOrigin, null, startPos, Quaternion.identity);
-            projectile.Launch(targetPos);
+            Projectile projectile = _poolManager.GetFromPool<Projectile>(_projectileOrigin, null, attacker.Position, Quaternion.identity);
+            projectile.SetProjectile(attacker, victim, damageCalculator, onApplyDamage);
+            projectile.Launch(victim.Position);
         }
     }
 }
