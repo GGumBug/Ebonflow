@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace CombatSystem
 {
-    public class ProjectileSkillExecutor : SkillExecutor
+    public class SkillshotExecutor : SkillExecutor
     {
         private ProjectileManager _projectileManager;
 
-        public ProjectileSkillExecutor()
+        public SkillshotExecutor()
         {
             _projectileManager = ProjectileManager.Instance;
         }
@@ -23,8 +23,7 @@ namespace CombatSystem
 
             foreach (var target in validationResult.Targets)
             {
-                int damage = damageCalculator.CalculateDamage(attacker.Stat, target.Stat);
-                _projectileManager.LaunchProjectile(attacker, target, skillDefinition, validationResult, damageCalculator, ApplyDamage);
+                _projectileManager.LaunchProjectile(attacker, target, skillDefinition, validationResult, damageCalculator, ApplyDamage, target.Position);
             }
         }
     }

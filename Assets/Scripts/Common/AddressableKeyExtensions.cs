@@ -7,7 +7,8 @@ public enum AddressableKey
     UIMapView,
     UIAutoBattle,
     CardView,
-    BasicProjectile,
+    TargetedProjectile,
+    SkillshotProjectile,
 }
 
 public static class AddressableKeyExtensions
@@ -20,7 +21,8 @@ public static class AddressableKeyExtensions
         { AddressableKey.UIMapView, "RoguelikeMap/UIMapView" },
         { AddressableKey.UIAutoBattle, "Assets/Prefabs/UI/UIAutoBattle.prefab" },
         { AddressableKey.CardView, "Assets/Prefabs/UI/CardView.prefab" },
-        { AddressableKey.BasicProjectile, "Assets/Prefabs/Projectile/BasicProjectile.prefab" },
+        { AddressableKey.TargetedProjectile, "Assets/Prefabs/Projectile/TargetedProjectile.prefab" },
+        { AddressableKey.SkillshotProjectile, "Assets/Prefabs/Projectile/SkillshotProjectile.prefab" },
     };
 
     public static string ToKey(this AddressableKey key)
