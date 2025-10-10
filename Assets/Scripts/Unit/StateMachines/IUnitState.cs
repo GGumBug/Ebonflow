@@ -101,7 +101,6 @@ public class DeadState : IUnitState
 
     public void Enter(Unit unit)
     {
-        // 애니메이션 재생, 콜라이더 비활성화 등
         unit.HandleDeath();
     }
 

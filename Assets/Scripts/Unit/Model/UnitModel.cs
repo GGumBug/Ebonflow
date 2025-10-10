@@ -2,8 +2,20 @@ using UnityEngine;
 
 public class UnitModel : MonoBehaviour
 {
+    [SerializeField] private Animator animator;
+    
+    private SpriteOffsetAdjuster _spriteOffsetAdjuster;
+    private UnitAnimationController _unitAnimationController;
+
     private void Awake()
     {
-        gameObject.AddComponent<SpriteOffsetAdjuster>();
+        _spriteOffsetAdjuster = gameObject.AddComponent<SpriteOffsetAdjuster>();
+        _unitAnimationController = new UnitAnimationController(animator);
     }
+
+    public void PlayMovementAnimation(Vector2 dir) => _unitAnimationController.SetMovement(dir);
+    public void TriggerUnitAttack() => _unitAnimationController.TriggerAttack();
+    public void TriggerUnitSkill() => _unitAnimationController.TriggerSkill();
+    public void SetDead(bool isDead) => _unitAnimationController.SetDead(isDead);
+    public void SetUnitDirection(Vector2 dir) => _unitAnimationController.SetDirection(dir);
 }

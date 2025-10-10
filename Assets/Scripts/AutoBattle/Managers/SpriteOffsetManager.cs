@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpriteOffsetManager : Singleton<SpriteOffsetManager>
+public class SpriteOffsetManager : Singleton<SpriteOffsetManager>, ILateUpdateObserver
 {
     private float referenceY = 0f;
     private float offsetWeight = 0.01f;
@@ -17,6 +17,11 @@ public class SpriteOffsetManager : Singleton<SpriteOffsetManager>
     void Awake()
     {
         targetCamera = Camera.main;
+    }
+
+    private void Start()
+    {
+        LateUpdateManager.Instance.RegisterObserver(this);
     }
 
     /// <summary>
@@ -49,7 +54,7 @@ public class SpriteOffsetManager : Singleton<SpriteOffsetManager>
         referenceScale = sr.transform.localScale;
     }
 
-    void LateUpdate()
+    public void ObservedLateUpdate()
     {
         if (targetCamera == null) return;
 
@@ -79,5 +84,10 @@ public class SpriteOffsetManager : Singleton<SpriteOffsetManager>
             referenceLocalPosition.y + yOffset,
             referenceLocalPosition.z
         );
+    }
+
+    private void OnDisable()
+    {
+        LateUpdateManager.Instance.UnRegisterObserver(this);
     }
 }

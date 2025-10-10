@@ -1,13 +1,16 @@
 using AutoBattle;
 using CombatSystem;
+using Cysharp.Threading.Tasks;
 using DeckSystem;
 using System;
+using System.Threading;
 using UnityEngine;
 
-public class Unit : MonoBehaviour, IAttacker, IVictim
+public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
 {
-    [SerializeField] private UIUnitStatBars _uIUnitStatBars;
-    [SerializeField] private TeamType _team;
+    [SerializeField] private UnitModel model;
+    [SerializeField] private UIUnitStatBars uIUnitStatBars;
+    [SerializeField] private TeamType team;
 
     private int _instanceId = -1;
     private bool _battleHandlersSubscribed; // 중복 구독/해제 방지
@@ -23,6 +26,7 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
     private AutoBattleManager _autoBattleManager;
     private CombatManager _combatManager;
     private AutoBattleDataManager _autoBattleDataManager;
+    private CancellationTokenSource _deathCts;
 
     public event Action<IVictim> OnDied;
 
@@ -31,7 +35,8 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
     public int AttackSkillID { get; private set; }
     public bool IsBattleActive { get; private set; }
     public bool IsDead { get; private set; }
-    public int TeamId => (int)_team;
+    public int TeamId => (int)team;
+    public UnitModel Model => model;
     public UnitStats Stat => _stats;
     public AStarAgent Agent => _aStarAgent;
     public Vector3 Position => transform.position; // 현재 오브젝트 위치
@@ -41,7 +46,7 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
     public HealthComponent Health { get; private set; }
     public ManaComponent Mana { get; private set; }
 
-    public TeamType GetTeam() => _team;
+    public TeamType GetTeam() => team;
     public int GetTeamID() => TeamId;
     public void SetInstanceId(int id) => _instanceId = id;
 
@@ -55,12 +60,13 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
     public void Setup(TeamType team, UnitAggregate aggregate, IGridManager gridManager)
     {
         CurrentGridPosition = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+        model.SetUnitDirection(Vector2.down);
 
         Class = aggregate.Data.Class;
         Origin = aggregate.Data.Origin;
         AttackSkillID = aggregate.Data.AttackSkillID;
 
-        _team = team;
+        this.team = team;
         _statData = aggregate.Stat;
         CacheComponents();
         InitializeComponents(gridManager);
@@ -85,7 +91,7 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
         _combatComponent = new CombatComponent(this, _rangeDetector, _combatManager.Trigger, Mana);
         _movementComponent = new MovementComponent(transform);
         Health = new HealthComponent(_stats);
-        _uIUnitStatBars.Bind(Health, Mana);
+        uIUnitStatBars.Bind(Health, Mana);
 
         SetCurrentGrid(gridManager);
 
@@ -111,6 +117,7 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
         _aStarAgent.OnRequestTeamType += GetTeam;
         _rangeDetector.OnRequestTeamId += GetTeamID;
 
+        _movementComponent.OnStartMove += model.PlayMovementAnimation;
         _movementComponent.OnEndMove += _aStarAgent.EndMove;
         _movementComponent.OnEndMove += _stateMachine.ChangeToIdle;
         _movementComponent.CancelMovementAction += _aStarAgent.ClearFllowing;
@@ -135,6 +142,7 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
         _aStarAgent.OnRequestTeamType -= GetTeam;
         _rangeDetector.OnRequestTeamId -= GetTeamID;
 
+        _movementComponent.OnStartMove -= model.PlayMovementAnimation;
         _movementComponent.OnEndMove -= _aStarAgent.EndMove;
         _movementComponent.OnEndMove -= _stateMachine.ChangeToIdle;
         _movementComponent.CancelMovementAction -= _aStarAgent.ClearFllowing;
@@ -165,7 +173,7 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
         SetCurrentGridPosition(positionInt);
     }
 
-    private void Update()
+    public void ObservedUpdate()
     {
         if (!IsBattleActive || IsDead)
             return;
@@ -183,22 +191,46 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
 
     public void HandleDeath()
     {
+        _deathCts?.Cancel();
+        _deathCts?.Dispose();
+        _deathCts = new CancellationTokenSource();
+        CancellationToken token = _deathCts.Token;
+
         IsDead = true;
         _circleCollider2D.enabled = false;
         _combatComponent.CancelAttack();
         _movementComponent.CancelMovement();
+        Model.SetDead(true);
         OnDied?.Invoke(this);
 
-        ReleaseAndPool();
+        HandleDeathSequence(token).Forget();
+    }
+
+    private async UniTask HandleDeathSequence(CancellationToken token)
+    {
+        try
+        {
+            await UniTask.Delay(
+                TimeSpan.FromSeconds(1.5f),
+                DelayType.DeltaTime,
+                PlayerLoopTiming.Update,
+                token // CancellationToken 주입
+            );
+
+            ReleaseAndPool();
+        }
+        catch (OperationCanceledException)
+        {
+            Debug.Log("사망 후 풀 반환 작업이 취소되었습니다.");
+        }
     }
 
     private void ReleaseAndPool()
     {
-        // 배틀 상태 핸들러 해제(중복 호출 안전)
         UnsubscribeBattleStateHandlers();
+        UnregisterEventHandlers();
 
         CurrentGrid.RemoveUnit(CurrentGridPosition, this);
-        UnregisterEventHandlers();
         PoolManager.Instance.Push(GetComponent<Poolable>());
     }
 
@@ -220,6 +252,8 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
         ctrl.DefeatEntered.Add(OnBattleExited_Deactivate, priority: 0);
 
         _battleHandlersSubscribed = true;
+
+        UpdateManager.Instance.RegisterObserver(this);
     }
 
     public void UnsubscribeBattleStateHandlers()
@@ -271,4 +305,15 @@ public class Unit : MonoBehaviour, IAttacker, IVictim
 
     /// <summary>A*가 현재 그리드 좌표를 요청할 때 반환</summary>
     private Vector2Int OnRequestCurrentGridPos() => CurrentGridPosition;
+
+    private void OnDisable()
+    {
+        UpdateManager.Instance.UnRegisterObserver(this);
+    }
+
+    private void OnDestroy()
+    {
+        _deathCts?.Cancel();
+        _deathCts?.Dispose();
+    }
 }

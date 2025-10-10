@@ -10,6 +10,7 @@ public class MovementComponent
     private Transform _transform;
     private Tween _moveTween;
 
+    public event Action<Vector2> OnStartMove;
     public event Action CancelMovementAction;
     public event Action OnEndMove;
 
@@ -24,6 +25,10 @@ public class MovementComponent
         Vector3 destination = new Vector3(destPos.x, destPos.y, _transform.position.z);
 
         // 현재 위치와 목표 위치 사이의 거리를 계산하고, 이동 시간(duration)을 결정합니다.
+        Vector2 direction = (destination - _transform.position).normalized;
+
+        OnStartMove?.Invoke(direction);
+
         float distance = Vector2.Distance(_transform.position, new Vector2(destPos.x, destPos.y));
         float duration = distance / moveSpeed;
 
