@@ -13,7 +13,8 @@ public class UnitModel : MonoBehaviour
         _unitAnimationController = new UnitAnimationController(animator);
     }
 
-    public void PlayMovementAnimation(Vector2 dir) => _unitAnimationController.SetMovement(dir);
+    public void StopWalkAnimation() => _unitAnimationController.StopWalk();
+    public void PlayWalkAnimation() => _unitAnimationController.SetWalk();
     public void TriggerUnitAttack() => _unitAnimationController.TriggerAttack();
     public void TriggerUnitSkill() => _unitAnimationController.TriggerSkill();
     public void SetDead(bool isDead) => _unitAnimationController.SetDead(isDead);

@@ -36,6 +36,7 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
     public bool IsBattleActive { get; private set; }
     public bool IsDead { get; private set; }
     public int TeamId => (int)team;
+    public UnitStateMachine StateMachine => _stateMachine;
     public UnitModel Model => model;
     public UnitStats Stat => _stats;
     public AStarAgent Agent => _aStarAgent;
@@ -117,7 +118,7 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
         _aStarAgent.OnRequestTeamType += GetTeam;
         _rangeDetector.OnRequestTeamId += GetTeamID;
 
-        _movementComponent.OnStartMove += model.PlayMovementAnimation;
+        _movementComponent.OnStartMove += model.SetUnitDirection;
         _movementComponent.OnEndMove += _aStarAgent.EndMove;
         _movementComponent.OnEndMove += _stateMachine.ChangeToIdle;
         _movementComponent.CancelMovementAction += _aStarAgent.ClearFllowing;
@@ -142,7 +143,7 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
         _aStarAgent.OnRequestTeamType -= GetTeam;
         _rangeDetector.OnRequestTeamId -= GetTeamID;
 
-        _movementComponent.OnStartMove -= model.PlayMovementAnimation;
+        _movementComponent.OnStartMove -= model.SetUnitDirection;
         _movementComponent.OnEndMove -= _aStarAgent.EndMove;
         _movementComponent.OnEndMove -= _stateMachine.ChangeToIdle;
         _movementComponent.CancelMovementAction -= _aStarAgent.ClearFllowing;
@@ -200,7 +201,6 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
         _circleCollider2D.enabled = false;
         _combatComponent.CancelAttack();
         _movementComponent.CancelMovement();
-        Model.SetDead(true);
         OnDied?.Invoke(this);
 
         HandleDeathSequence(token).Forget();
@@ -313,6 +313,7 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
 
     private void OnDestroy()
     {
+        _combatComponent?.Dispose();
         _deathCts?.Cancel();
         _deathCts?.Dispose();
     }

@@ -14,6 +14,7 @@ public class WaitState : IUnitState
 
     public void Enter(Unit unit)
     {
+        unit.Model.StopWalkAnimation();
     }
 
     public void Execute(Unit unit)
@@ -33,7 +34,7 @@ public class IdleState : IUnitState
 
     public void Enter(Unit unit)
     {
-        // unit.Animator.Play("Idle");
+        unit.Model.StopWalkAnimation();
     }
 
     public void Execute(Unit unit)
@@ -55,7 +56,7 @@ public class WalkState : IUnitState
 
     public void Enter(Unit unit)
     {
-        // unit.Animator.Play("Walk");
+        unit.Model.PlayWalkAnimation();
         unit.OnEnterWalk();
     }
 
@@ -78,7 +79,8 @@ public class AttackState : IUnitState
 
     public void Enter(Unit unit)
     {
-        // unit.Animator.Play("Attack");
+        unit.Model.StopWalkAnimation();
+        unit.Model.TriggerUnitAttack();
         unit.OnEnterAttack();
     }
 
@@ -101,9 +103,13 @@ public class DeadState : IUnitState
 
     public void Enter(Unit unit)
     {
+        unit.Model.SetDead(true);
         unit.HandleDeath();
     }
 
     public void Execute(Unit unit) { }
-    public void Exit(Unit unit) { }
+    public void Exit(Unit unit) 
+    {
+        unit.Model.SetDead(false);
+    }
 }

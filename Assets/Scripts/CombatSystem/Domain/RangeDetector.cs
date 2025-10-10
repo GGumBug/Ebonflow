@@ -82,6 +82,9 @@ namespace CombatSystem
 
             foreach (IVictim enemy in _inRangeEnemies)
             {
+                if (enemy.IsDead)
+                    continue;
+
                 float distance = Vector2.Distance(transform.position, enemy.Position);
                 if (distance < minDistance)
                 {

@@ -20,7 +20,7 @@ namespace CombatSystem
             _skillExecutorFactory = new SkillExecutorFactory();
         }
 
-        public void Trigger(IAttacker attacker, IRangeDetector detector)
+        public bool Trigger(IAttacker attacker, IRangeDetector detector)
         {
             SkillDefinition currentSkill = null;
 
@@ -34,6 +34,11 @@ namespace CombatSystem
             // 타겟 적 혹은 방향 값 위치값 담은 결과
             ValidationResult validationResult = _castValidatorFactory.Get(currentSkill.Targeting).Validate(currentSkill, attacker, detector);
 
+            if (validationResult.Targets == null || validationResult.Targets.Count <= 0)
+            {
+                return false;
+            }
+
             // 타겟 논타겟 에리어에 따라 또 전략이 나눠져야 될 거 같아.
             _skillExecutorFactory.GetExecutor(currentSkill.Targeting).Execute(
                 attacker,
@@ -41,6 +46,8 @@ namespace CombatSystem
                 validationResult,
                 _damageCalculator
             );
+
+            return true;
         }
     }
 }

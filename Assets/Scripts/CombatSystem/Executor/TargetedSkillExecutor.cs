@@ -21,6 +21,10 @@ namespace CombatSystem
                 return;
             }
 
+            // 다수 공격 스킬에 대한 예외처리 필요
+            Vector2 direction = (validationResult.Targets[0].Position - attacker.Position).normalized;
+            attacker.Model.SetUnitDirection(direction);
+
             if (skillDefinition.Delivery == DeliveryType.Instant)
             {
                 foreach (var target in validationResult.Targets)

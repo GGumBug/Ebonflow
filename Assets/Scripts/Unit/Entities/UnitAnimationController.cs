@@ -31,17 +31,18 @@ public class UnitAnimationController
         _animator.SetFloat(ANIM_HASH_DIRECTION, directionIndex);
     }
 
-    public void SetMovement(Vector2 dir)
+    public void StopWalk()
     {
-        bool isMoving = dir.sqrMagnitude > 0.01f;
-        _animator.SetBool(ANIM_HASH_IS_MOVING, isMoving);
+        _animator.SetBool(ANIM_HASH_IS_MOVING, false);
 
-        if (isMoving)
-        {
-            int directionIndex = GetDirectionIndexOptimized(dir);
+        _animator.SetFloat(ANIM_HASH_DIRECTION, _currentDirection);
+    }
 
-            _animator.SetFloat(ANIM_HASH_DIRECTION, directionIndex);
-        }
+    public void SetWalk()
+    {
+        _animator.SetBool(ANIM_HASH_IS_MOVING, true);
+
+        _animator.SetFloat(ANIM_HASH_DIRECTION, _currentDirection);
     }
 
     /// <summary>
