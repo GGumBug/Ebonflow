@@ -4,13 +4,25 @@ namespace CombatSystem
 {
     public abstract class SkillExecutor : ISkillExecutor
     {
-        public abstract void Execute(IAttacker attacker, SkillDefinition skillDefinition, ValidationResult validationResult, DamageCalculator damageCalculator);
+        protected CombatManager combatManager;
 
-        protected void ApplyDamage(IAttacker attacker, IVictim victim, DamageCalculator damageCalculator)
+        public SkillExecutor()
         {
+            combatManager = CombatManager.Instance;
+        }
+
+        public abstract void Execute(IAttacker attacker, SkillDefinition skillDefinition, ValidationResult validationResult, bool isManaGain);
+
+        protected void ApplyDamage(IAttacker attacker, IVictim victim, DamageCalculator damageCalculator, bool isManaGain)
+        {
+            int appliedDamage = -1;
             int damage = damageCalculator.CalculateDamage(attacker.Stat, victim.Stat);
-            int appliedDamage = 0;
             victim.Health.ApplyDamageAndGetApplied(damage, out appliedDamage);
+
+            if(isManaGain)
+            {
+                combatManager.ManaGainService.OnDealDamage(attacker, appliedDamage);
+            }
         }
     }
 }

@@ -25,7 +25,7 @@ namespace ProjectileSystem
                 {
                     if (_attacker.TeamId != triggeredUnit.TeamId)
                     {
-                        OnApplyDamage?.Invoke(_attacker, triggeredUnit, _damageCalculator);
+                        OnApplyDamage?.Invoke(_attacker, triggeredUnit, _damageCalculator, _isManaGain);
 
                         _poolManager.Push(_poolable);
                     }

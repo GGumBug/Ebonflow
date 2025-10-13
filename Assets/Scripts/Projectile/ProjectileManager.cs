@@ -21,7 +21,7 @@ namespace ProjectileSystem
             _triggerProjectileOrigin = await _addressableManager.Load<GameObject>(AddressableKey.SkillshotProjectile);
         }
 
-        public void LaunchProjectile(IAttacker attacker, IVictim victim, SkillDefinition skillDefinition, ValidationResult validationResult, DamageCalculator damageCalculator, Action<IAttacker, IVictim, DamageCalculator> onApplyDamage, Vector2 destination = default)
+        public void LaunchProjectile(IAttacker attacker, IVictim victim, SkillDefinition skillDefinition, ValidationResult validationResult, DamageCalculator damageCalculator, bool isManaGain, Action<IAttacker, IVictim, DamageCalculator, bool> onApplyDamage, Vector2 destination = default)
         {
             Projectile projectile = null;
 
@@ -34,8 +34,8 @@ namespace ProjectileSystem
                     projectile = _poolManager.GetFromPool<SkillshotProjectile>(_triggerProjectileOrigin, null, attacker.Position, Quaternion.identity);
                     break;
             }
-            
-            projectile.SetData(attacker, victim, destination, damageCalculator, onApplyDamage);
+
+            projectile.SetData(attacker, victim, destination, damageCalculator, isManaGain, onApplyDamage);
             projectile.Launch();
         }
     }

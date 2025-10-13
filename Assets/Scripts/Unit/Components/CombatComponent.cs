@@ -8,14 +8,14 @@ public class CombatComponent : IDisposable
     private IRangeDetector _detector;
     private IAttacker _host;
     private Sequence _attackSequence;
-    private Func<IAttacker, IRangeDetector, bool> OnTrigger;
+    private Func<IAttacker, IRangeDetector, bool, bool> OnTrigger;
 
     public event Action OnAttackStarted;
     public event Action OnAttackEnded;
     public event Action<int> ResetToMana;
     public event Func<bool> CheckManaFull;
 
-    public CombatComponent(Unit host, RangeDetector detector, Func<IAttacker, IRangeDetector, bool> onTrigger, ManaComponent manaComponent)
+    public CombatComponent(Unit host, RangeDetector detector, Func<IAttacker, IRangeDetector, bool, bool> onTrigger, ManaComponent manaComponent)
     {
         _host = host;
         _detector = detector;
@@ -48,7 +48,7 @@ public class CombatComponent : IDisposable
         }
         else
         {
-            bool result = OnTrigger(attacker, _detector); // 디버그용 스킬 0번
+            bool result = OnTrigger(attacker, _detector, true); // 디버그용 스킬 0번
             if (!result)
             {
                 OnAttackEnded?.Invoke();

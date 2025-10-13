@@ -5,22 +5,23 @@ namespace CombatSystem
 {
     public class CombatManager : Singleton<CombatManager>
     {
-        private DamageCalculator _damageCalculator;
-        private ManaGainService _manaGainService;
         private SkillRepository _skillRepository;
         private CastValidatorFactory _castValidatorFactory;
         private SkillExecutorFactory _skillExecutorFactory;
 
+        public DamageCalculator Calculator { get; private set; }
+        public ManaGainService ManaGainService { get; private set; }
+
         public void Setup()
         {
             _skillRepository = new SkillRepository();
-            _damageCalculator = new DamageCalculator();
-            _manaGainService = new ManaGainService();
+            Calculator = new DamageCalculator();
+            ManaGainService = new ManaGainService();
             _castValidatorFactory = new CastValidatorFactory();
             _skillExecutorFactory = new SkillExecutorFactory();
         }
 
-        public bool Trigger(IAttacker attacker, IRangeDetector detector)
+        public bool Trigger(IAttacker attacker, IRangeDetector detector, bool isManaGain = true)
         {
             SkillDefinition currentSkill = null;
 
@@ -44,7 +45,7 @@ namespace CombatSystem
                 attacker,
                 currentSkill,
                 validationResult,
-                _damageCalculator
+                isManaGain
             );
 
             return true;

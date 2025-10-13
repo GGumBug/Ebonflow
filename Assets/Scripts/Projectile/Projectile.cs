@@ -17,7 +17,8 @@ namespace ProjectileSystem
         protected IVictim _victim;
         protected Vector2 _destination;
         protected DamageCalculator _damageCalculator;
-        protected Action<IAttacker, IVictim ,DamageCalculator> OnApplyDamage;
+        protected bool _isManaGain;
+        protected Action<IAttacker, IVictim, DamageCalculator, bool> OnApplyDamage;
     
         protected virtual void Awake()
         {
@@ -25,7 +26,7 @@ namespace ProjectileSystem
             _poolable = GetComponent<Poolable>();
         }
 
-        public void SetData(IAttacker attacker, IVictim victim, Vector2 destination, DamageCalculator damageCalculator, Action<IAttacker, IVictim, DamageCalculator> onApplyDamage)
+        public void SetData(IAttacker attacker, IVictim victim, Vector2 destination, DamageCalculator damageCalculator, bool isManaGain, Action<IAttacker, IVictim, DamageCalculator, bool> onApplyDamage)
         {
             _attacker = attacker;
             _victim = victim;

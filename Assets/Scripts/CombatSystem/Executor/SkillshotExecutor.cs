@@ -13,7 +13,7 @@ namespace CombatSystem
             _projectileManager = ProjectileManager.Instance;
         }
 
-        public override void Execute(IAttacker attacker, SkillDefinition skillDefinition, ValidationResult validationResult, DamageCalculator damageCalculator)
+        public override void Execute(IAttacker attacker, SkillDefinition skillDefinition, ValidationResult validationResult, bool isManaGain)
         {
             // 다수 공격 스킬에 대한 예외처리 필요
             Vector2 direction = (validationResult.Targets[0].Position - attacker.Position).normalized;
@@ -27,7 +27,7 @@ namespace CombatSystem
 
             foreach (var target in validationResult.Targets)
             {
-                _projectileManager.LaunchProjectile(attacker, target, skillDefinition, validationResult, damageCalculator, ApplyDamage, target.Position);
+                _projectileManager.LaunchProjectile(attacker, target, skillDefinition, validationResult, combatManager.Calculator, isManaGain, ApplyDamage, target.Position);
             }
         }
     }

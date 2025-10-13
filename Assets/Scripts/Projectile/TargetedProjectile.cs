@@ -40,7 +40,7 @@ namespace ProjectileSystem
                                 .SetEase(Ease.Linear)
                                 .ToUniTask(cancellationToken: cancellationToken);
 
-                OnApplyDamage?.Invoke(_attacker, _victim, _damageCalculator);
+                OnApplyDamage?.Invoke(_attacker, _victim, _damageCalculator, _isManaGain);
             }
             catch
             {
