@@ -634,6 +634,11 @@ public partial class DB_SkillDefinitions : BGEntity
 		get => _f_Coef[Index];
 		set => _f_Coef[Index] = value;
 	}
+	public System.Boolean f_IsAttack
+	{
+		get => _f_IsAttack[Index];
+		set => _f_IsAttack[Index] = value;
+	}
 	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
 	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(5552308268041475466UL, 4065140096132871589UL), () => _ufle12jhs77_f_name = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_SkillID;
@@ -648,6 +653,8 @@ public partial class DB_SkillDefinitions : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldInt _f_HitLimit => _ufle12jhs77_f_HitLimit ?? (_ufle12jhs77_f_HitLimit = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(4791642517642103022UL, 18013108878088374427UL), () => _ufle12jhs77_f_HitLimit = null));
 	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_Coef;
 	public static BansheeGz.BGDatabase.BGFieldFloat _f_Coef => _ufle12jhs77_f_Coef ?? (_ufle12jhs77_f_Coef = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(5720104085545835281UL, 3299285901855127UL), () => _ufle12jhs77_f_Coef = null));
+	private static BansheeGz.BGDatabase.BGFieldBool _ufle12jhs77_f_IsAttack;
+	public static BansheeGz.BGDatabase.BGFieldBool _f_IsAttack => _ufle12jhs77_f_IsAttack ?? (_ufle12jhs77_f_IsAttack = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldBool>(MetaDefault, new BGId(5128916381293213162UL, 3719071332559131525UL), () => _ufle12jhs77_f_IsAttack = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();

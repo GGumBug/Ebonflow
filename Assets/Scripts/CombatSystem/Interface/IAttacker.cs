@@ -11,5 +11,6 @@ namespace CombatSystem
         public UnitStats Stat { get; }
         public ManaComponent Mana { get; }
         public int AttackSkillID { get; }
+        public int ActiveSkillID { get; }
     }
 }

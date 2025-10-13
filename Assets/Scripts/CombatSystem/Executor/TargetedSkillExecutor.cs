@@ -25,7 +25,6 @@ namespace CombatSystem
             Vector2 direction = (validationResult.Targets[0].Position - attacker.Position).normalized;
             attacker.Model.SetUnitDirection(direction);
 
-            int appliedDamage = -1;
             if (skillDefinition.Delivery == DeliveryType.Instant)
             {
                 foreach (var target in validationResult.Targets)
@@ -37,11 +36,6 @@ namespace CombatSystem
                 {
                     _projectileManager.LaunchProjectile(attacker, target, skillDefinition, validationResult, combatManager.Calculator, isManaGain, ApplyDamage);
                 }
-            }
-
-            if (isManaGain)
-            {
-                combatManager.ManaGainService.OnDealDamage(attacker, appliedDamage);
             }
         }
 

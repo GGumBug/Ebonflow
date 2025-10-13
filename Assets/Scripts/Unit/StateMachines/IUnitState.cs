@@ -9,8 +9,7 @@ public interface IUnitState
 
 public class WaitState : IUnitState
 {
-    public static readonly WaitState Instance = new WaitState();
-    private WaitState() { }
+    public WaitState() { }
 
     public void Enter(Unit unit)
     {
@@ -29,8 +28,7 @@ public class WaitState : IUnitState
 
 public class IdleState : IUnitState
 {
-    public static readonly IdleState Instance = new IdleState();
-    private IdleState() { }
+    public IdleState() { }
 
     public void Enter(Unit unit)
     {
@@ -50,9 +48,7 @@ public class IdleState : IUnitState
 
 public class WalkState : IUnitState
 {
-    public static readonly WalkState Instance = new WalkState();
-    private WalkState() { }
-
+    public WalkState() { }
 
     public void Enter(Unit unit)
     {
@@ -74,14 +70,12 @@ public class WalkState : IUnitState
 
 public class AttackState : IUnitState
 {
-    public static readonly AttackState Instance = new AttackState();
-    private AttackState() { }
+    public AttackState() { }
 
     public void Enter(Unit unit)
     {
         unit.Model.StopWalkAnimation();
         unit.Model.TriggerUnitAttack();
-        unit.OnEnterAttack();
     }
 
     public void Execute(Unit unit)
@@ -92,14 +86,35 @@ public class AttackState : IUnitState
 
     public void Exit(Unit unit)
     {
-        
+
+    }
+}
+
+public class ActiveSkillState : IUnitState
+{
+    public ActiveSkillState() { }
+
+    public void Enter(Unit unit)
+    {
+        unit.Model.StopWalkAnimation();
+        unit.Model.TriggerUnitSkill();
+    }
+
+    public void Execute(Unit unit)
+    {
+        // if (unit.IsAttackAnimationFinished)
+        //     unit.StateMachine.ChangeState(new IdleState());
+    }
+
+    public void Exit(Unit unit)
+    {
+
     }
 }
 
 public class DeadState : IUnitState
 {
-    public static readonly DeadState Instance = new DeadState();
-    private DeadState() { }
+    public DeadState() { }
 
     public void Enter(Unit unit)
     {

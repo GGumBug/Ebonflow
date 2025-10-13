@@ -1,4 +1,5 @@
 using SkillSystem;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace CombatSystem
@@ -21,11 +22,11 @@ namespace CombatSystem
             _skillExecutorFactory = new SkillExecutorFactory();
         }
 
-        public bool Trigger(IAttacker attacker, IRangeDetector detector, bool isManaGain = true)
+        public bool Trigger(bool isActiveSkill, IAttacker attacker, IRangeDetector detector, bool isManaGain = true)
         {
             SkillDefinition currentSkill = null;
 
-            bool getSkillDefinitionResult = _skillRepository.TryGet(attacker.AttackSkillID, out currentSkill);
+            bool getSkillDefinitionResult = GetSkillDefinitionResult(isActiveSkill, attacker, out currentSkill);
 
             if (!getSkillDefinitionResult || currentSkill == null)
             {
@@ -49,6 +50,18 @@ namespace CombatSystem
             );
 
             return true;
+        }
+
+        private bool GetSkillDefinitionResult(bool isActiveSkill, IAttacker attacker, out SkillDefinition currentSkill)
+        {
+            bool getSkillDefinitionResult = false;
+
+            if (isActiveSkill)
+                getSkillDefinitionResult = _skillRepository.TryGet(attacker.ActiveSkillID, out currentSkill);
+            else
+                getSkillDefinitionResult = _skillRepository.TryGet(attacker.AttackSkillID, out currentSkill);
+
+            return getSkillDefinitionResult;
         }
     }
 }

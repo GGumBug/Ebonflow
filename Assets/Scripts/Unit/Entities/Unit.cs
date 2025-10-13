@@ -14,6 +14,7 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
 
     private int _instanceId = -1;
     private bool _battleHandlersSubscribed; // 중복 구독/해제 방지
+    private bool _isActiveSkill = false;
     private AStarAgent _aStarAgent;
     private RangeDetector _rangeDetector;
     private CombatComponent _combatComponent;
@@ -33,6 +34,7 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
     public UnitClass Class { get; private set; }
     public UnitOrigin Origin { get; private set; }
     public int AttackSkillID { get; private set; }
+    public int ActiveSkillID { get; private set; }
     public bool IsBattleActive { get; private set; }
     public bool IsDead { get; private set; }
     public int TeamId => (int)team;
@@ -66,6 +68,7 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
         Class = aggregate.Data.Class;
         Origin = aggregate.Data.Origin;
         AttackSkillID = aggregate.Data.AttackSkillID;
+        ActiveSkillID = aggregate.Data.ActiveSkillID;
 
         this.team = team;
         _statData = aggregate.Stat;
@@ -124,6 +127,7 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
         _movementComponent.CancelMovementAction += _aStarAgent.ClearFllowing;
 
         Health.OnDied += _stateMachine.ChangeToDead;
+        _combatComponent.OnAttackStarted += OnEnterAttack;
         _combatComponent.OnAttackEnded += _stateMachine.ChangeToIdle;
 
         _aStarAgent.GetCurrentGridPositionAction += OnRequestCurrentGridPos;
@@ -149,6 +153,7 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
         _movementComponent.CancelMovementAction -= _aStarAgent.ClearFllowing;
 
         Health.OnDied -= _stateMachine.ChangeToDead;
+        _combatComponent.OnAttackStarted -= OnEnterAttack;
         _combatComponent.OnAttackEnded -= _stateMachine.ChangeToIdle;
 
         _aStarAgent.GetCurrentGridPositionAction -= OnRequestCurrentGridPos;
@@ -184,8 +189,13 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
 
     public void TransitionToState()
     {
-        if (_combatComponent.CanAttack())
-            _stateMachine.ChangeToAttack();
+        if (_combatComponent.TryAttack(out _isActiveSkill))
+        {
+            if (_isActiveSkill)
+                _stateMachine.ChangeToSkill();
+            else
+                _stateMachine.ChangeToAttack();
+        }
         else
             _stateMachine.ChangeToWalk();
     }
@@ -237,7 +247,6 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
     public void OnEnterAttack()
     {
         _aStarAgent.ClearFllowing();
-        _combatComponent.TryAttack();
     }
 
     public void SubscribeBattleStateHandlers()

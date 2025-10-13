@@ -1,21 +1,23 @@
-using System;
 using CombatSystem;
 using DG.Tweening;
+using System;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class CombatComponent : IDisposable
 {
+    private bool _isAttacking = false;
     private IRangeDetector _detector;
     private IAttacker _host;
     private Sequence _attackSequence;
-    private Func<IAttacker, IRangeDetector, bool, bool> OnTrigger;
+    private Func<bool, IAttacker, IRangeDetector, bool, bool> OnTrigger;
 
     public event Action OnAttackStarted;
     public event Action OnAttackEnded;
     public event Action<int> ResetToMana;
     public event Func<bool> CheckManaFull;
 
-    public CombatComponent(Unit host, RangeDetector detector, Func<IAttacker, IRangeDetector, bool, bool> onTrigger, ManaComponent manaComponent)
+    public CombatComponent(Unit host, RangeDetector detector, Func<bool, IAttacker, IRangeDetector, bool, bool> onTrigger, ManaComponent manaComponent)
     {
         _host = host;
         _detector = detector;
@@ -24,16 +26,14 @@ public class CombatComponent : IDisposable
         ResetToMana += manaComponent.ResetTo;
     }
 
-    public bool CanAttack()
+    public bool TryAttack(out bool isActiveSkill)
     {
-        if (_detector.HasEnemies)
-            return true;
+        if (_isAttacking)
+        {
+            isActiveSkill = false;
+            return false;
+        }
 
-        return false;
-    }
-
-    public void TryAttack()
-    {
         // 기존 시퀀트가 남아 있으면 즉시 취소
         if (_attackSequence != null && _attackSequence.IsActive())
             _attackSequence.Kill();
@@ -44,25 +44,38 @@ public class CombatComponent : IDisposable
         if (CheckManaFull.Invoke())
         {
             ResetToMana.Invoke(0);
-            Debug.Log("스킬 발동!");
-        }
-        else
-        {
-            bool result = OnTrigger(attacker, _detector, true); // 디버그용 스킬 0번
+            bool result = OnTrigger(true, attacker, _detector, false);
+            isActiveSkill = true;
             if (!result)
             {
                 OnAttackEnded?.Invoke();
-                return;
+                return false;
+            }
+        }
+        else
+        {
+            bool result = OnTrigger(false, attacker, _detector, true);
+            isActiveSkill = false;
+            if (!result)
+            {
+                OnAttackEnded?.Invoke();
+                return false;
             }
         }
 
         OnAttackStarted?.Invoke();
+        BeginAttackSequence(attacker);
+        return true;
+    }
 
+    private void BeginAttackSequence(IAttacker attacker)
+    {
         _attackSequence = DOTween.Sequence()
             .AppendInterval(attacker.Stat.AttackDelay)
             .AppendCallback(() =>
             {
                 OnAttackEnded?.Invoke();
+                _isAttacking = false;
             })
             .SetAutoKill(true);
     }
