@@ -13,7 +13,7 @@ namespace ProjectileSystem
 
         void SetDirection()
         {
-            _direction = ((Vector2)_attacker.Position - _destination).normalized;
+            _direction = (_destination - (Vector2)_attacker.Position).normalized;
         }
 
         void OnTriggerEnter2D(Collider2D collision)
