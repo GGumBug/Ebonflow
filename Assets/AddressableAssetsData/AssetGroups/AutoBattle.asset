@@ -20,6 +20,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d3716adc1e568645ab583e0d1b12984
+    m_Address: Assets/Art/Animation/ArcherAnimator.overrideController
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3f78bc18a4270f74b82f5043b03f1c72
     m_Address: Assets/Prefabs/UI/UIAutoBattle.prefab
     m_ReadOnly: 0
@@ -27,6 +32,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6c8e3d795af95fe4d9d2547861af29d9
     m_Address: Assets/Prefabs/UI/CardView.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: acf6952fe18e2ea498a714a5f5a2cec0
+    m_Address: Assets/Art/Animation/MinerAnimator.overrideController
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

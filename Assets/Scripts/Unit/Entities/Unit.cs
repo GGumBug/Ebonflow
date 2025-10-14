@@ -64,6 +64,7 @@ public class Unit : MonoBehaviour, IUpdateObserver, IAttacker, IVictim
     {
         CurrentGridPosition = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
         model.SetUnitDirection(Vector2.down);
+        model.SetAnimatorController(aggregate.Data.UnitAnimatorKey);
 
         Class = aggregate.Data.Class;
         Origin = aggregate.Data.Origin;

@@ -19,6 +19,17 @@ public class UnitAnimationController
         _animator = animator;
     }
 
+    public void SetAnimatorOverrideController(AnimatorOverrideController overrideController)
+    {
+        if (overrideController == null)
+        {
+            Debug.LogWarning("제공된 Override Controller가 null이므로 기본 Controller를 유지합니다.");
+            return;
+        }
+
+        _animator.runtimeAnimatorController = overrideController;
+    }
+
     public void SetDirection(Vector2 dir)
     {
         if (dir.sqrMagnitude < 0.01f)

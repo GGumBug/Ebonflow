@@ -28,7 +28,7 @@ public class AutoBattleScene : SceneBase, IAStarGridSettings
         if (isDebugMode)
         {
             Debug.LogWarning("autobattleSceneDataContext가 null 입니다. 더미데이터 생성");
-            dataManager.Setup();
+            await dataManager.Setup();
             AutoBattleStageData dummy = new AutoBattleStageData(true, 1, 0, 2, 0);
             _currentStageData = _autoBattleStagePicker.PickStage(dummy);
         }

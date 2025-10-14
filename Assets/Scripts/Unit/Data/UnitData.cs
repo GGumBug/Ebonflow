@@ -11,6 +11,7 @@ public class UnitData
     public UnitOrigin Origin { get; }
     public int AttackSkillID { get; }
     public int ActiveSkillID { get; }
+    public AddressableKey UnitAnimatorKey { get; }
 
     public UnitData(DB_Units e)
     {
@@ -25,5 +26,6 @@ public class UnitData
         Origin = e.f_Origin;
         AttackSkillID = e.f_AttackSkillId;
         ActiveSkillID = e.f_ActiveSkillId;
+        UnitAnimatorKey = e.f_ModelKey;
     }
 }

@@ -1,3 +1,4 @@
+using AutoBattle;
 using UnityEngine;
 
 public class UnitModel : MonoBehaviour
@@ -11,6 +12,12 @@ public class UnitModel : MonoBehaviour
     {
         _spriteOffsetAdjuster = gameObject.AddComponent<SpriteOffsetAdjuster>();
         _unitAnimationController = new UnitAnimationController(animator);
+    }
+
+    public void SetAnimatorController(AddressableKey modelKey)
+    {
+        var controller = AutoBattleDataManager.Instance.GetUnitModelAnimator(modelKey);
+        _unitAnimationController.SetAnimatorOverrideController(controller);
     }
 
     public void StopWalkAnimation() => _unitAnimationController.StopWalk();

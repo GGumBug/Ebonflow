@@ -5,6 +5,7 @@ public class UnitRepository : IUnitRepository
 {
     private readonly Dictionary<int, UnitData> _dataMap;
     private readonly Dictionary<(int, int), UnitStatData> _statMap;
+    private readonly Dictionary<int, AddressableKey> _modelMap;
 
     public UnitRepository()
     {

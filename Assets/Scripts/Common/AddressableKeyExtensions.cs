@@ -9,6 +9,8 @@ public enum AddressableKey
     CardView,
     TargetedProjectile,
     SkillshotProjectile,
+    MinerAnimator,
+    ArcherAnimator
 }
 
 public static class AddressableKeyExtensions
@@ -23,6 +25,8 @@ public static class AddressableKeyExtensions
         { AddressableKey.CardView, "Assets/Prefabs/UI/CardView.prefab" },
         { AddressableKey.TargetedProjectile, "Assets/Prefabs/Projectile/TargetedProjectile.prefab" },
         { AddressableKey.SkillshotProjectile, "Assets/Prefabs/Projectile/SkillshotProjectile.prefab" },
+        { AddressableKey.MinerAnimator, "Assets/Art/Animation/MinerAnimator.overrideController" },
+        { AddressableKey.ArcherAnimator, "Assets/Art/Animation/ArcherAnimator.overrideController" }
     };
 
     public static string ToKey(this AddressableKey key)

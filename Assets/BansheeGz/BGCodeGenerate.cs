@@ -65,6 +65,11 @@ public partial class DB_Units : BGEntity
 		get => _f_ActiveSkillId[Index];
 		set => _f_ActiveSkillId[Index] = value;
 	}
+	public AddressableKey f_ModelKey
+	{
+		get => (AddressableKey) _f_ModelKey[Index];
+		set => _f_ModelKey[Index] = value;
+	}
 	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
 	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(4762821637793240553UL, 2073662938292457094UL), () => _ufle12jhs77_f_name = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_UnitId;
@@ -83,6 +88,8 @@ public partial class DB_Units : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldInt _f_AttackSkillId => _ufle12jhs77_f_AttackSkillId ?? (_ufle12jhs77_f_AttackSkillId = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(5102688652777171817UL, 646664592436642998UL), () => _ufle12jhs77_f_AttackSkillId = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_ActiveSkillId;
 	public static BansheeGz.BGDatabase.BGFieldInt _f_ActiveSkillId => _ufle12jhs77_f_ActiveSkillId ?? (_ufle12jhs77_f_ActiveSkillId = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(5359149282576833668UL, 64933892537012670UL), () => _ufle12jhs77_f_ActiveSkillId = null));
+	private static BansheeGz.BGDatabase.BGFieldEnum _ufle12jhs77_f_ModelKey;
+	public static BansheeGz.BGDatabase.BGFieldEnum _f_ModelKey => _ufle12jhs77_f_ModelKey ?? (_ufle12jhs77_f_ModelKey = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEnum>(MetaDefault, new BGId(5049821014539495352UL, 6494668822180373135UL), () => _ufle12jhs77_f_ModelKey = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
@@ -639,6 +646,11 @@ public partial class DB_SkillDefinitions : BGEntity
 		get => _f_IsAttack[Index];
 		set => _f_IsAttack[Index] = value;
 	}
+	public System.String f_CastValidationPolicy
+	{
+		get => _f_CastValidationPolicy[Index];
+		set => _f_CastValidationPolicy[Index] = value;
+	}
 	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
 	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(5552308268041475466UL, 4065140096132871589UL), () => _ufle12jhs77_f_name = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_SkillID;
@@ -655,6 +667,8 @@ public partial class DB_SkillDefinitions : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldFloat _f_Coef => _ufle12jhs77_f_Coef ?? (_ufle12jhs77_f_Coef = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(5720104085545835281UL, 3299285901855127UL), () => _ufle12jhs77_f_Coef = null));
 	private static BansheeGz.BGDatabase.BGFieldBool _ufle12jhs77_f_IsAttack;
 	public static BansheeGz.BGDatabase.BGFieldBool _f_IsAttack => _ufle12jhs77_f_IsAttack ?? (_ufle12jhs77_f_IsAttack = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldBool>(MetaDefault, new BGId(5128916381293213162UL, 3719071332559131525UL), () => _ufle12jhs77_f_IsAttack = null));
+	private static BansheeGz.BGDatabase.BGFieldString _ufle12jhs77_f_CastValidationPolicy;
+	public static BansheeGz.BGDatabase.BGFieldString _f_CastValidationPolicy => _ufle12jhs77_f_CastValidationPolicy ?? (_ufle12jhs77_f_CastValidationPolicy = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldString>(MetaDefault, new BGId(4826110664042211592UL, 9764399295466742717UL), () => _ufle12jhs77_f_CastValidationPolicy = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();
