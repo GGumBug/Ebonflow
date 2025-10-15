@@ -8,7 +8,7 @@ namespace ProjectileSystem
 {
     public abstract class Projectile : MonoBehaviour
     {
-        [SerializeField] protected float speed = 10f;
+        [SerializeField] protected float speed = 20f;
 
         protected const float TARGET_Y_OFFSET = 0.5f;
 
