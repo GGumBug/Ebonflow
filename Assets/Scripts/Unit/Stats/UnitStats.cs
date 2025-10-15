@@ -22,6 +22,8 @@ public class UnitStats
 
     public int CurrentHP   { get; private set; }
     public int CurrentMana { get; private set; } // ★ 추가
+    public float AttackFrameDelay { get; }
+    public float ActiveSkillFrameDelay { get; }
 
     public UnitStats(UnitStatData unitStatData)
     {
@@ -33,6 +35,9 @@ public class UnitStats
         // 초기화
         CurrentHP   = MaxHP;
         CurrentMana = 0; // 시작은 0 or Max, 게임 규칙에 맞게 설정
+
+        AttackFrameDelay = unitStatData.AttackFrameDelay;
+        ActiveSkillFrameDelay = unitStatData.ActiveSkillFrameDelay;
 
         Debug.Log($"[UnitStats] ★{BaseStats.StarLevel} 생성 → MaxHP={MaxHP}, MaxMana={MaxMana}, CurrentHP={CurrentHP}, CurrentMana={CurrentMana}, Atk={Attack}");
     }

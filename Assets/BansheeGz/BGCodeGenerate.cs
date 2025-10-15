@@ -260,6 +260,16 @@ public partial class DB_UnitStats : BGEntity
 		get => _f_Mana[Index];
 		set => _f_Mana[Index] = value;
 	}
+	public System.Single f_AttackFrameDelay
+	{
+		get => _f_AttackFrameDelay[Index];
+		set => _f_AttackFrameDelay[Index] = value;
+	}
+	public System.Single f_ActiveSkillFrameDelay
+	{
+		get => _f_ActiveSkillFrameDelay[Index];
+		set => _f_ActiveSkillFrameDelay[Index] = value;
+	}
 	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
 	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(5507304839897652857UL, 4685881140701435545UL), () => _ufle12jhs77_f_name = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_UnitId;
@@ -276,6 +286,10 @@ public partial class DB_UnitStats : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldInt _f_Range => _ufle12jhs77_f_Range ?? (_ufle12jhs77_f_Range = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(5759245139096195051UL, 3789395744533961906UL), () => _ufle12jhs77_f_Range = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_Mana;
 	public static BansheeGz.BGDatabase.BGFieldInt _f_Mana => _ufle12jhs77_f_Mana ?? (_ufle12jhs77_f_Mana = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldInt>(MetaDefault, new BGId(5762520283391830254UL, 7941986863915011512UL), () => _ufle12jhs77_f_Mana = null));
+	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_AttackFrameDelay;
+	public static BansheeGz.BGDatabase.BGFieldFloat _f_AttackFrameDelay => _ufle12jhs77_f_AttackFrameDelay ?? (_ufle12jhs77_f_AttackFrameDelay = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(4652181813929785532UL, 14626841767468074424UL), () => _ufle12jhs77_f_AttackFrameDelay = null));
+	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_ActiveSkillFrameDelay;
+	public static BansheeGz.BGDatabase.BGFieldFloat _f_ActiveSkillFrameDelay => _ufle12jhs77_f_ActiveSkillFrameDelay ?? (_ufle12jhs77_f_ActiveSkillFrameDelay = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(5378440026726774248UL, 5927352442813175225UL), () => _ufle12jhs77_f_ActiveSkillFrameDelay = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();

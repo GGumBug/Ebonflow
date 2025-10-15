@@ -1,4 +1,6 @@
+using Cysharp.Threading.Tasks;
 using SkillSystem;
+using System;
 
 namespace CombatSystem
 {
@@ -11,7 +13,7 @@ namespace CombatSystem
             combatManager = CombatManager.Instance;
         }
 
-        public abstract void Execute(IAttacker attacker, SkillDefinition skillDefinition, ValidationResult validationResult, bool isManaGain);
+        public abstract void Execute(IAttacker attacker, SkillDefinition skillDefinition, ValidationResult validationResult, bool isManaGain, Action<IAttacker, Action> startAttackDelegate);
 
         protected void ApplyDamage(IAttacker attacker, IVictim victim, DamageCalculator damageCalculator, bool isManaGain)
         {

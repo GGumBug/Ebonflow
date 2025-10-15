@@ -1,6 +1,8 @@
-using SkillSystem;
-using UnityEngine;
+using Cysharp.Threading.Tasks;
 using ProjectileSystem;
+using SkillSystem;
+using System;
+using UnityEngine;
 
 namespace CombatSystem
 {
@@ -13,12 +15,12 @@ namespace CombatSystem
             _projectileManager = ProjectileManager.Instance;
         }
 
-        public override void Execute(IAttacker attacker, SkillDefinition skillDefinition, ValidationResult validationResult, bool isManaGain)
+        public override void Execute(IAttacker attacker, SkillDefinition skillDefinition, ValidationResult validationResult, bool isManaGain, Action<IAttacker, Action> startAttackDelegate)
         {
             if (!validationResult.Accepted)
             {
                 Debug.LogError("Targeted skill executed without a target.");
-                return;
+                return;  
             }
 
             // 다수 공격 스킬에 대한 예외처리 필요
@@ -28,13 +30,13 @@ namespace CombatSystem
             if (skillDefinition.Delivery == DeliveryType.Instant)
             {
                 foreach (var target in validationResult.Targets)
-                    ApplyDamage(attacker, target, combatManager.Calculator, isManaGain);
+                    startAttackDelegate.Invoke(attacker, () => ApplyDamage(attacker, target, combatManager.Calculator, isManaGain));
             }
             else if (skillDefinition.Delivery == DeliveryType.Projectile)
             {
                 foreach (var target in validationResult.Targets)
                 {
-                    _projectileManager.LaunchProjectile(attacker, target, skillDefinition, validationResult, combatManager.Calculator, isManaGain, ApplyDamage);
+                    startAttackDelegate.Invoke(attacker, () => _projectileManager.LaunchProjectile(attacker, target, skillDefinition, validationResult, combatManager.Calculator, isManaGain, ApplyDamage));
                 }
             }
         }

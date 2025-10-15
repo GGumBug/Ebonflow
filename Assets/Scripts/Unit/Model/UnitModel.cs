@@ -7,11 +7,13 @@ public class UnitModel : MonoBehaviour
     
     private SpriteOffsetAdjuster _spriteOffsetAdjuster;
     private UnitAnimationController _unitAnimationController;
+    private ShootPositionGenerator _shootPositionGenerator;
 
     private void Awake()
     {
         _spriteOffsetAdjuster = gameObject.AddComponent<SpriteOffsetAdjuster>();
         _unitAnimationController = new UnitAnimationController(animator);
+        _shootPositionGenerator = new ShootPositionGenerator();
     }
 
     public void SetAnimatorController(AddressableKey modelKey)
@@ -26,4 +28,5 @@ public class UnitModel : MonoBehaviour
     public void TriggerUnitSkill() => _unitAnimationController.TriggerSkill();
     public void SetDead(bool isDead) => _unitAnimationController.SetDead(isDead);
     public void SetUnitDirection(Vector2 dir) => _unitAnimationController.SetDirection(dir);
+    public Vector2 GetShootPositionFromDirection(Vector2 dir) => _shootPositionGenerator.GetShootPositionFromDirection(transform.position, dir);
 }

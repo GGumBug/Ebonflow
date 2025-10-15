@@ -1,5 +1,5 @@
 using SkillSystem;
-using UnityEditor.Experimental.GraphView;
+using System;
 using UnityEngine;
 
 namespace CombatSystem
@@ -22,7 +22,7 @@ namespace CombatSystem
             _skillExecutorFactory = new SkillExecutorFactory();
         }
 
-        public bool Trigger(bool isActiveSkill, IAttacker attacker, IRangeDetector detector, bool isManaGain = true)
+        public bool Trigger(bool isActiveSkill, IAttacker attacker, IRangeDetector detector, bool isManaGain, Action<IAttacker, Action> startAttackDelegate)
         {
             SkillDefinition currentSkill = null;
 
@@ -46,7 +46,8 @@ namespace CombatSystem
                 attacker,
                 currentSkill,
                 validationResult,
-                isManaGain
+                isManaGain,
+                startAttackDelegate
             );
 
             return true;

@@ -1,8 +1,6 @@
 using CombatSystem;
 using DG.Tweening;
 using System;
-using UnityEditor.Experimental.GraphView;
-using UnityEngine;
 
 public class CombatComponent : IDisposable
 {
@@ -10,14 +8,14 @@ public class CombatComponent : IDisposable
     private IRangeDetector _detector;
     private IAttacker _host;
     private Sequence _attackSequence;
-    private Func<bool, IAttacker, IRangeDetector, bool, bool> OnTrigger;
+    private Func<bool, IAttacker, IRangeDetector, bool, Action<IAttacker, Action>, bool> OnTrigger;
 
     public event Action OnAttackStarted;
     public event Action OnAttackEnded;
     public event Action<int> ResetToMana;
     public event Func<bool> CheckManaFull;
 
-    public CombatComponent(Unit host, RangeDetector detector, Func<bool, IAttacker, IRangeDetector, bool, bool> onTrigger, ManaComponent manaComponent)
+    public CombatComponent(Unit host, RangeDetector detector, Func<bool, IAttacker, IRangeDetector, bool, Action<IAttacker, Action>, bool> onTrigger, ManaComponent manaComponent)
     {
         _host = host;
         _detector = detector;
@@ -44,7 +42,7 @@ public class CombatComponent : IDisposable
         if (CheckManaFull.Invoke())
         {
             ResetToMana.Invoke(0);
-            bool result = OnTrigger(true, attacker, _detector, false);
+            bool result = OnTrigger(true, attacker, _detector, false, BeginAttackSequence);
             isActiveSkill = true;
             if (!result)
             {
@@ -54,7 +52,7 @@ public class CombatComponent : IDisposable
         }
         else
         {
-            bool result = OnTrigger(false, attacker, _detector, true);
+            bool result = OnTrigger(false, attacker, _detector, true, BeginAttackSequence);
             isActiveSkill = false;
             if (!result)
             {
@@ -63,15 +61,20 @@ public class CombatComponent : IDisposable
             }
         }
 
-        OnAttackStarted?.Invoke();
-        BeginAttackSequence(attacker);
         return true;
     }
 
-    private void BeginAttackSequence(IAttacker attacker)
+    private void BeginAttackSequence(IAttacker attacker, Action shootAction)
     {
+        OnAttackStarted?.Invoke();
+
         _attackSequence = DOTween.Sequence()
-            .AppendInterval(attacker.Stat.AttackDelay)
+            .AppendInterval(attacker.Stat.AttackFrameDelay)
+            .AppendCallback(() =>
+            {
+                shootAction?.Invoke();
+            })
+            .AppendInterval(attacker.Stat.AttackDelay - attacker.Stat.AttackFrameDelay)
             .AppendCallback(() =>
             {
                 OnAttackEnded?.Invoke();

@@ -24,14 +24,20 @@ namespace ProjectileSystem
         public void LaunchProjectile(IAttacker attacker, IVictim victim, SkillDefinition skillDefinition, ValidationResult validationResult, DamageCalculator damageCalculator, bool isManaGain, Action<IAttacker, IVictim, DamageCalculator, bool> onApplyDamage, Vector2 destination = default)
         {
             Projectile projectile = null;
+            Vector2 direction = Vector2.zero;
+            Vector2 shootPosition = Vector2.zero;
 
             switch (skillDefinition.Targeting)
             {
                 case TargetingType.Targeted:
-                    projectile = _poolManager.GetFromPool<TargetedProjectile>(_basicProjectileOrigin, null, attacker.Position, Quaternion.identity);
+                    direction = ((Vector2)victim.Position - (Vector2)attacker.Position).normalized;
+                    shootPosition = attacker.Model.GetShootPositionFromDirection(direction);
+                    projectile = _poolManager.GetFromPool<TargetedProjectile>(_basicProjectileOrigin, null, shootPosition, Quaternion.identity);
                     break;
                 case TargetingType.Skillshot:
-                    projectile = _poolManager.GetFromPool<SkillshotProjectile>(_triggerProjectileOrigin, null, attacker.Position, Quaternion.identity);
+                    direction = (destination - (Vector2)attacker.Position).normalized;
+                    shootPosition = attacker.Model.GetShootPositionFromDirection(direction);
+                    projectile = _poolManager.GetFromPool<SkillshotProjectile>(_triggerProjectileOrigin, null, shootPosition, Quaternion.identity);
                     break;
             }
 
