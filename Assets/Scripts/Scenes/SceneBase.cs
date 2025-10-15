@@ -7,10 +7,26 @@ public abstract class SceneBase : MonoBehaviour, ILoadableScene
 
     private async void Awake()
     {
+        bool isLoadedViaManager = SceneLoadManager.Instance.IsLoadingFlowActive;
+
         if (isDebugMode)
-            await DebugMode();
+        {
+            if (isLoadedViaManager)
+            {
+                Debug.LogWarning($"[SceneBase] '{gameObject.scene.name}' 씬이 정상 로딩 플로우를 통해 시작되었습니다. 디버그 모드를 무시합니다.");
+
+                isDebugMode = false;
+                SetSceneLoadCallbacks();
+            }
+            else
+            {
+                await DebugMode();
+            }
+        }
         else
+        {
             SetSceneLoadCallbacks();
+        }
     }
 
     void SetSceneLoadCallbacks()

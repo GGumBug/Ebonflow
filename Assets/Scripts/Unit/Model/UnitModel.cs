@@ -6,13 +6,11 @@ public class UnitModel : MonoBehaviour
     [SerializeField] private Animator animator;
 
     private Transform _rootTransform;
-    private SpriteOffsetAdjuster _spriteOffsetAdjuster;
     private UnitAnimationController _unitAnimationController;
     private ShootPositionGenerator _shootPositionGenerator;
 
     private void Awake()
     {
-        _spriteOffsetAdjuster = gameObject.AddComponent<SpriteOffsetAdjuster>();
         _unitAnimationController = new UnitAnimationController(animator);
         _shootPositionGenerator = new ShootPositionGenerator();
     }

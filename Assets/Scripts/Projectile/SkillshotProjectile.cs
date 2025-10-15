@@ -9,13 +9,6 @@ namespace ProjectileSystem
     {
         [SerializeField] private LayerMask targetLayerMask;
 
-        private Vector2 _direction;
-
-        void SetDirection()
-        {
-            _direction = (_destination - (Vector2)_attacker.Position).normalized;
-        }
-
         void OnTriggerEnter2D(Collider2D collision)
         {
             if ((targetLayerMask.value & (1 << collision.gameObject.layer)) > 0)
@@ -35,14 +28,7 @@ namespace ProjectileSystem
 
         public override void Launch()
         {
-            SetDirection();
-
-            if (_direction != Vector2.zero)
-            {
-                float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
-
-                transform.rotation = Quaternion.Euler(0, 0, angle);
-            }
+            InitializeLaunchDirection();
 
             MoveAsync(_cancellationSource.Token).Forget();
         }
@@ -68,6 +54,17 @@ namespace ProjectileSystem
                     _poolManager.Push(_poolable);    
                 }
             }
+        }
+
+        protected override void InitializeLaunchDirection()
+        {
+            var offsetDest = new Vector2(_destination.x, _destination.y + TARGET_Y_OFFSET);
+            _destination = offsetDest;
+
+            var originDirection = (offsetDest - (Vector2)_attacker.Position).normalized;
+            _direction = ClampDirectionTo8Ways(originDirection);
+
+            LookAtDirection2D();
         }
     }
 }

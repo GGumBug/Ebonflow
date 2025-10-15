@@ -23,6 +23,7 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
 
     private bool HasAssignedLoadingTasks => Callbacks != null;
 
+    public bool IsLoadingFlowActive { get; private set; }
     public SceneLoadCallbacks Callbacks { get; set; } = null;
     public Action PreviousSceneLoadProgressAction { get; set; }
     public Action OnSceneLoadComplete { get; set; }
@@ -45,6 +46,8 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
 
     public async UniTask LoadSceneAsync<T>(bool isLoadingEnabled = true)
     {
+        IsLoadingFlowActive = true;
+
         PreviousSceneLoadProgressAction?.Invoke();
 
         currentSceneName = SceneManager.GetActiveScene().name;
@@ -63,6 +66,8 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
 
     public async UniTask LoadSceneAsyncWithLoadingUI<T>() where T : ILoadableScene
     {
+        IsLoadingFlowActive = true;
+
         PreviousSceneLoadProgressAction?.Invoke();
 
         currentSceneName = SceneManager.GetActiveScene().name;
@@ -157,6 +162,7 @@ public class SceneLoadManager : Singleton<SceneLoadManager>, IDonDestroy
         currentPercent = 0f;
         updateProgressAction = null;
         Callbacks = null;
+        IsLoadingFlowActive = false;
 
         cancel.Cancel();
         cancel.Dispose();

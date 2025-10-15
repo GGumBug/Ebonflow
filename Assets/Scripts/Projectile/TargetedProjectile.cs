@@ -7,25 +7,9 @@ namespace ProjectileSystem
 {
     public class TargetedProjectile : Projectile
     {
-        private Vector2 _targetPos;
-
-        private void SetTargetPos()
-        {
-            _targetPos = (Vector2)_victim.Position;
-        }
-
         public override void Launch()
         {
-            SetTargetPos();
-
-            Vector2 direction = (_targetPos - (Vector2)transform.position).normalized;
-
-            if (direction != Vector2.zero)
-            {
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-                transform.rotation = Quaternion.Euler(0, 0, angle);
-            }
+            InitializeLaunchDirection();
 
             MoveAsync(_cancellationSource.Token).Forget();
         }
@@ -34,9 +18,9 @@ namespace ProjectileSystem
         {
             try
             {
-                float duration = Vector2.Distance(transform.position, _targetPos) / speed;
+                float duration = Vector2.Distance(transform.position, _destination) / speed;
 
-                await transform.DOMove(_targetPos, duration)
+                await transform.DOMove(_destination, duration)
                                 .SetEase(Ease.Linear)
                                 .ToUniTask(cancellationToken: cancellationToken);
 
@@ -56,7 +40,18 @@ namespace ProjectileSystem
         {
             base.Clear();
 
-            _targetPos = Vector2.zero;
+            _destination = Vector2.zero;
+        }
+
+        protected override void InitializeLaunchDirection()
+        {
+            var offsetDest = new Vector2(_victim.Position.x, _victim.Position.y + TARGET_Y_OFFSET);
+            _destination = offsetDest;
+            _direction = (_destination - (Vector2)transform.position).normalized;
+
+            _direction = ClampDirectionTo8Ways(_direction);
+
+            LookAtDirection2D();
         }
     }
 }
