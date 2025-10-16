@@ -42,7 +42,6 @@ namespace ProjectileSystem
             }
 
             projectile.SetData(attacker, victim, destination, damageCalculator, isManaGain, onApplyDamage);
-            projectile.Launch();
         }
     }
 }
