@@ -31,12 +31,12 @@ namespace ProjectileSystem
             {
                 case TargetingType.Targeted:
                     direction = ((Vector2)victim.Position - (Vector2)attacker.Position).normalized;
-                    shootPosition = attacker.Model.GetShootPositionFromDirection(direction);
+                    shootPosition = attacker.Model.GetShootPosition();
                     projectile = _poolManager.GetFromPool<TargetedProjectile>(_basicProjectileOrigin, null, shootPosition, Quaternion.identity);
                     break;
                 case TargetingType.Skillshot:
                     direction = (destination - (Vector2)attacker.Position).normalized;
-                    shootPosition = attacker.Model.GetShootPositionFromDirection(direction);
+                    shootPosition = attacker.Model.GetShootPosition();
                     projectile = _poolManager.GetFromPool<SkillshotProjectile>(_triggerProjectileOrigin, null, shootPosition, Quaternion.identity);
                     break;
             }

@@ -19,6 +19,11 @@ public class UnitAnimationController
         _animator = animator;
     }
 
+    public int GetCurrentDirectionIndex()
+    {
+        return _currentDirection;
+    }
+
     public void SetAnimatorOverrideController(AnimatorOverrideController overrideController)
     {
         if (overrideController == null)

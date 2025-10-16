@@ -22,11 +22,17 @@ public class UnitModel : MonoBehaviour
         _unitAnimationController.SetAnimatorOverrideController(controller);
     }
 
+    public Vector2 GetShootPosition()
+    {
+        int directionIndex = _unitAnimationController.GetCurrentDirectionIndex();
+
+        return _shootPositionGenerator.GetShootPositionFromIndex(_rootTransform.position, directionIndex);
+    }
+
     public void StopWalkAnimation() => _unitAnimationController.StopWalk();
     public void PlayWalkAnimation() => _unitAnimationController.SetWalk();
     public void TriggerUnitAttack() => _unitAnimationController.TriggerAttack();
     public void TriggerUnitSkill() => _unitAnimationController.TriggerSkill();
     public void SetDead(bool isDead) => _unitAnimationController.SetDead(isDead);
     public void SetUnitDirection(Vector2 dir) => _unitAnimationController.SetDirection(dir);
-    public Vector2 GetShootPositionFromDirection(Vector2 dir) => _shootPositionGenerator.GetShootPositionFromDirection(_rootTransform.position, dir);
 }
