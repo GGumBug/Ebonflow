@@ -35,6 +35,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9edaeb9624e814d4fb5efbc167baf35d
+    m_Address: Assets/Art/Animation/MagicianAnimator.overrideController
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: acf6952fe18e2ea498a714a5f5a2cec0
     m_Address: Assets/Art/Animation/MinerAnimator.overrideController
     m_ReadOnly: 0
