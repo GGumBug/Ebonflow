@@ -1,7 +1,4 @@
 using UnityEngine;
-using DG.Tweening;
-using Cysharp.Threading.Tasks;
-using System.Threading;
 
 namespace ProjectileSystem
 {

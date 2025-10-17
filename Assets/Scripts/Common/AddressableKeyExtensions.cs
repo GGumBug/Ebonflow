@@ -26,9 +26,9 @@ public static class AddressableKeyExtensions
         { AddressableKey.CardView, "Assets/Prefabs/UI/CardView.prefab" },
         { AddressableKey.TargetedProjectile, "Assets/Prefabs/Projectile/TargetedProjectile.prefab" },
         { AddressableKey.SkillshotProjectile, "Assets/Prefabs/Projectile/SkillshotProjectile.prefab" },
-        { AddressableKey.MinerAnimator, "Assets/Art/Animation/MinerAnimator.overrideController" },
-        { AddressableKey.ArcherAnimator, "Assets/Art/Animation/ArcherAnimator.overrideController" },
-        { AddressableKey.MagicianAnimator, "Assets/Art/Animation/MagicianAnimator.overrideController" }
+        { AddressableKey.MinerAnimator, "Assets/Art/Animation/CharacterAnim/MinerAnimator.overrideController" },
+        { AddressableKey.ArcherAnimator, "Assets/Art/Animation/CharacterAnim/ArcherAnimator.overrideController" },
+        { AddressableKey.MagicianAnimator, "Assets/Art/Animation/CharacterAnim/MagicianAnimator.overrideController" }
     };
 
     public static string ToKey(this AddressableKey key)

@@ -21,7 +21,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3d3716adc1e568645ab583e0d1b12984
-    m_Address: Assets/Art/Animation/ArcherAnimator.overrideController
+    m_Address: Assets/Art/Animation/CharacterAnim/ArcherAnimator.overrideController
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -36,12 +36,12 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9edaeb9624e814d4fb5efbc167baf35d
-    m_Address: Assets/Art/Animation/MagicianAnimator.overrideController
+    m_Address: Assets/Art/Animation/CharacterAnim/MagicianAnimator.overrideController
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: acf6952fe18e2ea498a714a5f5a2cec0
-    m_Address: Assets/Art/Animation/MinerAnimator.overrideController
+    m_Address: Assets/Art/Animation/CharacterAnim/MinerAnimator.overrideController
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
