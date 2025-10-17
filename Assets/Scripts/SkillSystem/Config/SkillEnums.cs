@@ -15,12 +15,19 @@ public enum TargetPriorityType
 public enum DeliveryType
 {
     Instant,
-    Projectile,
-    Raycast
+    Projectile
 }
 
 public enum DamageType
 {
     Physical,
     Magic,
+}
+
+public enum AreaShapeType
+{
+    None,
+    Circle,
+    Box,
+    Cone
 }

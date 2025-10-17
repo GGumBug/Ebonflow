@@ -26,7 +26,7 @@ namespace AutoBattle
                 Debug.LogWarning($"[BattleRoster] Register: 이미 등록되어 있음 -> {unit.name} ({team})");
         }
 
-        public void Unregister(Unit unit)
+        public void UnRegister(Unit unit)
         {
             var team = unit.GetTeam();
             bool removed = _map[team].Remove(unit);
@@ -44,10 +44,33 @@ namespace AutoBattle
             return _map[unit.GetTeam()].Contains(unit);
         }
 
+        /// <summary>
+        /// 주어진 팀의 상대 팀을 반환
+        /// </summary>
+        public IReadOnlyCollection<Unit> GetOpposingTeam(TeamType team)
+        {
+            TeamType opposingTeam = GetOpposingTeamType(team);
+
+            return _map[opposingTeam];
+        }
+
+        /// <summary>
+        /// 주어진 팀의 상대 팀 타입을 반환합니다.
+        /// </summary>
+        private TeamType GetOpposingTeamType(TeamType team)
+        {
+            return team switch
+            {
+                TeamType.Ally => TeamType.Enemy,
+                TeamType.Enemy => TeamType.Ally,
+                _ => throw new System.ArgumentException($"지원되지 않거나 알 수 없는 팀 타입이 전달되었습니다: {team}. TeamType Enum 정의를 확인하십시오.")
+            };
+        }
+
         // 팀 변경이 가능하다면 별도 메서드 제공
         public void ChangeTeam(Unit unit, TeamType newTeam)
         {
-            Unregister(unit);
+            UnRegister(unit);
             _map[newTeam].Add(unit);
         }
     }

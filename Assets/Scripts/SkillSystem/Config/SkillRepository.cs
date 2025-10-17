@@ -33,7 +33,11 @@ namespace SkillSystem
                     delivery: e.f_DeliveryType,
                     hitLimit: e.f_HitLimit,
                     targetPriorityType: e.f_TargetPriorityType,
-                    coef: e.f_Coef
+                    coef: e.f_Coef,
+                    areaShapeType: e.f_AreaShapeType,
+                    areaRadius: e.f_AreaRadius,
+                    areaSize: e.f_AreaSize,
+                    areaAngle: e.f_AreaAngle
                     );
 
                 if (!_skillDefinitionsbyId.ContainsKey(e.f_SkillID))

@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace SkillSystem
 {
     public class SkillDefinition
@@ -9,6 +11,10 @@ namespace SkillSystem
         public int HitLimit { get; private set; }
         public TargetPriorityType TargetPriorityType { get; private set; }
         public float Coef { get; private set; }
+        public AreaShapeType AreaShapeType { get; private set; }
+        public float AreaRadius { get; private set; }
+        public Vector2 AreaSize { get; private set; }
+        public float AreaAngle { get; private set; }
 
         public SkillDefinition(
         int skillId,
@@ -17,7 +23,11 @@ namespace SkillSystem
         DeliveryType delivery,
         int hitLimit,
         TargetPriorityType targetPriorityType,
-        float coef)
+        float coef,
+        AreaShapeType areaShapeType,
+        float areaRadius,
+        Vector2 areaSize,
+        float areaAngle)
         {
             SkillId = skillId;
             SkillName = skillName;
@@ -26,6 +36,11 @@ namespace SkillSystem
             HitLimit = hitLimit;
             TargetPriorityType = targetPriorityType;
             Coef = coef;
+
+            AreaShapeType = areaShapeType;
+            AreaRadius = areaRadius;
+            AreaSize = areaSize;
+            AreaAngle = areaAngle;
         }
     }
 }

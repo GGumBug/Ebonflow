@@ -1,6 +1,6 @@
 using SkillSystem;
 using System.Collections.Generic;
-using static UnityEngine.GraphicsBuffer;
+using AutoBattle;
 
 namespace CombatSystem
 {
@@ -22,6 +22,45 @@ namespace CombatSystem
 
             var targets = new List<IVictim> { closestEnemy };
             return ValidationResult.Ok(targets: targets);
+        }
+    }
+
+    public sealed class StrongestEnemyValidator : ICastValidator
+    {
+        private AutoBattleUnitManager unitManager;
+
+        public ValidationResult Validate(SkillDefinition skill, IAttacker attacker, IRangeDetector detector)
+        {
+            unitManager ??= AutoBattleUnitManager.Instance;
+
+            var opposingTeam = unitManager.Roster.GetOpposingTeam((TeamType)attacker.TeamId);
+
+            Unit strongestTarget = null;
+            float highestDps = -1f;
+
+            foreach (var opposingUnit in opposingTeam)
+            {
+                if (opposingUnit == null || opposingUnit.IsDead)
+                    continue;
+
+                float unitDps = opposingUnit.Stat.GetDPS();
+
+                if (unitDps > highestDps)
+                {
+                    highestDps = unitDps;
+                    strongestTarget = opposingUnit;
+                }
+            }
+
+            if (strongestTarget != null)
+            {
+                var targets = new List<IVictim> { strongestTarget };
+                return ValidationResult.Ok(targets: targets);
+            }
+            else
+            {
+                return ValidationResult.Fail("NoStrongestTargetAvailable");
+            }
         }
     }
 }

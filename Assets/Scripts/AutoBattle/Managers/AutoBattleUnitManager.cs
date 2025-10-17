@@ -16,7 +16,6 @@ namespace AutoBattle
         private IUnitRepository         _statRepository;
         private IPlacementInputGate     _placementInputGate;
         private IPlacementService       _placementService;
-        private AutoBattleDataManager   _autoBattleDataManager;
 
         public event Action<TeamType>   OnTeamEliminated;
 
@@ -39,7 +38,6 @@ namespace AutoBattle
 
         public void Setup(IGridManager battleGrid, SellZonePanel sellZonePanel, List<StageEditorUnitInfo> enemyList)
         {
-            _autoBattleDataManager = AutoBattleDataManager.Instance;
             AutoBattleManager autoBattleManager = AutoBattleManager.Instance;
             Roster = new BattleRoster();
             Transform _allyContainer = new GameObject("AllyUnits").transform;
@@ -127,7 +125,7 @@ namespace AutoBattle
             }
 
             var set = unit.GetTeam() == TeamType.Ally ? Roster.Allies : Roster.Enemies;
-            Roster.Unregister(unit);
+            Roster.UnRegister(unit);
 
             if (set.Count == 0)
                 OnTeamEliminated?.Invoke(unit.GetTeam());

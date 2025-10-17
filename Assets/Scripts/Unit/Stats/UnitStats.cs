@@ -11,6 +11,7 @@ public class UnitStats
         (StatType[])Enum.GetValues(typeof(StatType));
 
     private readonly StatModifierBucket[] _buckets;
+    private UnitCombatAnalyzer _unitCombatAnalyzer;
 
     public UnitStatData BaseStats { get; private set; }
 
@@ -27,6 +28,7 @@ public class UnitStats
 
     public UnitStats(UnitStatData unitStatData)
     {
+        _unitCombatAnalyzer = new UnitCombatAnalyzer(this);
         BaseStats = unitStatData;
         _buckets = new StatModifierBucket[AllStatTypes.Length];
         foreach (var statType in AllStatTypes)
@@ -41,6 +43,8 @@ public class UnitStats
 
         Debug.Log($"[UnitStats] ★{BaseStats.StarLevel} 생성 → MaxHP={MaxHP}, MaxMana={MaxMana}, CurrentHP={CurrentHP}, CurrentMana={CurrentMana}, Atk={Attack}");
     }
+
+    public float GetDPS() => _unitCombatAnalyzer.GetDPS();
 
     // --- HP ---
     public void TakeDamage(int damage)

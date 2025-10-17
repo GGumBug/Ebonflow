@@ -660,6 +660,26 @@ public partial class DB_SkillDefinitions : BGEntity
 		get => _f_IsAttack[Index];
 		set => _f_IsAttack[Index] = value;
 	}
+	public AreaShapeType f_AreaShapeType
+	{
+		get => (AreaShapeType) _f_AreaShapeType[Index];
+		set => _f_AreaShapeType[Index] = value;
+	}
+	public System.Single f_AreaRadius
+	{
+		get => _f_AreaRadius[Index];
+		set => _f_AreaRadius[Index] = value;
+	}
+	public UnityEngine.Vector2 f_AreaSize
+	{
+		get => _f_AreaSize[Index];
+		set => _f_AreaSize[Index] = value;
+	}
+	public System.Single f_AreaAngle
+	{
+		get => _f_AreaAngle[Index];
+		set => _f_AreaAngle[Index] = value;
+	}
 	private static BansheeGz.BGDatabase.BGFieldEntityName _ufle12jhs77_f_name;
 	public static BansheeGz.BGDatabase.BGFieldEntityName _f_name => _ufle12jhs77_f_name ?? (_ufle12jhs77_f_name = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEntityName>(MetaDefault, new BGId(5552308268041475466UL, 4065140096132871589UL), () => _ufle12jhs77_f_name = null));
 	private static BansheeGz.BGDatabase.BGFieldInt _ufle12jhs77_f_SkillID;
@@ -676,6 +696,14 @@ public partial class DB_SkillDefinitions : BGEntity
 	public static BansheeGz.BGDatabase.BGFieldFloat _f_Coef => _ufle12jhs77_f_Coef ?? (_ufle12jhs77_f_Coef = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(5720104085545835281UL, 3299285901855127UL), () => _ufle12jhs77_f_Coef = null));
 	private static BansheeGz.BGDatabase.BGFieldBool _ufle12jhs77_f_IsAttack;
 	public static BansheeGz.BGDatabase.BGFieldBool _f_IsAttack => _ufle12jhs77_f_IsAttack ?? (_ufle12jhs77_f_IsAttack = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldBool>(MetaDefault, new BGId(5128916381293213162UL, 3719071332559131525UL), () => _ufle12jhs77_f_IsAttack = null));
+	private static BansheeGz.BGDatabase.BGFieldEnum _ufle12jhs77_f_AreaShapeType;
+	public static BansheeGz.BGDatabase.BGFieldEnum _f_AreaShapeType => _ufle12jhs77_f_AreaShapeType ?? (_ufle12jhs77_f_AreaShapeType = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldEnum>(MetaDefault, new BGId(4621647123215705439UL, 8076012056291196309UL), () => _ufle12jhs77_f_AreaShapeType = null));
+	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_AreaRadius;
+	public static BansheeGz.BGDatabase.BGFieldFloat _f_AreaRadius => _ufle12jhs77_f_AreaRadius ?? (_ufle12jhs77_f_AreaRadius = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(4750178945025104644UL, 13322834789898347929UL), () => _ufle12jhs77_f_AreaRadius = null));
+	private static BansheeGz.BGDatabase.BGFieldVector2 _ufle12jhs77_f_AreaSize;
+	public static BansheeGz.BGDatabase.BGFieldVector2 _f_AreaSize => _ufle12jhs77_f_AreaSize ?? (_ufle12jhs77_f_AreaSize = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldVector2>(MetaDefault, new BGId(4950031090742748833UL, 453348959195954062UL), () => _ufle12jhs77_f_AreaSize = null));
+	private static BansheeGz.BGDatabase.BGFieldFloat _ufle12jhs77_f_AreaAngle;
+	public static BansheeGz.BGDatabase.BGFieldFloat _f_AreaAngle => _ufle12jhs77_f_AreaAngle ?? (_ufle12jhs77_f_AreaAngle = BGCodeGenUtils.GetField<BansheeGz.BGDatabase.BGFieldFloat>(MetaDefault, new BGId(4731979383967244474UL, 1945778713832812718UL), () => _ufle12jhs77_f_AreaAngle = null));
 	private static readonly DB_Units.Factory _factory0_PFS = new DB_Units.Factory();
 	private static readonly DB_LocalizationEntries.Factory _factory1_PFS = new DB_LocalizationEntries.Factory();
 	private static readonly DB_UnitStats.Factory _factory2_PFS = new DB_UnitStats.Factory();

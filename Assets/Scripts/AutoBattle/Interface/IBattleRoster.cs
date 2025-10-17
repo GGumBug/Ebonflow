@@ -8,7 +8,7 @@ namespace AutoBattle
         IReadOnlyCollection<Unit> Enemies { get; }
 
         void Register(Unit unit);
-        void Unregister(Unit unit);
+        void UnRegister(Unit unit);
         bool Contains(Unit unit);
     }
 }

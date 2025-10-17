@@ -264,7 +264,7 @@ public class AStarGrid : MonoBehaviour, IGridManager
     private void SyncRosterOnRemove(Unit unit)
     {
         if (_roster != null && _roster.Contains(unit))
-            _roster.Unregister(unit);
+            _roster.UnRegister(unit);
     }
 
     private void OnDrawGizmos()
