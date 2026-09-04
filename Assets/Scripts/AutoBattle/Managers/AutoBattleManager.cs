@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
 
@@ -22,14 +23,14 @@ namespace AutoBattle
             StateController.VictoryEntered.Add(() => _rewardService.ApplyInterest(), 0);
             StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.Save(), 1);
             StateController.VictoryEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Save(), 1);
-            StateController.VictoryEntered.Add(async () => await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MapScene>(), 2);
+            StateController.VictoryEntered.Add(MoveToMapScene, 2);
 
             StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Stage.shouldResumeBattle = false, 0);
             StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.UpdateStreak(false), 0);
             StateController.DefeatEntered.Add(() => _rewardService.ApplyInterest(), 0);
             StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattleSceneDataContext.Save(), 1);
             StateController.DefeatEntered.Add(() => autoBattleDataManager.AutoBattlePlayerDataContext.Save(), 1);
-            StateController.DefeatEntered.Add(async () => await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MapScene>(), 2);
+            StateController.DefeatEntered.Add(MoveToMapScene, 2);
         }
 
         private void HandleTeamEliminated(TeamType eliminatedTeam)
@@ -47,6 +48,13 @@ namespace AutoBattle
                 : AutoBattleGameState.Defeat;
 
             Debug.Log(victory ? "승리!" : "패배…");
+        }
+
+        private async void MoveToMapScene()
+        {
+            await UniTask.Delay(3000);
+
+            await SceneLoadManager.Instance.LoadSceneAsyncWithLoadingUI<MapScene>();
         }
     }
 }
